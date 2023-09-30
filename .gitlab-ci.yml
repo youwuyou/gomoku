@@ -2,28 +2,18 @@ stages:
   - build
   - test
 
-image: ubuntu:20.04
+image: youwuyou/gomoku:latest
 
 variables:
   DEBIAN_FRONTEND: noninteractive
 
-before_script:
-  - apt-get update -qy
-  - apt-get install -y build-essential ninja-build libwxgtk3.0-gtk3-dev
-
 build_project:
   stage: build
-  tags:
-    - kubernetes-runner  # replace with the actual tag
-    - gitlab-runner-7d4cdd6967-qnm52
   script:
     - ./build-run.sh "Ninja"
 
 run_tests:
   stage: test
-  tags:
-    - kubernetes-runner  # replace with the actual tag
-    - gitlab-runner-7d4cdd6967-qnm52
   script:
     - cd cmake-build-debug
     - ctest -V
