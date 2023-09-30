@@ -131,5 +131,7 @@ add_library(Gomoku-lib ${SERVER_SOURCE_FILES})
 # set compile directives for server-library
 target_compile_definitions(Gomoku-lib PRIVATE GOMOKU_SERVER=1 RAPIDJSON_HAS_STDSTRING=1)
 
+# Enables testing for this directory and below
+enable_testing()
 add_subdirectory(googletest)
 add_subdirectory(unit-tests)

@@ -27,8 +27,8 @@ Execute the following commands in a console:
 
 ### 1.2 Compile Code
 
-#### Using Clion
-1. Open Clion
+#### Using CLion
+1. Open CLion
 2. Click `File > Open...` and there select the **/sockpp** folder of this project
 3. Click `Build > Build all in 'Debug'`
 4. Wait until sockpp is compiled (from now on you never have to touch sockpp again ;))
@@ -36,10 +36,9 @@ Execute the following commands in a console:
 6. Click `Build > Build all in 'Debug'`
 7. Wait until Gomoku-server, Gomoku-client and Gomoku-tests are compiled
 
-<!-- TODO: change it into gomoku-server, gomoku-client, gomoku-tests accordingly -->
 
-#### Without Clion
-We also provide build scripts that you can utilize for the build process, in case you do not use the Clion IDE. For building the game, you could either run the `build-run.sh` script with either "Unix Makefiles" of "Ninja" as argument
+#### Without CLion
+We also provide build scripts that you can utilize for the build process, in case you do not use the CLion IDE. For building the game, you could either run the `build-run.sh` script with either "Unix Makefiles" of "Ninja" as argument
 
 1. Make sure you locate at the root, using `pwd` you should see `/path/to/gomoku`
 2. Choose to build with/without [Ninja](https://ninja-build.org/). Build directories named `cmake-build-debug` will appear under sockpp directory and then the root of the project 
@@ -61,11 +60,24 @@ For your convinience, we also provide a script that allows us to remove the `cma
 3. In new consoles run as many clients as you want players `./Gomoku-client`
 
 ## 3. Run the Unit Tests
+
+### With CLion
 1. CLion should automatically create a Google Test configuration Gomoku-tests which will run all tests. See [Google Test run/debug configuration﻿](https://www.jetbrains.com/help/clion/creating-google-test-run-debug-configuration-for-test.html#gtest-config) for more information.
 2. From the list on the main toolbar, select the configuration Gomoku-tests.
 3. Click ![run](https://resources.jetbrains.com/help/img/idea/2021.1/artwork.studio.icons.shell.toolbar.run.svg) or press `Shift+F10`.
    
 You can run individual tests or test suites by opening the corresponding file in the **/unit-tests** folder and clicking ![run](https://resources.jetbrains.com/help/img/idea/2021.1/artwork.studio.icons.shell.toolbar.run.svg) next to the test method or class. For more information on testing in CLion read the [documentation](https://www.jetbrains.com/help/clion/performing-tests.html).
+
+
+### Without CLion
+
+1. Make sure you locate at the `cmake-build-debug` directory of the whole project
+
+- you should see `path/to/gomoku/cmake-build-debug` when using `pwd`
+
+2. Perform testing using `ctest -V`
+
+
 
 ## 4. Instruction for Developers
 You don't need to look at the **/sockpp**, **/rapidjson** or **/googletest** folder, as they simply contain 3rd party code that should not be changed.
