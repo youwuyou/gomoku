@@ -15,17 +15,9 @@ build_project:
   stage: build
   script:
     - ./build-run.sh "Ninja"
-  tags:
-    - shell
-    - ubuntu
-    - ubuntu20.04
 
 run_tests:
   stage: test
   script:
     - cd cmake-build-debug
     - ctest -V
-  tags:
-    - shell
-    - ubuntu
-    - ubuntu20.04
