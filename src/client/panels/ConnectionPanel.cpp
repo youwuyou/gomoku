@@ -13,7 +13,7 @@ ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
 
     wxBoxSizer* verticalLayout = new wxBoxSizer(wxVERTICAL);
 
-    ImagePanel* logo = new ImagePanel(this, "assets/lama_logo.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, wxSize(200, 250));
+    ImagePanel* logo = new ImagePanel(this, "assets/gomoku_logo.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, wxSize(600, 450));
     verticalLayout->Add(logo, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);
 
     this->_serverAddressField = new InputField(

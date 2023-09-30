@@ -2,8 +2,7 @@
 
 This is a simple C++ implementation of a classical Japanese board game called "Gomoku". You can read the game's rules [here](https://www.wikiwand.com/en/Gomoku). The implementation features a client/server architecture for 2-player scenarios.
 
-<!-- TODO: add the logo for Gomoku -->
-<!-- ![Gomoku-logo](./assets/Gomoku_logo.png?raw=true) -->
+![Gomoku-logo](./assets/Gomoku_logo.png?raw=true)
 
 ## 1. Compile instructions
 This project only works on UNIX systems (Linux / MacOS). We recommend using [Ubuntu](https://ubuntu.com/#download), as it offers the easiest way to setup wxWidgets. Therefore, we explain installation only for Ubuntu systems. The following was tested on a Ubuntu 20.4 system, but should also work for earlier versions of Ubuntu.
