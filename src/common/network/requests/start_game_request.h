@@ -2,8 +2,8 @@
 // Created by Manuel on 29.01.2021.
 //
 
-#ifndef LAMA_START_GAME_REQUEST_H
-#define LAMA_START_GAME_REQUEST_H
+#ifndef GOMOKU_START_GAME_REQUEST_H
+#define GOMOKU_START_GAME_REQUEST_H
 
 
 #include <string>
@@ -25,4 +25,4 @@ public:
     static start_game_request* from_json(const rapidjson::Value& json);
 };
 
-#endif //LAMA_START_GAME_REQUEST_H
+#endif //GOMOKU_START_GAME_REQUEST_H

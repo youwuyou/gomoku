@@ -4,8 +4,8 @@
 // Base class for all messages sent from the server to the client.
 // It offers a function to deserialize a server_response subclass from a valid json.
 
-#ifndef LAMA_SERVER_RESPONSE_H
-#define LAMA_SERVER_RESPONSE_H
+#ifndef GOMOKU_SERVER_RESPONSE_H
+#define GOMOKU_SERVER_RESPONSE_H
 
 #include <string>
 #include <unordered_map>
@@ -53,10 +53,10 @@ public:
     // Serializes the server_response into a json object that can be sent over the network
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
 
-#ifdef LAMA_CLIENT
+#ifdef GOMOKU_CLIENT
     virtual void Process() const = 0;
 #endif
 };
 
 
-#endif //LAMA_SERVER_RESPONSE_H
+#endif //GOMOKU_SERVER_RESPONSE_H

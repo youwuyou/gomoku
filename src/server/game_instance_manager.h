@@ -6,8 +6,8 @@
 // If a new player requests to join a game but no valid game_instance is available, then this class
 // will generate a new game_instance and add it to the unordered_map of (active) game instances.
 
-#ifndef LAMA_GAME_INSTANCE_MANAGER_H
-#define LAMA_GAME_INSTANCE_MANAGER_H
+#ifndef GOMOKU_GAME_INSTANCE_MANAGER_H
+#define GOMOKU_GAME_INSTANCE_MANAGER_H
 
 #include <string>
 #include <shared_mutex>
@@ -47,4 +47,4 @@ public:
 };
 
 
-#endif //LAMA_GAME_INSTANCE_MANAGER_H
+#endif //GOMOKU_GAME_INSTANCE_MANAGER_H

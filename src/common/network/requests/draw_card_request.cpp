@@ -4,7 +4,7 @@
 
 #include "draw_card_request.h"
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 #include "../../../server/game_instance_manager.h"
 #include "../../../server/game_instance.h"
 #endif
@@ -27,7 +27,7 @@ draw_card_request* draw_card_request::from_json(const rapidjson::Value &json) {
     if (json.HasMember("nof_cards") ) {
         return new draw_card_request(props, json["nof_cards"].GetInt());
     } else {
-        throw LamaException("Could not find 'nof_cards' in draw_card_request");
+        throw GomokuException("Could not find 'nof_cards' in draw_card_request");
     }
 }
 

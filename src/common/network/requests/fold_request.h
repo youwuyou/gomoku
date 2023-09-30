@@ -2,8 +2,8 @@
 // Created by Manuel on 29.01.2021.
 //
 
-#ifndef LAMA_FOLD_REQUEST_H
-#define LAMA_FOLD_REQUEST_H
+#ifndef GOMOKU_FOLD_REQUEST_H
+#define GOMOKU_FOLD_REQUEST_H
 
 #include <string>
 #include "client_request.h"
@@ -25,4 +25,4 @@ public:
 };
 
 
-#endif //LAMA_FOLD_REQUEST_H
+#endif //GOMOKU_FOLD_REQUEST_H

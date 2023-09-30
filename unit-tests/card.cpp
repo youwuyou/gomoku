@@ -3,7 +3,7 @@
 //
 
 #include "gtest/gtest.h"
-#include "../src/common/exceptions/LamaException.h"
+#include "../src/common/exceptions/GomokuException.h"
 #include "../src/common/game_state/cards/card.h"
 #include "../src/common/serialization/json_utils.h"
 
@@ -51,9 +51,9 @@ TEST(CardTest, SerializationEquality) {
     delete card_recv;
 }
 
-// Deserializing an invalid string must throw a LamaException
+// Deserializing an invalid string must throw a GomokuException
 TEST(CardTest, SerializationException) {
     rapidjson::Document json = rapidjson::Document(rapidjson::kObjectType);
     json.Parse("not json");
-    EXPECT_THROW(card::from_json(json), LamaException);
+    EXPECT_THROW(card::from_json(json), GomokuException);
 }

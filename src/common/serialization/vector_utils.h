@@ -3,8 +3,8 @@
 //
 // Helper functions to serialize vectors containing objects that implement the 'serializable' class.
 
-#ifndef LAMA_VECTOR_UTILS_H
-#define LAMA_VECTOR_UTILS_H
+#ifndef GOMOKU_VECTOR_UTILS_H
+#define GOMOKU_VECTOR_UTILS_H
 
 #include <vector>
 #include "serializable.h"
@@ -34,4 +34,4 @@ namespace vector_utils {
 
 }
 
-#endif //LAMA_VECTOR_UTILS_H
+#endif //GOMOKU_VECTOR_UTILS_H

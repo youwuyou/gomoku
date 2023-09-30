@@ -4,7 +4,7 @@
 
 #include "card.h"
 
-#include "../../exceptions/LamaException.h"
+#include "../../exceptions/GomokuException.h"
 
 
 card::card(std::string id) : unique_serializable(id) { }
@@ -36,7 +36,7 @@ card *card::from_json(const rapidjson::Value &json) {
     if (json.HasMember("id") && json.HasMember("value")) {
         return new card(json["id"].GetString(), serializable_value<int>::from_json(json["value"].GetObject()));
     } else {
-        throw LamaException("Could not parse json of card. Was missing 'id' or 'val'.");
+        throw GomokuException("Could not parse json of card. Was missing 'id' or 'val'.");
     }
 }
 

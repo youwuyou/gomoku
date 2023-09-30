@@ -4,7 +4,7 @@
 
 #include "game_state.h"
 
-#include "../exceptions/LamaException.h"
+#include "../exceptions/GomokuException.h"
 #include "../serialization/vector_utils.h"
 
 
@@ -124,7 +124,7 @@ std::vector<player*>& game_state::get_players() {
 }
 
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 
 // state modification functions without diff
 void game_state::setup_round(std::string &err) {
@@ -402,7 +402,7 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
 
 
     } else {
-        throw LamaException("Failed to deserialize game_state. Required entries were missing.");
+        throw GomokuException("Failed to deserialize game_state. Required entries were missing.");
     }
 }
 

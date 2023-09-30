@@ -2,8 +2,8 @@
 // Created by Manuel on 25.01.2021.
 //
 
-#ifndef LAMA_DISCARD_PILE_H
-#define LAMA_DISCARD_PILE_H
+#ifndef GOMOKU_DISCARD_PILE_H
+#define GOMOKU_DISCARD_PILE_H
 
 #include <string>
 #include <vector>
@@ -27,7 +27,7 @@ public:
     bool can_play(const card* card);
     const card* get_top_card() const;
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 // state update functions
     void setup_game(std::string& err);  // Clears the stack
     bool try_play(const std::string& card_id, player* player, std::string& err);
@@ -40,4 +40,4 @@ public:
 };
 
 
-#endif //LAMA_DISCARD_PILE_H
+#endif //GOMOKU_DISCARD_PILE_H

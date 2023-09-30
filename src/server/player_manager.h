@@ -5,8 +5,8 @@
 // functionality to retrieve players by id or adding players when they first connect to the server.
 //
 
-#ifndef LAMA_PLAYER_MANAGER_H
-#define LAMA_PLAYER_MANAGER_H
+#ifndef GOMOKU_PLAYER_MANAGER_H
+#define GOMOKU_PLAYER_MANAGER_H
 
 #include <string>
 #include <shared_mutex>
@@ -28,4 +28,4 @@ public:
 };
 
 
-#endif //LAMA_PLAYER_MANAGER_H
+#endif //GOMOKU_PLAYER_MANAGER_H

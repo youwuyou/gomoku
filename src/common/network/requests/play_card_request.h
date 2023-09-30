@@ -2,8 +2,8 @@
 // Created by Manuel on 28.01.2021.
 //
 
-#ifndef LAMA_PLAY_CARD_REQUEST_H
-#define LAMA_PLAY_CARD_REQUEST_H
+#ifndef GOMOKU_PLAY_CARD_REQUEST_H
+#define GOMOKU_PLAY_CARD_REQUEST_H
 
 
 #include "client_request.h"
@@ -28,4 +28,4 @@ public:
 };
 
 
-#endif //LAMA_PLAY_CARD_REQUEST_H
+#endif //GOMOKU_PLAY_CARD_REQUEST_H

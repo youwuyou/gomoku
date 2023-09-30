@@ -21,7 +21,7 @@ play_card_request* play_card_request::from_json(const rapidjson::Value& json) {
     if (json.HasMember("card_id")) {
         return new play_card_request(props, json["card_id"].GetString());
     } else {
-        throw LamaException("Could not find 'card_id' or 'value' in play_card_request");
+        throw GomokuException("Could not find 'card_id' or 'value' in play_card_request");
     }
 }
 

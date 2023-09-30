@@ -1,5 +1,5 @@
-#ifndef LAMA_CLIENT_NETWORK_THREAD_H
-#define LAMA_CLIENT_NETWORK_THREAD_H
+#ifndef GOMOKU_CLIENT_NETWORK_THREAD_H
+#define GOMOKU_CLIENT_NETWORK_THREAD_H
 
 #include <functional>
 #include <wx/wx.h>
@@ -24,4 +24,4 @@ private:
 
 };
 
-#endif //LAMA_CLIENT_NETWORK_THREAD_H
+#endif //GOMOKU_CLIENT_NETWORK_THREAD_H

@@ -4,7 +4,7 @@
 
 #include "hand.h"
 
-#include "../../exceptions/LamaException.h"
+#include "../../exceptions/GomokuException.h"
 #include "../../serialization/vector_utils.h"
 
 hand::hand() : unique_serializable() { }
@@ -83,7 +83,7 @@ std::vector<card*>::iterator hand::get_card_iterator() {
 }
 
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 void hand::setup_round(std::string &err) {
     // remove all cards (if any) and clear it
     for (int i = 0; i < _cards.size(); i++) {
@@ -125,7 +125,7 @@ hand *hand::from_json(const rapidjson::Value &json) {
         }
         return new hand(json["id"].GetString(), deserialized_cards);
     } else {
-        throw LamaException("Could not parse hand from json. 'cards' were missing.");
+        throw GomokuException("Could not parse hand from json. 'cards' were missing.");
     }
 }
 

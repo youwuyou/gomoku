@@ -4,14 +4,14 @@
 // client_request is the base-class for all requests that are being sent from the client to the server.
 // It offers a function to deserialize a client_request subclass from a valid json.
 
-#ifndef LAMA_CLIENT_REQUEST_H
-#define LAMA_CLIENT_REQUEST_H
+#ifndef GOMOKU_CLIENT_REQUEST_H
+#define GOMOKU_CLIENT_REQUEST_H
 
 #include <string>
 #include <unordered_map>
 #include "../../../../rapidjson/include/rapidjson/document.h"
 #include "../../serialization/serializable.h"
-#include "../../exceptions/LamaException.h"
+#include "../../exceptions/GomokuException.h"
 #include "../../serialization/uuid_generator.h"
 #include "../../serialization/json_utils.h"
 
@@ -71,4 +71,4 @@ public:
 };
 
 
-#endif //LAMA_CLIENT_REQUEST_H
+#endif //GOMOKU_CLIENT_REQUEST_H

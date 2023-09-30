@@ -4,10 +4,10 @@
 
 #include "request_response.h"
 #include "../../serialization/json_utils.h"
-#include "../../exceptions/LamaException.h"
+#include "../../exceptions/GomokuException.h"
 #include "../../game_state/game_state.h"
 
-#ifdef LAMA_CLIENT
+#ifdef GOMOKU_CLIENT
 #include "../../../client/GameController.h"
 #endif
 
@@ -69,11 +69,11 @@ request_response *request_response::from_json(const rapidjson::Value& json) {
                 state_json,
                 err);
     } else {
-        throw LamaException("Could not parse request_response from json. err or success is missing.");
+        throw GomokuException("Could not parse request_response from json. err or success is missing.");
     }
 }
 
-#ifdef LAMA_CLIENT
+#ifdef GOMOKU_CLIENT
 
 void request_response::Process() const {
     if (_success) {

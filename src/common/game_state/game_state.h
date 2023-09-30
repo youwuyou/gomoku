@@ -2,8 +2,8 @@
 // Created by Manuel on 27.01.2021.
 //
 
-#ifndef LAMA_GAME_STATE_H
-#define LAMA_GAME_STATE_H
+#ifndef GOMOKU_GAME_STATE_H
+#define GOMOKU_GAME_STATE_H
 
 #include <vector>
 #include <string>
@@ -66,7 +66,7 @@ public:
     discard_pile* get_discard_pile() const;
     player* get_current_player() const;
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 // server-side state update functions
     void setup_round(std::string& err);   // server side initialization
     bool remove_player(player* player, std::string& err);
@@ -88,4 +88,4 @@ public:
 };
 
 
-#endif //LAMA_GAME_STATE_H
+#endif //GOMOKU_GAME_STATE_H

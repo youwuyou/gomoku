@@ -2,8 +2,8 @@
 // Created by Manuel on 25.01.2021.
 //
 
-#ifndef LAMA_PLAYER_H
-#define LAMA_PLAYER_H
+#ifndef GOMOKU_PLAYER_H
+#define GOMOKU_PLAYER_H
 
 
 #include <string>
@@ -20,7 +20,7 @@ private:
     serializable_value<int>* _score;
     hand* _hand;
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
     std::string _game_id;
 #endif
 
@@ -38,7 +38,7 @@ public:
     explicit player(std::string name);   // for client
     ~player();
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
     player(std::string id, std::string name);  // for server
 
     std::string get_game_id();
@@ -52,7 +52,7 @@ public:
     const hand* get_hand() const noexcept;
     std::string get_player_name() const noexcept;
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
     // state update functions
     bool fold(std::string& err);
     bool add_card(card* card, std::string& err);
@@ -70,4 +70,4 @@ public:
 };
 
 
-#endif //LAMA_PLAYER_H
+#endif //GOMOKU_PLAYER_H

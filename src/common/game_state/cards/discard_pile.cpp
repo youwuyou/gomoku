@@ -4,7 +4,7 @@
 
 #include "discard_pile.h"
 #include "../../serialization/vector_utils.h"
-#include "../../exceptions/LamaException.h"
+#include "../../exceptions/GomokuException.h"
 
 
 discard_pile::discard_pile(std::string id) : unique_serializable(id) { }
@@ -36,7 +36,7 @@ const card* discard_pile::get_top_card() const  {
     }
 }
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 void discard_pile::setup_game(std::string &err) {
     // remove all cards (if any) and clear it
     for (int i = 0; i < _cards.size(); i++) {
@@ -87,7 +87,7 @@ discard_pile *discard_pile::from_json(const rapidjson::Value &json) {
         }
         return new discard_pile(json["id"].GetString(), deserialized_cards);
     } else {
-        throw LamaException("Could not parse draw_pile from json. 'id' or 'cards' were missing.");
+        throw GomokuException("Could not parse draw_pile from json. 'id' or 'cards' were missing.");
     }
 }
 

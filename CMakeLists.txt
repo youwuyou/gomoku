@@ -88,7 +88,7 @@ set(SERVER_SOURCE_FILES
 # set source files for client-executable
 add_executable(Gomoku-client ${CLIENT_SOURCE_FILES})
 # set compile directives for client-executable
-target_compile_definitions(Gomoku-client PRIVATE LAMA_CLIENT=1 RAPIDJSON_HAS_STDSTRING=1)
+target_compile_definitions(Gomoku-client PRIVATE GOMOKU_CLIENT=1 RAPIDJSON_HAS_STDSTRING=1)
 # link with wxWidgets
 target_link_libraries(Gomoku-client ${wxWidgets_LIBRARIES})
 # Comment out if you don't want to print network-related messages into the console
@@ -97,7 +97,7 @@ target_compile_definitions(Gomoku-client PRIVATE PRINT_NETWORK_MESSAGES=1)
 # set source files for server-executable
 add_executable(Gomoku-server ${SERVER_SOURCE_FILES})
 # set compile directives for server-executable
-target_compile_definitions(Gomoku-server PRIVATE LAMA_SERVER=1 RAPIDJSON_HAS_STDSTRING=1)
+target_compile_definitions(Gomoku-server PRIVATE GOMOKU_SERVER=1 RAPIDJSON_HAS_STDSTRING=1)
 # Comment out if you don't want to print network-related messages into the console
 target_compile_definitions(Gomoku-server PRIVATE PRINT_NETWORK_MESSAGES=1)
 
@@ -127,9 +127,9 @@ file(INSTALL assets DESTINATION ${CMAKE_BINARY_DIR})
 
 set(CMAKE_CXX_FLAGS "--coverage")
 # set source files for server-library
-add_library(Lama-lib ${SERVER_SOURCE_FILES})
+add_library(Gomoku-lib ${SERVER_SOURCE_FILES})
 # set compile directives for server-library
-target_compile_definitions(Lama-lib PRIVATE LAMA_SERVER=1 RAPIDJSON_HAS_STDSTRING=1)
+target_compile_definitions(Gomoku-lib PRIVATE GOMOKU_SERVER=1 RAPIDJSON_HAS_STDSTRING=1)
 
 add_subdirectory(googletest)
 add_subdirectory(unit-tests)

@@ -4,7 +4,7 @@
 
 #include "start_game_request.h"
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 #include "../../../server/game_instance_manager.h"
 #include "../../../server/game_instance.h"
 #endif

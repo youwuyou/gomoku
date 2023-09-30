@@ -2,8 +2,8 @@
 // Created by Manuel on 29.01.2021.
 //
 
-#ifndef LAMA_JOIN_GAME_REQUEST_H
-#define LAMA_JOIN_GAME_REQUEST_H
+#ifndef GOMOKU_JOIN_GAME_REQUEST_H
+#define GOMOKU_JOIN_GAME_REQUEST_H
 
 
 #include <string>
@@ -39,4 +39,4 @@ public:
 };
 
 
-#endif //LAMA_JOIN_GAME_REQUEST_H
+#endif //GOMOKU_JOIN_GAME_REQUEST_H

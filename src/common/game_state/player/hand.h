@@ -2,8 +2,8 @@
 // Created by Manuel on 27.01.2021.
 //
 
-#ifndef LAMA_HAND_H
-#define LAMA_HAND_H
+#ifndef GOMOKU_HAND_H
+#define GOMOKU_HAND_H
 
 #include <vector>
 #include "../../../../rapidjson/include/rapidjson/document.h"
@@ -35,7 +35,7 @@ public:
     const std::vector<card*> get_cards() const;
     bool try_get_card(const std::string& card_id, card*& hand_card) const;
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 // state update functions
     void setup_round(std::string& err);
     bool add_card(card* card, std::string& err);
@@ -46,4 +46,4 @@ public:
 };
 
 
-#endif //LAMA_HAND_H
+#endif //GOMOKU_HAND_H

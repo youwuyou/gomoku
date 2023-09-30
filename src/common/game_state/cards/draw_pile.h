@@ -2,8 +2,8 @@
 // Created by Manuel on 25.01.2021.
 //
 
-#ifndef LAMA_DRAW_PILE_H
-#define LAMA_DRAW_PILE_H
+#ifndef GOMOKU_DRAW_PILE_H
+#define GOMOKU_DRAW_PILE_H
 
 #include "card.h"
 #include <vector>
@@ -42,7 +42,7 @@ public:
     bool is_empty() const noexcept;
     int get_nof_cards() const noexcept;
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 // state update functions
     void setup_game(std::string& err);  // Fills the stack with all cards of the game
     bool draw(player* player, card*& drawn_card, std::string& err);
@@ -55,4 +55,4 @@ public:
 };
 
 
-#endif //LAMA_DRAW_PILE_H
+#endif //GOMOKU_DRAW_PILE_H

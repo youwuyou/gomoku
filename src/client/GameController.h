@@ -1,5 +1,5 @@
-#ifndef LAMAUI_GAMECONTROLLER_H
-#define LAMAUI_GAMECONTROLLER_H
+#ifndef GOMOKUUI_GAMECONTROLLER_H
+#define GOMOKUUI_GAMECONTROLLER_H
 
 #include "windows/GameWindow.h"
 #include "panels/ConnectionPanel.h"
@@ -37,4 +37,4 @@ private:
 };
 
 
-#endif //LAMAUI_GAMECONTROLLER_H
+#endif //GOMOKUUI_GAMECONTROLLER_H

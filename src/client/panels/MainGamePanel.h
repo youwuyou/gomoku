@@ -1,5 +1,5 @@
-#ifndef LAMA_CLIENT_MAINGAMEPANEL_H
-#define LAMA_CLIENT_MAINGAMEPANEL_H
+#ifndef GOMOKU_CLIENT_MAINGAMEPANEL_H
+#define GOMOKU_CLIENT_MAINGAMEPANEL_H
 
 #include <wx/wx.h>
 #include "../../common/game_state/game_state.h"
@@ -46,4 +46,4 @@ private:
 };
 
 
-#endif //LAMA_CLIENT_MAINGAMEPANEL_H
+#endif //GOMOKU_CLIENT_MAINGAMEPANEL_H

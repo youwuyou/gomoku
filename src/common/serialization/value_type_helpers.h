@@ -3,8 +3,8 @@
 //
 // Helper functions for serializing and deserializing instances of serializable_value.
 
-#ifndef LAMA_VALUE_TYPE_HELPERS_H
-#define LAMA_VALUE_TYPE_HELPERS_H
+#ifndef GOMOKU_VALUE_TYPE_HELPERS_H
+#define GOMOKU_VALUE_TYPE_HELPERS_H
 
 #include <unordered_map>
 
@@ -155,4 +155,4 @@ namespace value_type_helpers {
 
 
 
-#endif //LAMA_VALUE_TYPE_HELPERS_H
+#endif //GOMOKU_VALUE_TYPE_HELPERS_H

@@ -4,7 +4,7 @@
 
 #include "player.h"
 
-#include "../../exceptions/LamaException.h"
+#include "../../exceptions/GomokuException.h"
 
 player::player(std::string name) : unique_serializable() {
     this->_player_name = new serializable_value<std::string>(name);
@@ -36,7 +36,7 @@ player::~player() {
     }
 }
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 player::player(std::string id, std::string name) :
         unique_serializable(id)
 {
@@ -77,7 +77,7 @@ int player::get_nof_cards() const noexcept {
 }
 
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 void player::setup_round(std::string& err) {
     _has_folded->set_value(false);
     _hand->setup_round(err);
@@ -161,6 +161,6 @@ player *player::from_json(const rapidjson::Value &json) {
                 hand::from_json(json["hand"].GetObject()),
                 serializable_value<bool>::from_json(json["has_folded"].GetObject()));
     } else {
-        throw LamaException("Failed to deserialize player from json. Required json entries were missing.");
+        throw GomokuException("Failed to deserialize player from json. Required json entries were missing.");
     }
 }

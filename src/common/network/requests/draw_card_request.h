@@ -2,8 +2,8 @@
 // Created by Manuel on 29.01.2021.
 //
 
-#ifndef LAMA_DRAW_CARD_REQUEST_H
-#define LAMA_DRAW_CARD_REQUEST_H
+#ifndef GOMOKU_DRAW_CARD_REQUEST_H
+#define GOMOKU_DRAW_CARD_REQUEST_H
 
 #include <string>
 #include "client_request.h"
@@ -29,4 +29,4 @@ public:
 };
 
 
-#endif //LAMA_DRAW_CARD_REQUEST_H
+#endif //GOMOKU_DRAW_CARD_REQUEST_H

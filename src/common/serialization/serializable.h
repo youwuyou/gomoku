@@ -3,8 +3,8 @@
 //
 // abstract class for a serializable object.
 
-#ifndef LAMA_SERIALIZABLE_H
-#define LAMA_SERIALIZABLE_H
+#ifndef GOMOKU_SERIALIZABLE_H
+#define GOMOKU_SERIALIZABLE_H
 
 #include "../../rapidjson/include/rapidjson/document.h"
 
@@ -21,4 +21,4 @@ public:
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const = 0;
 };
 
-#endif //LAMA_SERIALIZABLE_H
+#endif //GOMOKU_SERIALIZABLE_H

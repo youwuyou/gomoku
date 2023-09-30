@@ -4,10 +4,10 @@
 
 #include "full_state_response.h"
 
-#include "../../exceptions/LamaException.h"
+#include "../../exceptions/GomokuException.h"
 #include "../../serialization/json_utils.h"
 
-#ifdef LAMA_CLIENT
+#ifdef GOMOKU_CLIENT
 #include "../../../client/GameController.h"
 #endif
 
@@ -34,7 +34,7 @@ full_state_response *full_state_response::from_json(const rapidjson::Value& json
         return new full_state_response(server_response::extract_base_class_properties(json),
                                        json_utils::clone_value(json["state_json"].GetObject()));
     } else {
-        throw LamaException("Could not parse full_state_response from json. state is missing.");
+        throw GomokuException("Could not parse full_state_response from json. state is missing.");
     }
 }
 
@@ -49,7 +49,7 @@ rapidjson::Value* full_state_response::get_state_json() const {
     return _state_json;
 }
 
-#ifdef LAMA_CLIENT
+#ifdef GOMOKU_CLIENT
 
 void full_state_response::Process() const {
     try {

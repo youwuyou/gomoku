@@ -6,7 +6,7 @@
 
 
 #include "../../serialization/vector_utils.h"
-#include "../../exceptions/LamaException.h"
+#include "../../exceptions/GomokuException.h"
 
 
 // deserialization constructor
@@ -47,7 +47,7 @@ int draw_pile::get_nof_cards() const noexcept  {
 }
 
 
-#ifdef LAMA_SERVER
+#ifdef GOMOKU_SERVER
 void draw_pile::setup_game(std::string &err) {
     // remove all cards (if any) and add the change to the "cards" array_diff
     for (int i = 0; i < _cards.size(); i++) {
@@ -108,6 +108,6 @@ draw_pile *draw_pile::from_json(const rapidjson::Value &json) {
         }
         return new draw_pile(json["id"].GetString(), deserialized_cards);
     } else {
-        throw LamaException("Could not parse draw_pile from json. 'id' or 'cards' were missing.");
+        throw GomokuException("Could not parse draw_pile from json. 'id' or 'cards' were missing.");
     }
 }

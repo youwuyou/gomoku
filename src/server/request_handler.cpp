@@ -2,8 +2,8 @@
 // Created by Manuel on 08.02.2022.
 //
 
-#ifndef LAMA_REQUEST_HANDLER_CPP
-#define LAMA_REQUEST_HANDLER_CPP
+#ifndef GOMOKU_REQUEST_HANDLER_CPP
+#define GOMOKU_REQUEST_HANDLER_CPP
 
 #include "request_handler.h"
 
@@ -129,4 +129,4 @@ request_response* request_handler::handle_request(const client_request* const re
     }
 }
 
-#endif //LAMA_REQUEST_HANDLER_CPP
+#endif //GOMOKU_REQUEST_HANDLER_CPP

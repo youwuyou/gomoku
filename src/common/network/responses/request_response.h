@@ -2,8 +2,8 @@
 // Created by Manuel on 15.02.2021.
 //
 
-#ifndef LAMA_REQUEST_RESPONSE_H
-#define LAMA_REQUEST_RESPONSE_H
+#ifndef GOMOKU_REQUEST_RESPONSE_H
+#define GOMOKU_REQUEST_RESPONSE_H
 
 #include <string>
 #include "server_response.h"
@@ -26,10 +26,10 @@ public:
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
     static request_response* from_json(const rapidjson::Value& json);
 
-#ifdef LAMA_CLIENT
+#ifdef GOMOKU_CLIENT
     virtual void Process() const override;
 #endif
 };
 
 
-#endif //LAMA_REQUEST_RESPONSE_H
+#endif //GOMOKU_REQUEST_RESPONSE_H
