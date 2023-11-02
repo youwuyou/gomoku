@@ -18,7 +18,7 @@ private:
     playing_board(std::string id);
     playing_board(std::string id, std::array<std::array<stone*, _playing_board_size>, _playing_board_size> playing_board);
     void reset();
-    stone* place_stone(stone* stone);
+    void place_stone(stone* stone);
 
 public:
     playing_board();

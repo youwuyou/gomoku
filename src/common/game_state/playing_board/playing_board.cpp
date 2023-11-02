@@ -27,6 +27,34 @@ playing_board::~playing_board() {
     }
 }
 
+void playing_board::reset(){
+    for (int i = 0; i < this->_playing_board_size; i++) {
+        for (int j = 0; j < this->_playing_board_size; j++) {
+            delete _playing_board.at((i)).at((j));
+            _playing_board.at(i).at((j)) = nullptr;
+        }
+    }
+}
+
+/*
+ * Places a pointer to a stone object on the spot on the board indicated by its position coordinates only if:
+ *  - the spot is not occupied (== nullptr)
+ *  - the stones coordinates are valid (smaller than the size of the board)
+ */
+void playing_board::place_stone(stone* stone) {
+    if (this->_playing_board[stone->get_position_y().get_value()][stone->get_position_x().get_value()] == nullptr) {
+        if ((stone->get_position_y().get_value() < _playing_board_size) &&
+            (stone->get_position_x().get_value() < _playing_board_size)) {
+            this->_playing_board[stone->get_position_y().get_value()][stone->get_position_x().get_value()] = stone;
+        } else {
+            throw GomokuException("Stone coordinates are outside of board dimensions.");
+        }
+    } else {
+        throw GomokuException("Stone coordinates on board are not nullptr.");
+    }
+}
+
+
 // NOTE: Array size should be initialised with _playing_board_size, not a constant integer, WIP
 std::array<std::array<stone*, 15>, 15> playing_board::get_playing_board() const {
     return _playing_board;
