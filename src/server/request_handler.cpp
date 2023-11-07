@@ -12,8 +12,8 @@
 #include "game_instance.h"
 
 #include "../common/network/requests/join_game_request.h"
-#include "../common/network/requests/draw_card_request.h"
-#include "../common/network/requests/play_card_request.h"
+//#include "../common/network/requests/draw_card_request.h"
+//#include "../common/network/requests/play_card_request.h"
 
 
 request_response* request_handler::handle_request(const client_request* const req) {
@@ -84,7 +84,7 @@ request_response* request_handler::handle_request(const client_request* const re
 
 
         // ##################### PLAY CARD ##################### //
-        case RequestType::play_card: {
+        /*case RequestType::play_card: {
             if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
                 card *drawn_card;
                 std::string card_id = ((play_card_request *) req)->get_card_id();
@@ -120,7 +120,7 @@ request_response* request_handler::handle_request(const client_request* const re
                 }
             }
             return new request_response("", req_id, false, nullptr, err);
-        }
+        }*/
 
 
         // ##################### UNKNOWN REQUEST ##################### //
