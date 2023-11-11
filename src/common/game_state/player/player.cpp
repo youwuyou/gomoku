@@ -29,6 +29,7 @@ player::~player() {
         _player_name = nullptr;
         _score = nullptr;
         _colour = nullptr;
+
     }
 }
 
