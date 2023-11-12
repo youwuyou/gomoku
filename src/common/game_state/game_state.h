@@ -20,14 +20,9 @@
 class game_state : public unique_serializable {
 private:
 
-    // static const int _max_nof_players = 6;
-    // static const int _min_nof_players = 2;
-
     std::vector<player*> _players;
     playing_board* _playing_board;
     opening_rules* _opening_ruleset;
-    // draw_pile* _draw_pile;
-    // discard_pile* _discard_pile;
     serializable_value<bool>* _is_started;
     serializable_value<bool>* _is_finished;
     serializable_value<int>* _turn_number;
@@ -64,32 +59,26 @@ public:
     std::vector<player*>& get_players();
     int get_turn_number() const;
 
-//    draw_pile* get_draw_pile() const;
-//    discard_pile* get_discard_pile() const;
     player* get_current_player() const;
 
 #ifdef GOMOKU_SERVER
     // server-side state update functions
-    // lobby functionalities
+    //// lobby functionalities
     bool remove_player(player* player, std::string& err);
     bool add_player(player* player, std::string& err);
     bool start_game(std::string& err);
     bool set_game_mode(std::string rule_name);
 
-    // start of round functions
+    //// start of round functions
     void setup_round(std::string& err);
 
-    // in-round functionalities
+    //// in-round functionalities
     bool place_stone(player* player, std::string& err);
     bool check_win_condition();
 
-    // end of round functions
+    //// end of round functions
     void update_current_player(std::string& err);
     void wrap_up_round(std::string& err);
-
-    // bool draw_card(player* player, std::string& err);
-    // bool play_card(player* player, const std::string& card_id, std::string& err);
-    // bool fold(player* player, std::string& err);
 
 #endif
 

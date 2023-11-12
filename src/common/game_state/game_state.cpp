@@ -8,45 +8,16 @@
 #include "../serialization/vector_utils.h"
 #include "playing_board/playing_board.h"
 
-
-//game_state::game_state() : unique_serializable() {
-//    this->_draw_pile = new draw_pile();
-//    this->_discard_pile = new discard_pile();
-//    this->_players = std::vector<player*>();
-//    this->_is_started = new serializable_value<bool>(false);
-//    this->_is_finished = new serializable_value<bool>(false);
-//    this->_current_player_idx = new serializable_value<int>(0);
-//    this->_play_direction = new serializable_value<int>(1);
-//    this->_turn_number = new serializable_value<int>(0);
-//    this->_starting_player_idx = new serializable_value<int>(0);
-//}
-
 game_state::game_state() : unique_serializable() {
     this->_players = std::vector<player*>();
     this->_playing_board = new playing_board();
-    this->_opening_ruleset = new opening_rules();
+    this->_opening_ruleset = new opening_rules("uninitialized");
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
     this->_turn_number = new serializable_value<int>(0);
     this->_current_player_idx = new serializable_value<int>(0);
     this->_starting_player_idx = new serializable_value<int>(0);
 }
-
-//game_state::game_state(std::string id, draw_pile *draw_pile, discard_pile *discard_pile,
-//                       std::vector<player *> &players, serializable_value<bool> *is_started,
-//                       serializable_value<bool> *is_finished, serializable_value<int> *current_player_idx,
-//                       serializable_value<int> *play_direction, serializable_value<int>* round_number, serializable_value<int> *starting_player_idx)
-//        : unique_serializable(id),
-//          _draw_pile(draw_pile),
-//          _discard_pile(discard_pile),
-//          _players(players),
-//          _is_started(is_started),
-//          _is_finished(is_finished),
-//          _current_player_idx(current_player_idx),
-//          _play_direction(play_direction),
-//          _turn_number(round_number),
-//          _starting_player_idx(starting_player_idx)
-//{ }
 
 game_state::game_state(std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
                        std::vector<player *> &players, serializable_value<bool> *is_started,
@@ -65,7 +36,7 @@ game_state::game_state(std::string id, playing_board* _playing_board, opening_ru
 
 game_state::game_state(std::string id) : unique_serializable(id) {
     this->_playing_board = new playing_board();
-    this->_opening_ruleset = new opening_rules();
+    this->_opening_ruleset = new opening_rules("uninitialized");
     this->_players = std::vector<player*>();
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
@@ -101,14 +72,6 @@ player* game_state::get_current_player() const {
     }
     return _players[_current_player_idx->get_value()];
 }
-
-//discard_pile *game_state::get_discard_pile() const {
-//    return _discard_pile;
-//}
-
-//draw_pile *game_state::get_draw_pile() const {
-//    return _draw_pile;
-//}
 
 bool game_state::is_full() const {
     return _players.size() == 2;
@@ -152,74 +115,15 @@ std::vector<player*>& game_state::get_players() {
 
 // state modification functions without diff
 void game_state::setup_round(std::string &err) {
-
-//    // update round number
-//    _turn_number->set_value(_turn_number->get_value() + 1);
-//
-//    // setup draw_pile
-//    _draw_pile->setup_game(err);
-//
-//    // setup discard_pile
-//    _discard_pile->setup_game(err);
-//
-//    // setup players
-//    for (int i = 0; i < _players.size(); i++) {
-//        _players[i]->setup_round(err);
-//        // draw 6 cards
-//        card* drawn_card = nullptr;
-//        for (int j = 0; j < 6; j++) {
-//            if (!_draw_pile->draw(_players[i], drawn_card, err)) {
-//                std::cerr << err << std::endl;
-//            }
-//        }
-//    }
-//
-//    // set a first card onto the discard pile
-//    card* top_card = _draw_pile->remove_top(err);
-//    if (top_card != nullptr) {
-//        _discard_pile->try_play(top_card, err);
-//    }
+    // TODO: Implementation Code
 }
 
 void game_state::wrap_up_round(std::string& err) {
-//    bool is_game_over = false;
-//    for(int i = 0; i < _players.size(); i++) {
-//        _players[i]->wrap_up_round(err);
-//        if (_players[i]->get_score() >= 40) {
-//            // The game ends when the first player reaches 40 points
-//            is_game_over = true;
-//        }
-//    }
-//
-//    if (is_game_over) {
-//        this->_is_finished->set_value(true);
-//    } else {
-//        // decide which player starts in the next round
-//        _starting_player_idx->set_value((_starting_player_idx->get_value() + 1) % _players.size());
-//        // start next round
-//        setup_round(err);
-//    }
+    // TODO: Implementation Code
 }
 
 void game_state::update_current_player(std::string& err) {
-//    int nof_players = _players.size();
-//    int current_player_idx = _current_player_idx->get_value();
-//    ++current_player_idx %= nof_players;
-//    bool round_over = true;
-//    for (int i = 0; i < nof_players; i++) {
-//        if (_players[current_player_idx]->has_folded() == false) {
-//            _current_player_idx->set_value(current_player_idx);
-//            round_over = false;
-//            break;
-//        } else {
-//            ++current_player_idx %= nof_players;
-//        }
-//    }
-//
-//    if (round_over) {
-//        // all players have folded and the round is over
-//        wrap_up_round(err);
-//    }
+    // TODO: Implementation Code
 }
 
 bool game_state::start_game(std::string &err) {
@@ -253,7 +157,6 @@ bool game_state::remove_player(player *player_ptr, std::string &err) {
     }
 }
 
-
 bool game_state::add_player(player* player_ptr, std::string& err) {
     if (_is_started->get_value()) {
         err = "Could not join game, because the requested game is already started.";
@@ -277,93 +180,19 @@ bool game_state::add_player(player* player_ptr, std::string& err) {
 }
 
 bool set_game_mode(std::string rule_name) {
+    // TODO: Implementation Code
     return false;
 }
 
 bool place_stone(player* player, std::string& err) {
+    // TODO: Implementation Code
     return false;
 }
 
 bool check_win_condition() {
+    // TODO: Implementation Code
     return false;
 }
-
-//bool game_state::draw_card(player *player, std::string &err) {
-//    if (!is_player_in_game(player)) {
-//        err = "Server refused to perform draw_card. Player is not part of the game.";
-//        return false;
-//    }
-//    if (!is_allowed_to_play_now(player)) {
-//        err = "It's not this players turn yet.";
-//        return false;
-//    }
-//    if (_draw_pile->is_empty()) {
-//        err = "Draw pile is empty. Cannot draw a card.";
-//        return false;
-//    }
-//    if (_is_finished->get_value()) {
-//        err = "Could not draw card, because the requested game is already finished.";
-//        return false;
-//    }
-//
-//    card* drawn_card;
-//    if (_draw_pile->draw(player, drawn_card, err)) {
-//        update_current_player(err); // next players turn
-//        return true;
-//    } else {
-//        return false;
-//    }
-//}
-
-//bool game_state::play_card(player *player, const std::string& card_id, std::string &err) {
-//    if (!is_player_in_game(player)) {
-//        err = "Server refused to perform draw_card. Player is not part of the game.";
-//        return false;
-//    }
-//    if (!is_allowed_to_play_now(player)) {
-//        err = "It's not this players turn yet.";
-//        return false;
-//    }
-//    if (_is_finished->get_value()) {
-//        err = "Could not play card, because the requested game is already finished.";
-//        return false;
-//    }
-//
-//    if (_discard_pile->try_play(card_id, player, err)) {
-//        if (player->get_nof_cards() == 0) {
-//            // end of game. Calculate scores. Prepare new round
-//            wrap_up_round(err);
-//        } else {
-//            update_current_player(err);
-//        }
-//        return true;
-//    } else {
-//        return false;
-//    }
-//}
-
-//bool game_state::fold(player *player, std::string &err) {
-//    if(!is_player_in_game(player)) {
-//        err = "Server refused to perform draw_card. Player is not part of the game.";
-//        return false;
-//    }
-//    if (!is_allowed_to_play_now(player)) {
-//        err = "It's not this players turn yet.";
-//        return false;
-//    }
-//    if (_is_finished->get_value()) {
-//        err = "Could not fold, because the requested game is already finished.";
-//        return false;
-//    }
-//
-//    if (player->fold(err)) {
-//        // Allow next player to play
-//        update_current_player(err);
-//        return true;
-//    } else {
-//        return false;
-//    }
-//}
 
 #endif
 
@@ -385,10 +214,6 @@ void game_state::write_into_json(rapidjson::Value &json,
     _current_player_idx->write_into_json(current_player_idx_val, allocator);
     json.AddMember("current_player_idx", current_player_idx_val, allocator);
 
-//    rapidjson::Value play_direction_val(rapidjson::kObjectType);
-//    _play_direction->write_into_json(play_direction_val, allocator);
-//    json.AddMember("play_direction", play_direction_val, allocator);
-
     rapidjson::Value starting_player_idx_val(rapidjson::kObjectType);
     _starting_player_idx->write_into_json(starting_player_idx_val, allocator);
     json.AddMember("starting_player_idx", starting_player_idx_val, allocator);
@@ -405,24 +230,14 @@ void game_state::write_into_json(rapidjson::Value &json,
     _opening_ruleset->write_into_json(opening_ruleset_val, allocator);
     json.AddMember("opening_ruleset", opening_ruleset_val, allocator);
 
-//    rapidjson::Value draw_pile_val(rapidjson::kObjectType);
-//    _draw_pile->write_into_json(draw_pile_val, allocator);
-//    json.AddMember("draw_pile", draw_pile_val, allocator);
-
-//    rapidjson::Value discard_pile_val(rapidjson::kObjectType);
-//    _discard_pile->write_into_json(discard_pile_val, allocator);
-//    json.AddMember("discard_pile", discard_pile_val, allocator);
-
     json.AddMember("players", vector_utils::serialize_vector(_players, allocator), allocator);
 }
-
 
 game_state* game_state::from_json(const rapidjson::Value &json) {
     if (json.HasMember("id")
         && json.HasMember("is_finished")
         && json.HasMember("is_started")
         && json.HasMember("current_player_idx")
-        // && json.HasMember("play_direction")
         && json.HasMember("turn_number")
         && json.HasMember("starting_player_idx")
         && json.HasMember("players")
@@ -440,11 +255,8 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
                               serializable_value<bool>::from_json(json["is_started"].GetObject()),
                               serializable_value<bool>::from_json(json["is_finished"].GetObject()),
                               serializable_value<int>::from_json(json["current_player_idx"].GetObject()),
-                              //serializable_value<int>::from_json(json["play_direction"].GetObject()),
                               serializable_value<int>::from_json(json["turn_number"].GetObject()),
                               serializable_value<int>::from_json(json["starting_player_idx"].GetObject()));
-
-
     } else {
         throw GomokuException("Failed to deserialize game_state. Required entries were missing.");
     }

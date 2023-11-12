@@ -26,7 +26,7 @@ private:
                   serializable_value<std::string>* description);
 
     // Checks if a string pertains to a valid ruleset, and generate description
-    std::string generate_description_from_ruleset(std::string ruleset) const;
+    static std::string generate_description_from_ruleset(std::string ruleset);
 
 
 public:
@@ -53,6 +53,5 @@ public:
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
     static opening_rules* from_json(const rapidjson::Value& json);
 };
-
 
 #endif //GOMOKU_OPENING_RULES_H
