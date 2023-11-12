@@ -15,7 +15,7 @@
 #include "../serialization/serializable_value.h"
 #include "../serialization/unique_serializable.h"
 #include "playing_board/playing_board.h"
-#include "opening_rules.h"
+#include "playing_board/opening_rules.h"
 
 class game_state : public unique_serializable {
 private:

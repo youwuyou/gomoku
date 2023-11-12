@@ -53,8 +53,8 @@ set(CLIENT_SOURCE_FILES
         src/common/game_state/playing_board/stone.cpp
         src/common/game_state/playing_board/playing_board.cpp
         src/common/game_state/playing_board/playing_board.h
-        src/common/game_state/opening_rules.cpp
-        src/common/game_state/opening_rules.h
+        src/common/game_state/playing_board/opening_rules.cpp
+        src/common/game_state/playing_board/opening_rules.h
 )
 
 # define a variable SERVER_SOURCE_FILES that contains the paths to all source files required to compile the server executable
