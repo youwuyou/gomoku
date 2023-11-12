@@ -118,6 +118,6 @@ opening_rules *opening_rules::from_json(const rapidjson::Value &json) {
                 serializable_value<std::string>::from_json(json["ruleset"].GetObject()),
                 serializable_value<std::string>::from_json(json["description"].GetObject()));
     } else {
-        throw GomokuException("Failed to deserialize player from json. Required json entries were missing.");
+        throw GomokuException("Failed to deserialize opening_rules from json. Required json entries were missing.");
     }
 }
