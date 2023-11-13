@@ -83,46 +83,6 @@ request_response* request_handler::handle_request(const client_request* const re
         }
 
 
-        // ##################### PLAY CARD ##################### //
-        /*case RequestType::play_card: {
-            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
-                card *drawn_card;
-                std::string card_id = ((play_card_request *) req)->get_card_id();
-                if (game_instance_ptr->play_card(player, card_id, err)) {
-                    return new request_response(game_instance_ptr->get_id(), req_id, true,
-                                                game_instance_ptr->get_game_state()->to_json(), err);
-                }
-            }
-            return new request_response("", req_id, false, nullptr, err);
-        }
-
-
-        // ##################### DRAW CARD ##################### //
-        case RequestType:: draw_card: {
-            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
-                card *drawn_card;
-                // int nof_cards = ((draw_card_request*)req)->get_nof_cards();
-                if (game_instance_ptr->draw_card(player, drawn_card, err)) {
-                    return new request_response(game_instance_ptr->get_id(), req_id, true,
-                                                game_instance_ptr->get_game_state()->to_json(), err);
-                }
-            }
-            return new request_response("", req_id, false, nullptr, err);
-        }
-
-
-        // ##################### FOLD ##################### //
-        case RequestType::fold: {
-            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
-                if (game_instance_ptr->fold(player, err)) {
-                    return new request_response(game_instance_ptr->get_id(), req_id, true,
-                                                game_instance_ptr->get_game_state()->to_json(), err);
-                }
-            }
-            return new request_response("", req_id, false, nullptr, err);
-        }*/
-
-
         // ##################### UNKNOWN REQUEST ##################### //
         default:
             return new request_response("", req_id, false, nullptr, "Unknown RequestType " + type);
