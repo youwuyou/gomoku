@@ -3,7 +3,7 @@
 //
 
 #include "client_request.h"
-#include "play_stone_request.h"
+#include "place_stone_request.h"
 #include "swap_color_request.h"
 #include "select_game_mode_request.h"
 #include "join_game_request.h"
@@ -15,7 +15,7 @@
 const std::unordered_map<std::string, RequestType> client_request::_string_to_request_type = {
         {"join_game", RequestType::join_game },
         {"start_game", RequestType::start_game},
-        {"play_stone", RequestType::play_stone},
+        {"play_stone", RequestType::place_stone},
         {"swap_color", RequestType::swap_color},
         {"select_game_mode", RequestType::select_game_mode}
 };
@@ -23,7 +23,7 @@ const std::unordered_map<std::string, RequestType> client_request::_string_to_re
 const std::unordered_map<RequestType, std::string> client_request::_request_type_to_string = {
         { RequestType::join_game, "join_game" },
         { RequestType::start_game, "start_game"},
-        { RequestType::play_stone, "play_stone"},
+        { RequestType::place_stone, "place_stone"},
         { RequestType::swap_color, "swap_color"},
         {RequestType::select_game_mode, "select_game_mode"}
 };
@@ -92,8 +92,8 @@ client_request* client_request::from_json(const rapidjson::Value &json) {
         const RequestType request_type = client_request::_string_to_request_type.at(type);
 
         // Check which type of request it is and call the respective from_json constructor
-        if (request_type == RequestType::play_stone) {
-            return play_stone_request::from_json(json);
+        if (request_type == RequestType::place_stone) {
+            return place_stone_request::from_json(json);
         }
         else if (request_type == RequestType::swap_color) {
             return swap_color_request::from_json(json);

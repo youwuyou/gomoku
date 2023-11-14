@@ -147,9 +147,9 @@ void MainGamePanel::buildOtherPlayerLabels(game_state* gameState, player* otherP
         // Show other player's status label
         std::string statusText = "waiting...";
         bool bold = false;
-        if(otherPlayer->has_folded()) {
+        /*if(otherPlayer->has_folded()) {
             statusText = "Folded!";
-        } else if(otherPlayer == gameState->get_current_player()) {
+        } else */if(otherPlayer == gameState->get_current_player()) {
             statusText = "their turn";
             bold = true;
         }
@@ -184,12 +184,12 @@ void MainGamePanel::buildCardPiles(game_state* gameState, player *me) {
 
         ImagePanel* drawPile = new ImagePanel(this, "assets/lama_back.png", wxBITMAP_TYPE_ANY, drawPilePosition, MainGamePanel::cardSize);
 
-        if(gameState->get_current_player() == me && !me->has_folded()) {
+        if(gameState->get_current_player() == me/* && !me->has_folded()*/) {
             drawPile->SetToolTip("Draw card");
             drawPile->SetCursor(wxCursor(wxCURSOR_HAND));
-            drawPile->Bind(wxEVT_LEFT_UP, [](wxMouseEvent& event) {
+            /*drawPile->Bind(wxEVT_LEFT_UP, [](wxMouseEvent& event) {
                 GameController::drawCard();
-            });
+            });*/
         } else {
             drawPile->SetToolTip("Draw pile");
         }
@@ -269,7 +269,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxALIGN_CENTER
         );
         innerLayout->Add(playerPoints, 0, wxALIGN_CENTER | wxBOTTOM, 8);
-
+        /*
         // if our player folded, we display that as status
         if (me->has_folded()) {
             wxStaticText *playerStatus = buildStaticText(
@@ -289,7 +289,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             innerLayout->Add(foldButton, 0, wxALIGN_CENTER | wxBOTTOM, 8);
 
         // if it's not our turn, display "waiting..."
-        } else {
+        } else {*/
             wxStaticText *playerStatus = buildStaticText(
                     "waiting...",
                     wxDefaultPosition,
@@ -297,7 +297,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                     wxALIGN_CENTER
             );
             innerLayout->Add(playerStatus, 0, wxALIGN_CENTER | wxBOTTOM, 8);
-        }
+        //}
 
         // display our player's hand, if we have cards
         int numberOfCards = me->get_nof_cards();
@@ -326,14 +326,14 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 std::string cardFile = "assets/lama_" + std::to_string(handCard->get_value()) + ".png";
 
                 ImagePanel *cardButton = new ImagePanel(this, cardFile, wxBITMAP_TYPE_ANY, wxDefaultPosition, scaledCardSize);
-
+/*
                 if (gameState->get_current_player() == me && !me->has_folded()) {
                     cardButton->SetToolTip("Play card");
                     cardButton->SetCursor(wxCursor(wxCURSOR_HAND));
                     cardButton->Bind(wxEVT_LEFT_UP, [handCard](wxMouseEvent& event) {
                         GameController::playCard(handCard);
                     });
-                }
+                }*/
                 handLayout->Add(cardButton, 0, wxLEFT | wxRIGHT, 4);
             }
         }

@@ -33,7 +33,10 @@ set(CLIENT_SOURCE_FILES
         # client requests
         src/common/network/requests/client_request.cpp src/common/network/requests/client_request.h
         src/common/network/requests/join_game_request.cpp src/common/network/requests/join_game_request.h
+        src/common/network/requests/place_stone_request.cpp src/common/network/requests/place_stone_request.h
+        src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
         src/common/network/requests/start_game_request.cpp src/common/network/requests/start_game_request.h
+        src/common/network/requests/swap_color_request.cpp src/common/network/requests/swap_color_request.h
         # server responses
         src/common/network/responses/server_response.cpp src/common/network/responses/server_response.h
         src/common/network/responses/request_response.cpp src/common/network/responses/request_response.h
@@ -64,7 +67,10 @@ set(SERVER_SOURCE_FILES
         # client requests
         src/common/network/requests/client_request.cpp src/common/network/requests/client_request.h
         src/common/network/requests/join_game_request.cpp src/common/network/requests/join_game_request.h
+        src/common/network/requests/place_stone_request.cpp src/common/network/requests/place_stone_request.h
+        src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
         src/common/network/requests/start_game_request.cpp src/common/network/requests/start_game_request.h
+        src/common/network/requests/swap_color_request.cpp src/common/network/requests/swap_color_request.h
         # server responses
         src/common/network/responses/server_response.cpp src/common/network/responses/server_response.h
         src/common/network/responses/request_response.cpp src/common/network/responses/request_response.h

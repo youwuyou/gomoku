@@ -8,18 +8,16 @@
 
 player::player(std::string name) : unique_serializable() {
     this->_player_name = new serializable_value<std::string>(name);
-    this->_has_folded = new serializable_value<bool>(false);
     this->_score = new serializable_value<int>(0);
     this->_hand = new hand();
 }
 
 player::player(std::string id, serializable_value<std::string>* name,
-               serializable_value<int>* score, hand *hand, serializable_value<bool>* has_folded) :
+               serializable_value<int>* score, hand *hand) :
         unique_serializable(id),
         _player_name(name),
         _hand(hand),
-        _score(score),
-        _has_folded(has_folded)
+        _score(score)
 { }
 
 player::~player() {
@@ -27,12 +25,10 @@ player::~player() {
         delete _hand;
         delete _player_name;
         delete _score;
-        delete _has_folded;
 
         _hand = nullptr;
         _player_name = nullptr;
         _score = nullptr;
-        _has_folded = nullptr;
     }
 }
 
@@ -68,10 +64,6 @@ const hand* player::get_hand() const noexcept {
     return this->_hand;
 }
 
-bool player::has_folded() const noexcept {
-    return this->_has_folded->get_value();
-}
-
 int player::get_nof_cards() const noexcept {
     return _hand->get_nof_cards();
 }
@@ -95,32 +87,6 @@ void player::wrap_up_round(std::string &err) {
     _score->set_value(new_score);
 }
 
-bool player::fold(std::string &err) {
-    if (has_folded()) {
-        err = "This player has already folded.";
-        return false;
-    }
-    _has_folded->set_value(true);
-    return true;
-}
-
-bool player::add_card(card *card, std::string &err) {
-    if (has_folded()) {
-        err = "Player has already folded and is not allowed to draw any cards";
-        return false;
-    }
-    return _hand->add_card(card, err);
-}
-
-bool player::remove_card(std::string card_id, card*& card, std::string &err) {
-    card = nullptr;
-    if (has_folded()) {
-        err = "Player has already folded and is not allowed to play any cards";
-        return false;
-    }
-    return _hand->remove_card(card_id, card, err);
-}
-
 #endif
 
 
@@ -133,10 +99,6 @@ void player::write_into_json(rapidjson::Value& json, rapidjson::Document::Alloca
     rapidjson::Value name_val(rapidjson::kObjectType);
     _player_name->write_into_json(name_val, allocator);
     json.AddMember("player_name", name_val, allocator);
-
-    rapidjson::Value has_folded_val(rapidjson::kObjectType);
-    _has_folded->write_into_json(has_folded_val, allocator);
-    json.AddMember("has_folded", has_folded_val, allocator);
 
     rapidjson::Value score_val(rapidjson::kObjectType);
     _score->write_into_json(score_val, allocator);
@@ -158,8 +120,7 @@ player *player::from_json(const rapidjson::Value &json) {
                 json["id"].GetString(),
                 serializable_value<std::string>::from_json(json["player_name"].GetObject()),
                 serializable_value<int>::from_json(json["score"].GetObject()),
-                hand::from_json(json["hand"].GetObject()),
-                serializable_value<bool>::from_json(json["has_folded"].GetObject()));
+                hand::from_json(json["hand"].GetObject()));
     } else {
         throw GomokuException("Failed to deserialize player from json. Required json entries were missing.");
     }

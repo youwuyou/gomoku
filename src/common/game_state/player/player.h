@@ -16,7 +16,6 @@
 class player : public unique_serializable {
 private:
     serializable_value<std::string>* _player_name;
-    serializable_value<bool>* _has_folded;
     serializable_value<int>* _score;
     hand* _hand;
 
@@ -30,8 +29,7 @@ private:
     player(std::string id,
            serializable_value<std::string>* name,
            serializable_value<int>* score,
-           hand* hand,
-           serializable_value<bool>* has_folded);
+           hand* hand);
 
 public:
 // constructors
@@ -47,16 +45,11 @@ public:
 
     // accessors
     int get_score() const noexcept;
-    bool has_folded() const noexcept;
     int get_nof_cards() const noexcept;
     const hand* get_hand() const noexcept;
     std::string get_player_name() const noexcept;
 
 #ifdef GOMOKU_SERVER
-    // state update functions
-    bool fold(std::string& err);
-    bool add_card(card* card, std::string& err);
-    bool remove_card(std::string card_id, card*& card, std::string& err);
 
     void wrap_up_round(std::string& err);
     void setup_round(std::string& err);

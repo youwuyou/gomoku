@@ -72,9 +72,6 @@ public:
     bool remove_player(player* player, std::string& err);
     bool add_player(player* player, std::string& err);
     bool start_game(std::string& err);
-    bool draw_card(player* player, std::string& err);
-    bool play_card(player* player, const std::string& card_id, std::string& err);
-    bool fold(player* player, std::string& err);
 
     // end of round functions
     void update_current_player(std::string& err);
