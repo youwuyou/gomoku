@@ -10,11 +10,11 @@
 playing_board::playing_board() : unique_serializable() { }
 
 playing_board::playing_board(std::string id) : unique_serializable(id) {
-    this->_playing_board = std::array<std::array<stone*, _playing_board_size>, _playing_board_size>;
+    this->_playing_board = std::vector<std::vector<stone*>>(_playing_board_size, std::vector<stone*>(_playing_board_size, nullptr));
 }
 
 // deserialization constructor
-playing_board::playing_board(std::string id, std::array<std::array<stone*, _playing_board_size>, _playing_board_size> playing_board) : unique_serializable(id) {
+playing_board::playing_board(std::string id, std::vector<std::vector<stone*>> playing_board) : unique_serializable(id) {
     this->_playing_board = playing_board;
 }
 
@@ -42,26 +42,24 @@ void playing_board::reset(){
  *  - the stones coordinates are valid (smaller than the size of the board)
  */
 void playing_board::place_stone(stone* stone) {
-    if (this->_playing_board[stone->get_position_y().get_value()][stone->get_position_x().get_value()] == nullptr) {
-        if ((stone->get_position_y().get_value() < _playing_board_size) &&
-            (stone->get_position_x().get_value() < _playing_board_size)) {
-            this->_playing_board[stone->get_position_y().get_value()][stone->get_position_x().get_value()] = stone;
+    if (this->_playing_board[stone->get_position_y()][stone->get_position_x()] == nullptr) {
+        if ((stone->get_position_y() < _playing_board_size) &&
+            (stone->get_position_x() < _playing_board_size)) {
+            this->_playing_board[stone->get_position_y()][stone->get_position_x()] = stone;
         } else {
             throw GomokuException("Stone coordinates are outside of board dimensions.");
         }
     } else {
-        throw GomokuException("Stone coordinates on board are not nullptr.");
+        throw GomokuException("Stone coordinates on board are already taken.");
     }
 }
 
 
-// NOTE: Array size should be initialised with _playing_board_size, not a constant integer, WIP
-std::array<std::array<stone*, 15>, 15> playing_board::get_playing_board() const {
+std::vector<std::vector<stone*>> playing_board::get_playing_board() const {
     return _playing_board;
 }
 
-// NOTE: Array size should be initialised with _playing_board_size, not a constant integer, WIP
-std::array<std::array<stone*, 15>, 15>::iterator playing_board::get_playing_board_iterator() {
+std::vector<std::vector<stone*>>::iterator playing_board::get_playing_board_iterator() {
     return _playing_board.begin();
 }
 
@@ -87,7 +85,7 @@ playing_board *playing_board::from_json(const rapidjson::Value &json) {
         for (auto &serialized_stone : json["playing_board"].GetArray()) {
             deserialized_flattened_playing_board.push_back(stone::from_json(serialized_stone.GetObject()));
         }
-        std::array<std::array<stone*, _playing_board_size>, _playing_board_size> deserialized_playing_board;
+        std::vector<std::vector<stone*>> deserialized_playing_board (_playing_board_size, std::vector<stone*>(_playing_board_size, nullptr));
         for (int i=0; i<_playing_board_size; i++){
             for (int j=0; j<_playing_board_size; j++){
                 deserialized_playing_board.at(i).at(j) = deserialized_flattened_playing_board.at(i*_playing_board_size + j);
@@ -95,7 +93,7 @@ playing_board *playing_board::from_json(const rapidjson::Value &json) {
         }
         return new playing_board(json["id"].GetString(), deserialized_playing_board);
     } else {
-        throw GomokuException("Could not parse hand from json. 'cards' were missing.");
+        throw GomokuException("Could not parse playing board from json. 'playing_board' was missing.");
     }
 }
 

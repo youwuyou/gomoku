@@ -6,14 +6,14 @@
 
 #include "../../exceptions/GomokuException.h"
 
-player::player(std::string name, bool colour) : unique_serializable() {
+player::player(std::string name, std::string colour) : unique_serializable() {
     this->_player_name = new serializable_value<std::string>(name);
-    this->_colour = new serializable_value<bool>(colour);
+    this->_colour = new serializable_value<std::string>(colour);
     this->_score = new serializable_value<int>(0);
 }
 
 player::player(std::string id, serializable_value<std::string>* name,
-               serializable_value<int>* score, serializable_value<bool>* colour) :
+               serializable_value<int>* score, serializable_value<std::string>* colour) :
         unique_serializable(id),
         _player_name(name),
         _score(score),
@@ -38,7 +38,7 @@ player::player(std::string id, std::string name) :
         unique_serializable(id)
 {
     this->_player_name = new serializable_value<std::string>(name);
-    this->_colour = new serializable_value<bool>(colour);
+    this->_colour = new serializable_value<std::string>(colour);
     this->_score = new serializable_value<int>(0);
 }
 
@@ -59,13 +59,14 @@ int player::get_score() const noexcept {
     return _score->get_value();
 }
 
-bool player::get_colour() const noexcept {
+std::string player::get_colour() const noexcept {
     return this->_colour->get_value();
 }
 
 
 #ifdef GOMOKU_SERVER
-void player::setup_round(std::string& err) {
+/* might be cut-able
+   void player::setup_round(std::string& err) {
     _has_folded->set_value(false);
     _hand->setup_round(err);
 }
@@ -80,33 +81,27 @@ void player::wrap_up_round(std::string &err) {
         new_score = std::max(0, _score->get_value() - 10);
     }
     _score->set_value(new_score);
+}*/
+
+void increment_score(std::string& err){
+    this->_score++;
 }
 
-bool player::fold(std::string &err) {
-    if (has_folded()) {
-        err = "This player has already folded.";
-        return false;
-    }
-    _has_folded->set_value(true);
-    return true;
+void reset_score(std::string& err){
+    this->_score = 0;
 }
 
-bool player::add_card(card *card, std::string &err) {
-    if (has_folded()) {
-        err = "Player has already folded and is not allowed to draw any cards";
-        return false;
+void swap_colour(std::string& err){
+    if(this->_colour == "black"){
+        this->_colour = "white"
+    }else if(this->_color == "white"){
+        this->_colour = "black"
+    } else {
+        throw GomokuException("Failed to swap player colour. Unknown player colour was given.");
     }
-    return _hand->add_card(card, err);
 }
 
-bool player::remove_card(std::string card_id, card*& card, std::string &err) {
-    card = nullptr;
-    if (has_folded()) {
-        err = "Player has already folded and is not allowed to play any cards";
-        return false;
-    }
-    return _hand->remove_card(card_id, card, err);
-}
+
 
 #endif
 
@@ -141,7 +136,7 @@ player *player::from_json(const rapidjson::Value &json) {
                 json["id"].GetString(),
                 serializable_value<std::string>::from_json(json["player_name"].GetObject()),
                 serializable_value<int>::from_json(json["score"].GetObject()),
-                serializable_value<bool>::from_json(json["colour"].GetObject()));
+                serializable_value<std::string>::from_json(json["colour"].GetObject()));
     } else {
         throw GomokuException("Failed to deserialize player from json. Required json entries were missing.");
     }

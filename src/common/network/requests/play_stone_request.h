@@ -22,7 +22,7 @@ private:
 public:
     [[nodiscard]] std::string get_stone_id() const { return this->_stone_id; }
 
-    play_card_request(std::string game_id, std::string player_id, std::string stone_id_id);
+    play_stone_request(std::string game_id, std::string player_id, std::string stone_id_id);
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
     static play_stone_request* from_json(const rapidjson::Value& json);
 };

@@ -13,10 +13,10 @@ class playing_board : public unique_serializable {
 
 private:
     static const int _playing_board_size = 15;
-    std::array<std::array<stone*, _playing_board_size>, _playing_board_size> _playing_board;
+    std::vector<std::vector<stone*>> _playing_board;
 
     playing_board(std::string id);
-    playing_board(std::string id, std::array<std::array<stone*, _playing_board_size>, _playing_board_size> playing_board);
+    playing_board(std::string id, std::vector<std::vector<stone*>> playing_board);
     void reset();
     void place_stone(stone* stone);
 
@@ -30,14 +30,14 @@ public:
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
 
 // accessors
-    std::array<std::array<stone*, _playing_board_size>, _playing_board_size> get_playing_board() const;
+    std::vector<std::vector<stone*>> get_playing_board() const;
 
 #ifdef GOMOKU_SERVER
 // state update functions
     //void setup_round(std::string& err);
 #endif
 
-    std::array<std::array<stone*, _playing_board_size>, _playing_board_size>::iterator get_playing_board_iterator();
+    std::vector<std::vector<stone*>>::iterator get_playing_board_iterator();
 };
 
 

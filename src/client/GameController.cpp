@@ -1,9 +1,9 @@
 #include "GameController.h"
 #include "../common/network/requests/join_game_request.h"
 #include "../common/network/requests/start_game_request.h"
-#include "../common/network/requests/draw_card_request.h"
-#include "../common/network/requests/fold_request.h"
-#include "../common/network/requests/play_card_request.h"
+#include "../common/network/requests/play_stone_request.h"
+#include "../common/network/requests/swap_color_request.h"
+#include "../common/network/requests/select_game_mode_request.h"
 #include "network/ClientNetworkManager.h"
 
 
@@ -76,7 +76,7 @@ void GameController::connectToServer() {
     ClientNetworkManager::init(host, port);
 
     // send request to join game
-    GameController::_me = new player(playerName);
+    GameController::_me = new player(playerName, "white");
     join_game_request request = join_game_request(GameController::_me->get_id(), GameController::_me->get_player_name());
     ClientNetworkManager::sendRequest(request);
 
@@ -119,7 +119,7 @@ void GameController::startGame() {
     ClientNetworkManager::sendRequest(request);
 }
 
-
+/*
 void GameController::drawCard() {
     draw_card_request request = draw_card_request(GameController::_currentGameState->get_id(), GameController::_me->get_id());
     ClientNetworkManager::sendRequest(request);
@@ -135,7 +135,7 @@ void GameController::fold() {
 void GameController::playCard(card* cardToPlay) {
     play_card_request request = play_card_request(GameController::_currentGameState->get_id(), GameController::_me->get_id(), cardToPlay->get_id());
     ClientNetworkManager::sendRequest(request);
-}
+}*/
 
 
 wxEvtHandler* GameController::getMainThreadEventHandler() {
