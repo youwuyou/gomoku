@@ -31,8 +31,11 @@ private:
     // define key constant layout values
     wxSize const panelSize = wxSize(960, 680); // also set in the constructor implementation
     wxPoint const tableCenter = wxPoint(480, 300);
-    wxSize const stoneSize = wxSize(20, 20);
-    wxSize const boardSize = wxSize(400, 400);
+
+    int const scale_factor  = 1000/400;
+    wxSize const stoneSize = wxSize(50/scale_factor, 50/scale_factor);
+    wxSize const boardSize = wxSize(1000/scale_factor, 1000/scale_factor);
+
 
     wxPoint const turnIndicatorOffset = wxPoint(-70, 98);
     wxPoint const turnIndicatorStoneOffset = wxPoint(10, 0);

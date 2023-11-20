@@ -89,6 +89,10 @@ int game_state::get_turn_number() const {
     return _turn_number->get_value();
 }
 
+std::vector<std::vector<stone*>> game_state::get_playing_board() const{
+    return _playing_board->get_playing_board();
+}
+
 int game_state::get_player_index(player *player) const {
     auto it = std::find(_players.begin(), _players.end(), player);
     if (it == _players.end()) {

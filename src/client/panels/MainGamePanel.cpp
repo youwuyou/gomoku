@@ -1,6 +1,7 @@
 #include "MainGamePanel.h"
 #include "../uiElements/ImagePanel.h"
 #include "../GameController.h"
+#include "../../common/exceptions/GomokuException.h"
 
 
 MainGamePanel::MainGamePanel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 680)) {
@@ -59,6 +60,29 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
     }
 
+    // show stones on the playing board
+    std::vector<std::vector<stone*>> playing_board = gameState->get_playing_board();
+    unsigned int board_spot_num = playing_board.size();
+
+    for(unsigned int i=0; i<board_spot_num; i++){
+        for(unsigned int j=0; j<board_spot_num; j++){
+            if(playing_board.at(i).at(j) != nullptr){
+                stone current_stone = *playing_board.at(i).at(j);
+                std::string current_stone_image;
+                if(current_stone.get_colour() == "white"){
+                    current_stone_image = "assets/stone_white.png";
+                } else if (current_stone.get_colour() == "black") {
+                    current_stone_image = "assets/stone_black.png";
+                } else {
+                    throw GomokuException("Invalid stone colour for current_stone in rendering.");
+                }
+                wxPoint current_stone_position = tableCenter - boardSize/2 + wxPoint(16/scale_factor, 16/scale_factor) + i*wxPoint(0, 63) + j*wxPoint(63,0);
+                ImagePanel* current_stone_panel = new ImagePanel(this, current_stone_image, wxBITMAP_TYPE_ANY, current_stone_position, MainGamePanel::stoneSize);
+                current_stone_panel->SetToolTip(current_stone.get_colour() + " stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
+            }
+        }
+    }
+
 }
 
 void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
@@ -83,6 +107,7 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
         std::string currentPlayerStoneImage = "assets/stone" + current_player_colour + ".png";
         wxPoint turnIndicatorStonePosition = turnIndicatorPosition + wxPoint(200, 18) + MainGamePanel::turnIndicatorStoneOffset;
         ImagePanel* turnIndicatorStone = new ImagePanel(this, currentPlayerStoneImage, wxBITMAP_TYPE_ANY, turnIndicatorStonePosition, MainGamePanel::boardSize);
+        turnIndicatorStone->SetToolTip("Colour to play: " + current_player_colour);
     }
 }
 

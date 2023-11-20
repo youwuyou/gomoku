@@ -58,6 +58,7 @@ public:
     bool is_allowed_to_play_now(player* player) const;
     std::vector<player*>& get_players();
     int get_turn_number() const;
+    std::vector<std::vector<stone*>> get_playing_board() const;
 
     player* get_current_player() const;
 
