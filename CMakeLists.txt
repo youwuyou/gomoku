@@ -24,16 +24,20 @@ set(CLIENT_SOURCE_FILES
         src/client/network/ClientNetworkManager.cpp src/client/network/ClientNetworkManager.h
         src/client/network/ResponseListenerThread.cpp src/client/network/ResponseListenerThread.h
         # game state
-        src/common/game_state/cards/card.cpp src/common/game_state/cards/card.h
         src/common/game_state/game_state.cpp src/common/game_state/game_state.h
-        src/common/game_state/player/hand.cpp src/common/game_state/player/hand.h
         src/common/game_state/player/player.cpp src/common/game_state/player/player.h
-        src/common/game_state/cards/draw_pile.cpp src/common/game_state/cards/draw_pile.h
-        src/common/game_state/cards/discard_pile.cpp src/common/game_state/cards/discard_pile.h
+        src/common/game_state/playing_board/playing_board.cpp src/common/game_state/playing_board/playing_board.h
+        src/common/game_state/playing_board/stone.cpp src/common/game_state/playing_board/stone.h
+        src/common/game_state/playing_board/opening_rules.cpp src/common/game_state/playing_board/opening_rules.h
         # client requests
         src/common/network/requests/client_request.cpp src/common/network/requests/client_request.h
+        src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
+        src/common/network/requests/swap_color_request.cpp src/common/network/requests/swap_color_request.h
         src/common/network/requests/join_game_request.cpp src/common/network/requests/join_game_request.h
+        src/common/network/requests/place_stone_request.cpp src/common/network/requests/place_stone_request.h
+        src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
         src/common/network/requests/start_game_request.cpp src/common/network/requests/start_game_request.h
+        src/common/network/requests/swap_color_request.cpp src/common/network/requests/swap_color_request.h
         # server responses
         src/common/network/responses/server_response.cpp src/common/network/responses/server_response.h
         src/common/network/responses/request_response.cpp src/common/network/responses/request_response.h
@@ -45,7 +49,8 @@ set(CLIENT_SOURCE_FILES
         src/common/serialization/serializable_value.h
         src/common/serialization/json_utils.h
         src/common/serialization/uuid_generator.h
-        src/common/serialization/unique_serializable.cpp src/common/serialization/unique_serializable.h)
+        src/common/serialization/unique_serializable.cpp src/common/serialization/unique_serializable.h
+)
 
 # define a variable SERVER_SOURCE_FILES that contains the paths to all source files required to compile the server executable
 set(SERVER_SOURCE_FILES
@@ -55,16 +60,18 @@ set(SERVER_SOURCE_FILES
         src/server/player_manager.cpp src/server/player_manager.h
         src/server/server_network_manager.cpp src/server/server_network_manager.h
         # game state
-        src/common/game_state/cards/card.cpp src/common/game_state/cards/card.h
         src/common/game_state/game_state.cpp src/common/game_state/game_state.h
-        src/common/game_state/player/hand.cpp src/common/game_state/player/hand.h
         src/common/game_state/player/player.cpp src/common/game_state/player/player.h
-        src/common/game_state/cards/draw_pile.cpp src/common/game_state/cards/draw_pile.h
-        src/common/game_state/cards/discard_pile.cpp src/common/game_state/cards/discard_pile.h
+        src/common/game_state/playing_board/playing_board.cpp src/common/game_state/playing_board/playing_board.h
+        src/common/game_state/playing_board/stone.cpp src/common/game_state/playing_board/stone.h
+        src/common/game_state/playing_board/opening_rules.cpp src/common/game_state/playing_board/opening_rules.h
         # client requests
         src/common/network/requests/client_request.cpp src/common/network/requests/client_request.h
         src/common/network/requests/join_game_request.cpp src/common/network/requests/join_game_request.h
+        src/common/network/requests/place_stone_request.cpp src/common/network/requests/place_stone_request.h
+        src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
         src/common/network/requests/start_game_request.cpp src/common/network/requests/start_game_request.h
+        src/common/network/requests/swap_color_request.cpp src/common/network/requests/swap_color_request.h
         # server responses
         src/common/network/responses/server_response.cpp src/common/network/responses/server_response.h
         src/common/network/responses/request_response.cpp src/common/network/responses/request_response.h
@@ -76,7 +83,14 @@ set(SERVER_SOURCE_FILES
         src/common/serialization/serializable_value.h
         src/common/serialization/json_utils.h
         src/common/serialization/uuid_generator.h
-        src/common/serialization/unique_serializable.cpp src/common/serialization/unique_serializable.h src/server/request_handler.h src/server/request_handler.cpp)
+        src/common/serialization/unique_serializable.cpp src/common/serialization/unique_serializable.h src/server/request_handler.h src/server/request_handler.cpp
+        src/common/game_state/playing_board/stone.h
+        src/common/game_state/playing_board/stone.cpp
+        src/common/game_state/playing_board/playing_board.cpp
+        src/common/game_state/playing_board/playing_board.h
+        src/common/game_state/playing_board/opening_rules.cpp
+        src/common/game_state/playing_board/opening_rules.h
+)
 
 
 # set source files for client-executable

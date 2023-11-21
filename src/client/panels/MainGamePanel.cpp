@@ -1,6 +1,7 @@
 #include "MainGamePanel.h"
 #include "../uiElements/ImagePanel.h"
 #include "../GameController.h"
+#include "../../common/exceptions/GomokuException.h"
 
 
 MainGamePanel::MainGamePanel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 680)) {
@@ -12,7 +13,7 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
     this->DestroyChildren();
 
     std::vector<player*> players = gameState->get_players();
-    int numberOfPlayers = players.size();
+    int numberOfPlayers = 2;
 
     // find our own player object in the list of players
     int myPosition = -1;
@@ -27,23 +28,8 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
         return;
     }
 
-    double anglePerPlayer = MainGamePanel::twoPi / (double) numberOfPlayers;
-
-    // show all other players
-    for(int i = 1; i < numberOfPlayers; i++) {
-
-        // get player at i-th position after myself
-        player* otherPlayer = players.at((myPosition + i) % numberOfPlayers);
-
-        double playerAngle = (double) i * anglePerPlayer;
-        int side = (2 * i) - numberOfPlayers; // side < 0 => right, side == 0 => center, side > 0 => left
-
-        this->buildOtherPlayerHand(gameState, otherPlayer, playerAngle);
-        this->buildOtherPlayerLabels(gameState, otherPlayer, playerAngle, side);
-    }
-
-    // show both card piles at the center
-    this->buildCardPiles(gameState, me);
+    // show the board at the center
+    this->buildPlayingBoard(gameState, me);
 
     // show turn indicator below card piles
     this->buildTurnIndicator(gameState, me);
@@ -51,153 +37,50 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
     // show our own player
     this->buildThisPlayer(gameState, me);
 
+    // build About button
+    //this->buildAbout(gameState, me);
+
     // update layout
     this->Layout();
 }
 
 
-void MainGamePanel::buildOtherPlayerHand(game_state* gameState, player* otherPlayer, double playerAngle) {
+void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
-    // define the ellipse which represents the virtual player circle
-    double horizontalRadius = MainGamePanel::otherPlayerHandDistanceFromCenter * 1.4; // 1.4 to horizontally elongate players' circle
-    double verticalRadius = MainGamePanel::otherPlayerHandDistanceFromCenter;
-
-    // get this player's position on that ellipse
-    wxPoint handPosition = MainGamePanel::tableCenter;
-    handPosition += this->getPointOnEllipse(horizontalRadius, verticalRadius, playerAngle);
-
-    // add image of player's hand
-    int numberOfCards = otherPlayer->get_nof_cards();
-    if(numberOfCards > 0) {
-
-        // get new bounds of image, as they increase when image is rotated
-        wxSize boundsOfRotatedHand = this->getBoundsOfRotatedSquare(MainGamePanel::otherPlayerHandSize, playerAngle);
-        handPosition -= boundsOfRotatedHand / 2;
-
-        std::string handImage = "assets/lama_hand_" + std::to_string(numberOfCards) + ".png";
-        if(numberOfCards > 10) {
-            handImage = "assets/lama_hand_10.png";
-        }
-        new ImagePanel(this, handImage, wxBITMAP_TYPE_ANY, handPosition, boundsOfRotatedHand, playerAngle);
-
-    } else if(numberOfCards == 0) {
-
-        wxSize nonRotatedSize = wxSize((int) MainGamePanel::otherPlayerHandSize, (int) MainGamePanel::otherPlayerHandSize);
-        handPosition -= nonRotatedSize / 2;
-
-        new ImagePanel(this, "assets/lama_hand_0.png", wxBITMAP_TYPE_ANY, handPosition, nonRotatedSize);
-    }
-}
-
-
-void MainGamePanel::buildOtherPlayerLabels(game_state* gameState, player* otherPlayer, double playerAngle, int side) {
-
-    long textAlignment = wxALIGN_CENTER;
-    int labelOffsetX = 0;
-
-    if(side < 0) { // right side
-        textAlignment = wxALIGN_LEFT;
-        labelOffsetX = 85;
-
-    } else if(side > 0) { // left side
-        textAlignment = wxALIGN_RIGHT;
-        labelOffsetX = -85;
-    }
-
-    // define the ellipse which represents the virtual player circle
-    double horizontalRadius = MainGamePanel::otherPlayerLabelDistanceFromCenter * 1.25; // 1.25 to horizontally elongate players' circle (but less than the hands' circle)
-    double verticalRadius = MainGamePanel::otherPlayerLabelDistanceFromCenter;
-
-    // get this player's position on that ellipse
-    wxPoint labelPosition = MainGamePanel::tableCenter;
-    labelPosition += this->getPointOnEllipse(horizontalRadius, verticalRadius, playerAngle);
-    labelPosition += wxSize(labelOffsetX, 0);
-
-    // if game has not yet started, we only have two lines
-    if(!gameState->is_started()) {
-        this->buildStaticText(
-                otherPlayer->get_player_name(),
-                labelPosition + wxSize(-100, -18),
-                wxSize(200, 18),
-                textAlignment,
-                true
-        );
-        this->buildStaticText(
-                "waiting...",
-                labelPosition + wxSize(-100, 0),
-                wxSize(200, 18),
-                textAlignment
-        );
-
-    } else {
-        this->buildStaticText(
-                otherPlayer->get_player_name(),
-                labelPosition + wxSize(-100, -27),
-                wxSize(200, 18),
-                textAlignment,
-                true
-        );
-        this->buildStaticText(
-                std::to_string(otherPlayer->get_score()) + " minus points",
-                labelPosition + wxSize(-100, -9),
-                wxSize(200, 18),
-                textAlignment
-        );
-
-        // Show other player's status label
-        std::string statusText = "waiting...";
-        bool bold = false;
-        if(otherPlayer->has_folded()) {
-            statusText = "Folded!";
-        } else if(otherPlayer == gameState->get_current_player()) {
-            statusText = "their turn";
-            bold = true;
-        }
-        this->buildStaticText(
-                statusText,
-                labelPosition + wxSize(-100, 9),
-                wxSize(200, 18),
-                textAlignment,
-                bold
-        );
-    }
-}
-
-
-void MainGamePanel::buildCardPiles(game_state* gameState, player *me) {
-
+    // show the empty board as soon as the game is started
     if(gameState->is_started()) {
 
         // Show discard pile
-        const card* topCard = gameState->get_discard_pile()->get_top_card();
-        if(topCard != nullptr) {
-            std::string cardImage = "assets/lama_" + std::to_string(topCard->get_value()) + ".png";
+        std::string boardImage = "assets/playing_board.png";
 
-            wxPoint discardPilePosition = MainGamePanel::tableCenter + MainGamePanel::discardPileOffset;
+        wxPoint playingBoardPosition = MainGamePanel::tableCenter - MainGamePanel::boardSize/2;
 
-            ImagePanel* discardPile = new ImagePanel(this, cardImage, wxBITMAP_TYPE_ANY, discardPilePosition, MainGamePanel::cardSize);
-            discardPile->SetToolTip("Discard pile");
+        ImagePanel* playingBoard = new ImagePanel(this, boardImage, wxBITMAP_TYPE_ANY, playingBoardPosition, MainGamePanel::boardSize);
+        playingBoard->SetToolTip("Playing board");
+
+    }
+
+    // show stones on the playing board
+    std::vector<std::vector<stone*>> playing_board = gameState->get_playing_board();
+    unsigned int board_spot_num = playing_board.size();
+
+    for(unsigned int i=0; i<board_spot_num; i++){
+        for(unsigned int j=0; j<board_spot_num; j++){
+            if(playing_board.at(i).at(j) != nullptr){
+                stone current_stone = *playing_board.at(i).at(j);
+                std::string current_stone_image;
+                if(current_stone.get_colour() == "white"){
+                    current_stone_image = "assets/stone_white.png";
+                } else if (current_stone.get_colour() == "black") {
+                    current_stone_image = "assets/stone_black.png";
+                } else {
+                    throw GomokuException("Invalid stone colour for current_stone in rendering.");
+                }
+                wxPoint current_stone_position = tableCenter - boardSize/2 + wxPoint(16/scale_factor, 16/scale_factor) + i*wxPoint(0, 63) + j*wxPoint(63,0);
+                ImagePanel* current_stone_panel = new ImagePanel(this, current_stone_image, wxBITMAP_TYPE_ANY, current_stone_position, MainGamePanel::stoneSize);
+                current_stone_panel->SetToolTip(current_stone.get_colour() + " stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
+            }
         }
-
-        // Show draw pile
-        wxPoint drawPilePosition = MainGamePanel::tableCenter + MainGamePanel::drawPileOffset;
-
-        ImagePanel* drawPile = new ImagePanel(this, "assets/lama_back.png", wxBITMAP_TYPE_ANY, drawPilePosition, MainGamePanel::cardSize);
-
-        if(gameState->get_current_player() == me && !me->has_folded()) {
-            drawPile->SetToolTip("Draw card");
-            drawPile->SetCursor(wxCursor(wxCURSOR_HAND));
-            drawPile->Bind(wxEVT_LEFT_UP, [](wxMouseEvent& event) {
-                GameController::drawCard();
-            });
-        } else {
-            drawPile->SetToolTip("Draw pile");
-        }
-
-    } else {
-        // if the game did not start yet, show a back side of a card in the center (only for the mood)
-        wxPoint cardPosition = MainGamePanel::tableCenter - (MainGamePanel::cardSize / 2);
-        new ImagePanel(this, "assets/lama_back.png", wxBITMAP_TYPE_ANY, cardPosition, MainGamePanel::cardSize);
     }
 
 }
@@ -210,7 +93,7 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
             turnIndicatorText = "It's your turn!";
         }
 
-        wxPoint turnIndicatorPosition = MainGamePanel::tableCenter + MainGamePanel::turnIndicatorOffset;
+        wxPoint turnIndicatorPosition = MainGamePanel::tableCenter - MainGamePanel::boardSize/2 + MainGamePanel::turnIndicatorOffset;
 
         this->buildStaticText(
                 turnIndicatorText,
@@ -219,6 +102,12 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
                 wxALIGN_CENTER,
                 true
         );
+
+        std::string current_player_colour = gameState->get_current_player()->get_colour();
+        std::string currentPlayerStoneImage = "assets/stone" + current_player_colour + ".png";
+        wxPoint turnIndicatorStonePosition = turnIndicatorPosition + wxPoint(200, 18) + MainGamePanel::turnIndicatorStoneOffset;
+        ImagePanel* turnIndicatorStone = new ImagePanel(this, currentPlayerStoneImage, wxBITMAP_TYPE_ANY, turnIndicatorStonePosition, MainGamePanel::boardSize);
+        turnIndicatorStone->SetToolTip("Colour to play: " + current_player_colour);
     }
 }
 
@@ -261,25 +150,17 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
 
     } else {
 
-        // show our player's minus points
+        // show our player's points
         wxStaticText *playerPoints = buildStaticText(
-                std::to_string(me->get_score()) + " minus points",
+                std::to_string(me->get_score()) + " points",
                 wxDefaultPosition,
                 wxSize(200, 18),
                 wxALIGN_CENTER
         );
         innerLayout->Add(playerPoints, 0, wxALIGN_CENTER | wxBOTTOM, 8);
 
-        // if our player folded, we display that as status
-        if (me->has_folded()) {
-            wxStaticText *playerStatus = buildStaticText(
-                    "Folded!",
-                    wxDefaultPosition,
-                    wxSize(200, 32),
-                    wxALIGN_CENTER
-            );
-            innerLayout->Add(playerStatus, 0, wxALIGN_CENTER | wxBOTTOM, 8);
-
+        /* might be re-usable if we want to have a "give up" button
+         *
         // if we haven't folded yet, and it's our turn, display Fold button
         } else if (gameState->get_current_player() == me) {
             wxButton *foldButton = new wxButton(this, wxID_ANY, "Fold", wxDefaultPosition, wxSize(80, 32));
@@ -288,8 +169,9 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             });
             innerLayout->Add(foldButton, 0, wxALIGN_CENTER | wxBOTTOM, 8);
 
+
         // if it's not our turn, display "waiting..."
-        } else {
+        } else {*/
             wxStaticText *playerStatus = buildStaticText(
                     "waiting...",
                     wxDefaultPosition,
@@ -297,46 +179,8 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                     wxALIGN_CENTER
             );
             innerLayout->Add(playerStatus, 0, wxALIGN_CENTER | wxBOTTOM, 8);
-        }
+        //}
 
-        // display our player's hand, if we have cards
-        int numberOfCards = me->get_nof_cards();
-        if (numberOfCards > 0) {
-
-            // create horizontal layout for the individual hand cards of our player
-            wxBoxSizer *handLayout = new wxBoxSizer(wxHORIZONTAL);
-            innerLayout->Add(handLayout, 0, wxALIGN_CENTER);
-
-            wxSize scaledCardSize = MainGamePanel::cardSize;
-
-            // Adjust card size (if the number of cards does not fit on the screen)
-            if (numberOfCards * (MainGamePanel::cardSize.GetWidth() + 8) >
-                MainGamePanel::panelSize.GetWidth()) { // 8 -> 4 pixel padding on both sides
-                int scaledCardWidth = (MainGamePanel::panelSize.GetWidth() / numberOfCards) - 8;
-                double cardAspectRatio =
-                        (double) MainGamePanel::cardSize.GetHeight() / (double) MainGamePanel::cardSize.GetWidth();
-                int scaledCardHeight = (int) ((double) scaledCardWidth * cardAspectRatio);
-                scaledCardSize = wxSize(scaledCardWidth, scaledCardHeight);
-            }
-
-            // Show all cards
-            for (int i = 0; i < me->get_hand()->get_cards().size(); i++) {
-
-                card *handCard = me->get_hand()->get_cards().at(i);
-                std::string cardFile = "assets/lama_" + std::to_string(handCard->get_value()) + ".png";
-
-                ImagePanel *cardButton = new ImagePanel(this, cardFile, wxBITMAP_TYPE_ANY, wxDefaultPosition, scaledCardSize);
-
-                if (gameState->get_current_player() == me && !me->has_folded()) {
-                    cardButton->SetToolTip("Play card");
-                    cardButton->SetCursor(wxCursor(wxCURSOR_HAND));
-                    cardButton->Bind(wxEVT_LEFT_UP, [handCard](wxMouseEvent& event) {
-                        GameController::playCard(handCard);
-                    });
-                }
-                handLayout->Add(cardButton, 0, wxLEFT | wxRIGHT, 4);
-            }
-        }
     }
 }
 

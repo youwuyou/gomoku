@@ -6,7 +6,7 @@
 
 // Public constructor
 select_game_mode_request::select_game_mode_request(std::string game_id, std::string player_id)
-        : client_request( client_request::create_base_class_properties(RequestType::fold, uuid_generator::generate_uuid_v4(), player_id, game_id) )
+        : client_request( client_request::create_base_class_properties(RequestType::select_game_mode, uuid_generator::generate_uuid_v4(), player_id, game_id) )
 { }
 
 // private constructor for deserialization

@@ -39,43 +39,6 @@ bool game_instance::is_finished() {
 }
 
 
-bool game_instance::play_card(player *player, const std::string& card_id, std::string& err) {
-    modification_lock.lock();
-    if (_game_state->play_card(player, card_id, err)) {
-        full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
-        server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
-        modification_lock.unlock();
-        return true;
-    }
-    modification_lock.unlock();
-    return false;
-}
-
-bool game_instance::draw_card(player *player, card*& drawn_card, std::string& err) {
-    modification_lock.lock();
-    if (_game_state->draw_card(player, err)) {
-        full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
-        server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
-        modification_lock.unlock();
-        return true;
-    }
-    modification_lock.unlock();
-    return false;
-
-}
-
-bool game_instance::fold(player *player, std::string& err) {
-    modification_lock.lock();
-    if (_game_state->fold(player, err)) {
-        // send state update to all other players
-        full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
-        server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
-        modification_lock.unlock();
-        return true;
-    }
-    modification_lock.unlock();
-    return false;
-}
 
 bool game_instance::start_game(player* player, std::string &err) {
     modification_lock.lock();

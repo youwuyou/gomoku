@@ -11,7 +11,7 @@
 
 // Public constructor
 swap_color_request::swap_color_request(std::string game_id, std::string player_id, int nof_cards)
-        : client_request( client_request::create_base_class_properties(RequestType::draw_card, uuid_generator::generate_uuid_v4(), player_id, game_id) )
+        : client_request( client_request::create_base_class_properties(RequestType::swap_color, uuid_generator::generate_uuid_v4(), player_id, game_id) )
 {
     _nof_cards = nof_cards;
 }
