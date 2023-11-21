@@ -3,7 +3,7 @@
 //
 
 #include "client_request.h"
-#include "play_stone_request.h"
+#include "place_stone_request.h"
 #include "swap_color_request.h"
 #include "select_game_mode_request.h"
 #include "join_game_request.h"
@@ -93,7 +93,7 @@ client_request* client_request::from_json(const rapidjson::Value &json) {
 
         // Check which type of request it is and call the respective from_json constructor
         if (request_type == RequestType::place_stone) {
-            return play_stone_request::from_json(json);
+            return place_stone_request::from_json(json);
         }
         else if (request_type == RequestType::swap_color) {
             return swap_color_request::from_json(json);

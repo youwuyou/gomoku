@@ -25,7 +25,7 @@ bool player_manager::add_or_get_player(std::string name, const std::string& play
     if (try_get_player(player_id, player_ptr)) {
         return true;
     }
-    player_ptr = new player(player_id, name);
+    player_ptr = new player(player_id, std::move(name), "white");
     _rw_lock.lock();    // exclusive
     player_manager::_players_lut.insert({player_id, player_ptr});
     _rw_lock.unlock();

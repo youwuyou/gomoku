@@ -79,7 +79,7 @@ std::string opening_rules::get_description() const noexcept {
 
 #ifdef GOMOKU_SERVER
 // state update functions
-void set_opening_rule(std::string ruleset) {
+void opening_rules::set_opening_rule(std::string ruleset) {
     std::string generated_description = generate_description_from_ruleset(ruleset);
     if (generated_description == "") {
         throw GomokuException("Failed to instantiate opening_rules object. Invalid ruleset name.");

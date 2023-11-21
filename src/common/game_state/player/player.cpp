@@ -29,12 +29,11 @@ player::~player() {
         _player_name = nullptr;
         _score = nullptr;
         _colour = nullptr;
-
     }
 }
 
 #ifdef GOMOKU_SERVER
-player::player(std::string id, std::string name) :
+player::player(std::string id, std::string name, std::string colour) :
         unique_serializable(id)
 {
     this->_player_name = new serializable_value<std::string>(name);
@@ -83,19 +82,19 @@ void player::wrap_up_round(std::string &err) {
     _score->set_value(new_score);
 }*/
 
-void increment_score(std::string& err){
+void player::increment_score(std::string& err){
     this->_score++;
 }
 
-void reset_score(std::string& err){
+void player::reset_score(std::string& err){
     this->_score = 0;
 }
 
-void swap_colour(std::string& err){
-    if(this->_colour == "black"){
-        this->_colour = "white"
-    }else if(this->_color == "white"){
-        this->_colour = "black"
+void player::swap_colour(std::string& err){
+    if(this->_colour->get_value() == "black"){
+        this->_colour->set_value("white");
+    }else if(this->_colour->get_value() == "white"){
+        this->_colour->set_value("black");
     } else {
         throw GomokuException("Failed to swap player colour. Unknown player colour was given.");
     }
