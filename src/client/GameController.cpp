@@ -73,7 +73,7 @@ void GameController::connectToServer() {
     ClientNetworkManager::init(host, port);
 
     // send request to join game
-    GameController::_me = new player(playerName);
+    GameController::_me = new player(playerName, false);
     join_game_request request = join_game_request(GameController::_me->get_id(), GameController::_me->get_player_name());
     ClientNetworkManager::sendRequest(request);
 
@@ -91,7 +91,7 @@ void GameController::updateGameState(game_state* newGameState) {
     if(oldGameState != nullptr) {
 
         // check if a new round started, and display message accordingly
-        if(oldGameState->get_round_number() > 0 && oldGameState->get_round_number() < newGameState->get_round_number()) {
+        if(oldGameState->get_turn_number() > 0 && oldGameState->get_turn_number() < newGameState->get_turn_number()) {
             GameController::showNewRoundMessage(oldGameState, newGameState);
         }
 

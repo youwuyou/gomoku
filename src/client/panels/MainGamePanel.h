@@ -15,9 +15,7 @@ public:
 
 private:
 
-    void buildOtherPlayerHand(game_state* gameState, player* otherPlayer, double playerAngle);
     void buildOtherPlayerLabels(game_state* gameState, player* otherPlayer, double playerAngle, int side);
-    void buildCardPiles(game_state* gameState, player *me);
     void buildTurnIndicator(game_state* gameState, player* me);
     void buildThisPlayer(game_state* gameState, player* me);
 
