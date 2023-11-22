@@ -85,11 +85,10 @@ playing_board *playing_board::from_json(const rapidjson::Value &json) {
         for (auto &serialized_stone : json["playing_board"].GetArray()) {
             deserialized_flattened_playing_board.push_back(stone::from_json(serialized_stone.GetObject()));
         }
-        std::vector<std::vector<stone*>> deserialized_playing_board (_playing_board_size, std::vector<stone*>(_playing_board_size, nullptr));
-        for (int i=0; i<_playing_board_size; i++){
-            for (int j=0; j<_playing_board_size; j++){
-                deserialized_playing_board.at(i).at(j) = deserialized_flattened_playing_board.at(i*_playing_board_size + j);
-            }
+        std::vector<stone*> row(_playing_board_size, nullptr);
+        std::vector<std::vector<stone*>> deserialized_playing_board (_playing_board_size, row);
+        for (auto stone: deserialized_flattened_playing_board) {
+            deserialized_playing_board.at(stone->get_position_x()).at(stone->get_position_y()) = stone;
         }
         return new playing_board(json["id"].GetString(), deserialized_playing_board);
     } else {
