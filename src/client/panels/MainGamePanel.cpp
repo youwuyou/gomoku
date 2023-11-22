@@ -104,9 +104,9 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
         );
 
         std::string current_player_colour = gameState->get_current_player()->get_colour();
-        std::string currentPlayerStoneImage = "assets/stone" + current_player_colour + ".png";
-        wxPoint turnIndicatorStonePosition = turnIndicatorPosition + wxPoint(200, 18) + MainGamePanel::turnIndicatorStoneOffset;
-        ImagePanel* turnIndicatorStone = new ImagePanel(this, currentPlayerStoneImage, wxBITMAP_TYPE_ANY, turnIndicatorStonePosition, MainGamePanel::boardSize);
+        std::string currentPlayerStoneImage = "assets/stone_" + current_player_colour + ".png";
+        wxPoint turnIndicatorStonePosition = turnIndicatorPosition + MainGamePanel::turnIndicatorStoneOffset;
+        ImagePanel* turnIndicatorStone = new ImagePanel(this, currentPlayerStoneImage, wxBITMAP_TYPE_ANY, turnIndicatorStonePosition, MainGamePanel::stoneSize);
         turnIndicatorStone->SetToolTip("Colour to play: " + current_player_colour);
     }
 }

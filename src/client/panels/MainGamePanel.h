@@ -37,8 +37,8 @@ private:
     wxSize const boardSize = wxSize(1000/scale_factor, 1000/scale_factor);
 
 
-    wxPoint const turnIndicatorOffset = wxPoint(-70, 98);
-    wxPoint const turnIndicatorStoneOffset = wxPoint(10, 0);
+    wxPoint const turnIndicatorOffset = wxPoint(1000/(scale_factor*2)-100, -30);
+    wxPoint const turnIndicatorStoneOffset = wxPoint(200, -5);
 
     // might be cut-able
     double const twoPi = 6.28318530718;
