@@ -19,20 +19,21 @@ game_state::game_state() : unique_serializable() {
     this->_starting_player_idx = new serializable_value<int>(0);
 }
 
+// deserialization constructor
 game_state::game_state(std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
                        std::vector<player *> &players, serializable_value<bool> *is_started,
                        serializable_value<bool> *is_finished, serializable_value<int> *current_player_idx,
                         serializable_value<int>* turn_number, serializable_value<int> *starting_player_idx)
         : unique_serializable(id),
-          _playing_board(_playing_board),
-          _opening_ruleset(_opening_ruleset),
-          _players(players),
-          _is_started(is_started),
-          _is_finished(is_finished),
-          _current_player_idx(current_player_idx),
-          _turn_number(turn_number),
-          _starting_player_idx(starting_player_idx)
-{ }
+        _playing_board(_playing_board),
+        _opening_ruleset(_opening_ruleset),
+        _players(players),
+        _is_started(is_started),
+        _is_finished(is_finished),
+        _current_player_idx(current_player_idx),
+        _turn_number(turn_number),
+        _starting_player_idx(starting_player_idx)
+    {  }
 
 game_state::game_state(std::string id) : unique_serializable(id) {
     this->_playing_board = new playing_board();
@@ -252,6 +253,7 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
         for (auto &serialized_player : json["players"].GetArray()) {
             deserialized_players.push_back(player::from_json(serialized_player.GetObject()));
         }
+
         return new game_state(json["id"].GetString(),
                               playing_board::from_json(json["playing_board"].GetObject()),
                               opening_rules::from_json(json["opening_ruleset"].GetObject()),
