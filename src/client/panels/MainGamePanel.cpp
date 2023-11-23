@@ -50,14 +50,12 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
     // show the empty board as soon as the game is started
     if(gameState->is_started()) {
 
-        // Show discard pile
+        // Show board image
         std::string boardImage = "assets/playing_board.png";
 
         wxPoint playingBoardPosition = MainGamePanel::tableCenter - MainGamePanel::boardSize/2;
 
         ImagePanel* playingBoard = new ImagePanel(this, boardImage, wxBITMAP_TYPE_ANY, playingBoardPosition, MainGamePanel::boardSize);
-        playingBoard->SetToolTip("Playing board");
-
     }
 
     // show stones on the playing board
@@ -66,6 +64,7 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
     for(unsigned int i=0; i<board_spot_num; i++){
         for(unsigned int j=0; j<board_spot_num; j++){
+            // if a stone is placed at that spot, render it
             if(playing_board.at(i).at(j) != nullptr){
                 stone current_stone = *playing_board.at(i).at(j);
                 std::string current_stone_image;
@@ -78,7 +77,21 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                 }
                 wxPoint current_stone_position = tableCenter - boardSize/2 + wxPoint(16/scale_factor, 16/scale_factor) + i*wxPoint(0, 63) + j*wxPoint(63,0);
                 ImagePanel* current_stone_panel = new ImagePanel(this, current_stone_image, wxBITMAP_TYPE_ANY, current_stone_position, MainGamePanel::stoneSize);
-                current_stone_panel->SetToolTip(current_stone.get_colour() + " stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
+                //current_stone_panel->SetToolTip(current_stone.get_colour() + " stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
+            } else {
+                // if no stone is present, show a transparent button on each spot, if it is currently our turn
+                if(gameState->get_current_player() == me) {
+                    std::string current_player_colour = gameState->get_current_player()->get_colour();
+                    std::string transparent_stone_image = "assets/stone_transparent.png";
+                    wxPoint current_stone_position = tableCenter - boardSize/2 + wxPoint(16/scale_factor, 16/scale_factor) + i*wxPoint(0, 63) + j*wxPoint(63,0);
+                    ImagePanel* new_stone_button = new ImagePanel(this, transparent_stone_image, wxBITMAP_TYPE_ANY, current_stone_position, MainGamePanel::stoneSize);
+                    stone new_stone = stone(serializable_value<std::string>(current_player_colour), serializable_value<int>(j), serializable_value<int>(i));
+                    new_stone_button->SetCursor(wxCursor(wxCURSOR_HAND));
+                    //new_stone_button->SetToolTip("Place stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
+                    new_stone_button->Bind(wxEVT_LEFT_UP, [&new_stone](wxMouseEvent& event){
+                        GameController::placeStone(&new_stone);
+                    });
+                }
             }
         }
     }

@@ -119,6 +119,11 @@ void GameController::startGame() {
     ClientNetworkManager::sendRequest(request);
 }
 
+void GameController::placeStone(stone* stone_to_place){
+    place_stone_request request = place_stone_request(GameController::_currentGameState->get_id(), GameController::_me->get_id(), stone_to_place->get_id());
+    ClientNetworkManager::sendRequest(request);
+}
+
 
 wxEvtHandler* GameController::getMainThreadEventHandler() {
     return GameController::_gameWindow->GetEventHandler();
