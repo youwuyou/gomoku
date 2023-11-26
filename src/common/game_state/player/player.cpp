@@ -19,9 +19,7 @@ player::player(std::string id, serializable_value<std::string>* name,
         _player_name(name),
         _score(score),
         _colour(colour)
-{
-    std::cout << "passed player deserialisation\n";
-}
+{  }
 
 player::~player() {
     if (_player_name != nullptr) {

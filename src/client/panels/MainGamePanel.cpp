@@ -49,7 +49,6 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
     // show the empty board as soon as the game is started
     if(gameState->is_started()) {
-
         // Show board image
         std::string boardImage = "assets/playing_board.png";
 
@@ -89,10 +88,11 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                     //new_stone_button->SetToolTip("Place stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
                     std::string err;
 
-                    field_type new_stone_colour;
+                    int new_stone_colour;
+
                     if(current_player_colour == "black"){
                         new_stone_colour = field_type::black_stone;
-                    } else if (current_player_colour == "black"){
+                    } else if (current_player_colour == "white"){
                         new_stone_colour = field_type::white_stone;
                     } else {
                         throw GomokuException("Invalid current player colour in new stone button rendering.");

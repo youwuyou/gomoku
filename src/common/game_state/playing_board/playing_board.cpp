@@ -22,7 +22,6 @@ playing_board::playing_board(std::string id) : unique_serializable(id) {
 // deserialization constructor
 playing_board::playing_board(std::string id, std::vector<std::vector<int>> playing_board) : unique_serializable(id) {
     this->_playing_board = playing_board;
-    std::cout << "passed playing_board deserialisation\n";
 }
 
 playing_board::~playing_board() {

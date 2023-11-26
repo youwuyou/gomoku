@@ -33,9 +33,7 @@ game_state::game_state(std::string id, playing_board* _playing_board, opening_ru
         _current_player_idx(current_player_idx),
         _turn_number(turn_number),
         _starting_player_idx(starting_player_idx)
-    {
-        std::cout << "passed game_state deserialisation\n";
-    }
+    {  }
 
 game_state::game_state(std::string id) : unique_serializable(id) {
     this->_playing_board = new playing_board();
@@ -261,7 +259,6 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
         && json.HasMember("playing_board")
         && json.HasMember("opening_ruleset"))
     {
-        std::cout << "\n\n in game state deserialisation\n";
 
         std::vector<player*> deserialized_players;
         for (auto &serialized_player : json["players"].GetArray()) {
