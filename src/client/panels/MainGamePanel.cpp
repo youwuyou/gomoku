@@ -88,7 +88,7 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                     //new_stone_button->SetToolTip("Place stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
                     std::string err;
 
-                    int new_stone_colour;
+                    int new_stone_colour = field_type::empty;
 
                     if(current_player_colour == "black"){
                         new_stone_colour = field_type::black_stone;
@@ -97,9 +97,11 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                     } else {
                         throw GomokuException("Invalid current player colour in new stone button rendering.");
                     }
+                    unsigned int x = j;
+                    unsigned int y = i;
 
-                    new_stone_button->Bind(wxEVT_LEFT_UP, [&j, &i, &new_stone_colour, &err](wxMouseEvent& event){
-                        GameController::placeStone(j, i, new_stone_colour, err);
+                    new_stone_button->Bind(wxEVT_LEFT_UP, [x, y, new_stone_colour, &err](wxMouseEvent& event){
+                        GameController::placeStone(x, y, new_stone_colour, err);
                     });
                 }
             }

@@ -120,10 +120,8 @@ std::vector<player*>& game_state::get_players() {
 
 // state modification functions without diff
 void game_state::setup_round(std::string &err) {
-    std::cout << "\n\n reached game_state setup_round \n";
     this->_playing_board->setup_round(err);
     this->_players.at(0)->swap_colour(err);
-    std::cout << "passed swap_colour \n";
 }
 
 void game_state::wrap_up_round(std::string& err) {
@@ -149,7 +147,6 @@ bool game_state::start_game(std::string &err) {
     if (!_is_started->get_value()) {
         this->setup_round(err);
         this->_is_started->set_value(true);
-        std::cout << "passed start_game\n";
         return true;
     } else {
         err = "Could not start game, as the game was already started";

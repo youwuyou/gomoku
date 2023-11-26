@@ -22,11 +22,6 @@ private:
     //Private constructor for deserialization
     place_stone_request(base_class_properties, unsigned int x, unsigned int y, field_type colour);
 
-    // for deserialization
-    static const std::unordered_map<std::string, field_type> _string_to_field_type;
-    // for serialization
-    static const std::unordered_map<field_type, std::string> _field_type_to_string;
-
 public:
     place_stone_request(std::string player_id, std::string game_id, unsigned int x, unsigned int y, int colour);
     [[nodiscard]] unsigned int get_stone_x() const { return this->_x; }

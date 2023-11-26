@@ -28,20 +28,20 @@ private:
     playing_board(std::string id, std::vector<std::vector<int>> playing_board);
     void reset();
 
-    // for deserialization
-    static const std::unordered_map<std::string, field_type> _string_to_field_type;
-    // for serialization
-    static const std::unordered_map<field_type, std::string> _field_type_to_string;
-
 public:
     playing_board();
     ~playing_board();
 
-    bool place_stone(unsigned int x, unsigned int y, field_type colour, std::string &err);
+    bool place_stone(unsigned int x, unsigned int y, int colour, std::string &err);
 
 // serializable interface
     static playing_board* from_json(const rapidjson::Value& json);
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
+
+    // for deserialization
+    static const std::unordered_map<std::string, field_type> _string_to_field_type;
+    // for serialization
+    static const std::unordered_map<field_type, std::string> _field_type_to_string;
 
 // accessors
     std::vector<std::vector<int>> get_playing_board() const;

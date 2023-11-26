@@ -70,7 +70,6 @@ bool ClientNetworkManager::connect(const std::string& host, const uint16_t port)
 
 
 void ClientNetworkManager::sendRequest(const client_request &request) {
-
     // wait until network is connected (max. 5 seconds)
     int connectionCheckCounter = 0;
     while(!ClientNetworkManager::_connectionSuccess
@@ -86,7 +85,6 @@ void ClientNetworkManager::sendRequest(const client_request &request) {
     }
 
     if(ClientNetworkManager::_connectionSuccess && ClientNetworkManager::_connection->is_connected()) {
-
         // serialize request into JSON string
         rapidjson::Document* jsonDocument = request.to_json();
         std::string message = json_utils::to_string(jsonDocument);
@@ -104,6 +102,7 @@ void ClientNetworkManager::sendRequest(const client_request &request) {
 
         // send message to server
         ssize_t bytesSent = ClientNetworkManager::_connection->write(message);
+        std::cout << "point6\n";
 
         // if the number of bytes sent does not match the length of the message, probably something went wrong
         if (bytesSent != ssize_t(message.length())) {
