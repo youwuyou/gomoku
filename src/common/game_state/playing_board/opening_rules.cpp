@@ -11,9 +11,7 @@ opening_rules::opening_rules(std::string id, serializable_value<std::string>* ru
         unique_serializable(id),
         _ruleset(ruleset),
         _description(description)
-{
-    std::cout << "passed opening_rules deserialisation\n";
-}
+{  }
 
 // Client Constructor
 opening_rules::opening_rules(std::string ruleset) : unique_serializable(ruleset) {

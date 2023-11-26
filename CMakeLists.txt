@@ -62,7 +62,6 @@ set(SERVER_SOURCE_FILES
         src/common/game_state/game_state.cpp src/common/game_state/game_state.h
         src/common/game_state/player/player.cpp src/common/game_state/player/player.h
         src/common/game_state/playing_board/playing_board.cpp src/common/game_state/playing_board/playing_board.h
-        src/common/game_state/playing_board/stone.cpp src/common/game_state/playing_board/stone.h
         src/common/game_state/playing_board/opening_rules.cpp src/common/game_state/playing_board/opening_rules.h
         # client requests
         src/common/network/requests/client_request.cpp src/common/network/requests/client_request.h
@@ -83,12 +82,6 @@ set(SERVER_SOURCE_FILES
         src/common/serialization/json_utils.h
         src/common/serialization/uuid_generator.h
         src/common/serialization/unique_serializable.cpp src/common/serialization/unique_serializable.h src/server/request_handler.h src/server/request_handler.cpp
-        src/common/game_state/playing_board/stone.h
-        src/common/game_state/playing_board/stone.cpp
-        src/common/game_state/playing_board/playing_board.cpp
-        src/common/game_state/playing_board/playing_board.h
-        src/common/game_state/playing_board/opening_rules.cpp
-        src/common/game_state/playing_board/opening_rules.h
 )
 
 

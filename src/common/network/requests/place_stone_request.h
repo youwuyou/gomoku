@@ -17,21 +17,16 @@ private:
 
     unsigned int _x;
     unsigned int _y;
-    field_type _colour;
+    int _colour;
 
     //Private constructor for deserialization
     place_stone_request(base_class_properties, unsigned int x, unsigned int y, field_type colour);
 
-    // for deserialization
-    static const std::unordered_map<std::string, field_type> _string_to_field_type;
-    // for serialization
-    static const std::unordered_map<field_type, std::string> _field_type_to_string;
-
 public:
-    place_stone_request(std::string player_id, std::string game_id, unsigned int x, unsigned int y, field_type colour);
+    place_stone_request(std::string player_id, std::string game_id, unsigned int x, unsigned int y, int colour);
     [[nodiscard]] unsigned int get_stone_x() const { return this->_x; }
     [[nodiscard]] unsigned int get_stone_y() const { return this->_y; }
-    [[nodiscard]] field_type get_stone_colour() const { return this->_colour; }
+    [[nodiscard]] int get_stone_colour() const { return this->_colour; }
 
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
     static place_stone_request* from_json(const rapidjson::Value& json);

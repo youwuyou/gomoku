@@ -15,7 +15,7 @@
 const std::unordered_map<std::string, RequestType> client_request::_string_to_request_type = {
         {"join_game", RequestType::join_game },
         {"start_game", RequestType::start_game},
-        {"play_stone", RequestType::place_stone},
+        {"place_stone", RequestType::place_stone},
         {"swap_color", RequestType::swap_color},
         {"select_game_mode", RequestType::select_game_mode}
 };

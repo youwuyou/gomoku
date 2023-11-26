@@ -41,7 +41,7 @@ public:
     bool start_game(player* player, std::string& err);
     bool try_add_player(player* new_player, std::string& err);
     bool try_remove_player(player* player, std::string& err);
-    bool place_stone(player* player, const stone& stone, std::string& err);
+    bool place_stone(player* player, unsigned int x, unsigned int y, int colour, std::string& err);
     bool set_game_mode(player* player, const opening_rules& rule, std::string& err);
 
 };

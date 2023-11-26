@@ -9,7 +9,6 @@
 #include <string>
 #include "../../rapidjson/include/rapidjson/document.h"
 #include "player/player.h"
-#include "playing_board/stone.h"
 #include "playing_board/playing_board.h"
 #include "playing_board/opening_rules.h"
 #include "../serialization/serializable.h"
@@ -74,7 +73,7 @@ public:
     void setup_round(std::string& err);
 
     //// in-round functionalities
-    bool place_stone(player* player, std::string& err);
+    bool place_stone(unsigned int x, unsigned int y, int colour, std::string& err);
     bool check_win_condition();
 
     //// end of round functions

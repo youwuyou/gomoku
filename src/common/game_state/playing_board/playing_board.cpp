@@ -22,7 +22,6 @@ playing_board::playing_board(std::string id) : unique_serializable(id) {
 // deserialization constructor
 playing_board::playing_board(std::string id, std::vector<std::vector<int>> playing_board) : unique_serializable(id) {
     this->_playing_board = playing_board;
-    std::cout << "passed playing_board deserialisation\n";
 }
 
 playing_board::~playing_board() {
@@ -43,7 +42,7 @@ void playing_board::reset(){
  *   - the stones coordinates are valid (smaller than the size of the board)
  *   - the spot is not occupied (== field_type::empty)
  */
-bool playing_board::place_stone(const unsigned int x, const unsigned int y, const field_type colour, std::string &err) {
+bool playing_board::place_stone(const unsigned int x, const unsigned int y, const int colour, std::string &err) {
     if (x < _playing_board_size && y < _playing_board_size && colour != field_type::empty){
         if (this->_playing_board.at(y).at(x) == field_type::empty) {
             this->_playing_board.at(y).at(x) = colour;

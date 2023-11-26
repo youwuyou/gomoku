@@ -119,9 +119,14 @@ void GameController::startGame() {
     ClientNetworkManager::sendRequest(request);
 }
 
-void GameController::placeStone(unsigned int x, unsigned int y, field_type colour, std::string &err){
-    place_stone_request request = place_stone_request(GameController::_currentGameState->get_id(), GameController::_me->get_id(), x, y, colour);
-    ClientNetworkManager::sendRequest(request);
+void GameController::placeStone(unsigned int x, unsigned int y, int colour, std::string &err){
+    if (x < 15 && y < 15 && 0 < colour && colour < 2) {
+        place_stone_request request = place_stone_request(GameController::_currentGameState->get_id(),
+                                                          GameController::_me->get_id(), x, y, colour);
+        ClientNetworkManager::sendRequest(request);
+    } else {
+        err = "invalid position or colour";
+    }
 }
 
 

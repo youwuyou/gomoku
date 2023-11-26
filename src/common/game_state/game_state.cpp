@@ -33,9 +33,7 @@ game_state::game_state(std::string id, playing_board* _playing_board, opening_ru
         _current_player_idx(current_player_idx),
         _turn_number(turn_number),
         _starting_player_idx(starting_player_idx)
-    {
-        std::cout << "passed game_state deserialisation\n";
-    }
+    {  }
 
 game_state::game_state(std::string id) : unique_serializable(id) {
     this->_playing_board = new playing_board();
@@ -122,10 +120,8 @@ std::vector<player*>& game_state::get_players() {
 
 // state modification functions without diff
 void game_state::setup_round(std::string &err) {
-    std::cout << "\n\n reached game_state setup_round \n";
     this->_playing_board->setup_round(err);
     this->_players.at(0)->swap_colour(err);
-    std::cout << "passed swap_colour \n";
 }
 
 void game_state::wrap_up_round(std::string& err) {
@@ -151,7 +147,6 @@ bool game_state::start_game(std::string &err) {
     if (!_is_started->get_value()) {
         this->setup_round(err);
         this->_is_started->set_value(true);
-        std::cout << "passed start_game\n";
         return true;
     } else {
         err = "Could not start game, as the game was already started";
@@ -201,8 +196,11 @@ bool set_game_mode(std::string rule_name) {
     return false;
 }
 
-bool place_stone(player* player, std::string& err) {
-    // TODO: Implementation Code
+bool game_state::place_stone(unsigned int x, unsigned int y, int colour, std::string& err) {
+    if(this->_playing_board->place_stone(x, y, colour, err)){
+        return true;
+    }
+    err = "GameState: Unable to place stone.";
     return false;
 }
 
@@ -261,7 +259,6 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
         && json.HasMember("playing_board")
         && json.HasMember("opening_ruleset"))
     {
-        std::cout << "\n\n in game state deserialisation\n";
 
         std::vector<player*> deserialized_players;
         for (auto &serialized_player : json["players"].GetArray()) {
