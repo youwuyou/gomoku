@@ -9,8 +9,8 @@
 #include <vector>
 #include <unordered_map>
 #include "../../serialization/serializable.h"
+#include "../../serialization/serializable_value.h"
 #include "../../../../rapidjson/include/rapidjson/document.h"
-#include "../playing_board/stone.h"
 
 enum field_type {
     empty,
