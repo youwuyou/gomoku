@@ -73,7 +73,7 @@ public:
     void setup_round(std::string& err);
 
     //// in-round functionalities
-    bool place_stone(player* player, std::string& err);
+    bool place_stone(unsigned int x, unsigned int y, int colour, std::string& err);
     bool check_win_condition();
 
     //// end of round functions

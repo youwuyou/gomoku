@@ -196,8 +196,11 @@ bool set_game_mode(std::string rule_name) {
     return false;
 }
 
-bool place_stone(player* player, std::string& err) {
-    // TODO: Implementation Code
+bool game_state::place_stone(unsigned int x, unsigned int y, int colour, std::string& err) {
+    if(this->_playing_board->place_stone(x, y, colour, err)){
+        return true;
+    }
+    err = "GameState: Unable to place stone.";
     return false;
 }
 
