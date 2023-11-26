@@ -82,6 +82,23 @@ request_response* request_handler::handle_request(const client_request* const re
             return new request_response("", req_id, false, nullptr, err);
         }
 
+        case RequestType::place_stone: {
+            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
+                if (game_instance_ptr->place_stone(player, req->get_stone(), err)) {
+                    return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                game_instance_ptr->get_game_state()->to_json(), err);
+                }
+            }
+            return new request_response("", req_id, false, nullptr, err);
+        }
+
+        case RequestType::swap_color: {
+            return new request_response("", req_id, false, nullptr, err);
+        }
+
+        case RequestType::select_game_mode: {
+            return new request_response("", req_id, false, nullptr, err);
+        }
 
         // ##################### UNKNOWN REQUEST ##################### //
         default:
