@@ -13,8 +13,8 @@
 
 #include "../common/network/requests/join_game_request.h"
 #include "../common/network/requests/place_stone_request.h"
-//#include "../common/network/requests/draw_card_request.h"
-//#include "../common/network/requests/play_card_request.h"
+#include "../common/network/requests/swap_color_request.h"
+#include "../common/network/requests/select_game_mode_request.h"
 
 
 request_response* request_handler::handle_request(const client_request* const req) {
@@ -85,9 +85,9 @@ request_response* request_handler::handle_request(const client_request* const re
 
         case RequestType::place_stone: {
             if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
-                unsigned int x = ((place_stone_request *) req)->get_stone_x();
-                unsigned int y = ((place_stone_request *) req)->get_stone_y();
-                int colour = ((place_stone_request *) req)->get_stone_colour();
+                unsigned int x = (dynamic_cast<const place_stone_request *>(req))->get_stone_x();
+                unsigned int y = (dynamic_cast<const place_stone_request *>(req))->get_stone_y();
+                int colour = (dynamic_cast<const place_stone_request *>(req))->get_stone_colour();
                 if (game_instance_ptr->place_stone(player, x, y, colour, err)) {
                     return new request_response(game_instance_ptr->get_id(), req_id, true,
                                                 game_instance_ptr->get_game_state()->to_json(), err);
@@ -108,6 +108,10 @@ request_response* request_handler::handle_request(const client_request* const re
         default:
             return new request_response("", req_id, false, nullptr, "Unknown RequestType " + type);
     }
+}
+
+stone request_handler::get_stone(const place_stone_request * req) {
+    return stone(req->get_stone_x(), req->get_stone_y(), req->get_stone_colour());
 }
 
 #endif //GOMOKU_REQUEST_HANDLER_CPP

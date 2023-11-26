@@ -42,9 +42,9 @@ void playing_board::reset(){
  *   - the stones coordinates are valid (smaller than the size of the board)
  *   - the spot is not occupied (== field_type::empty)
  */
-bool playing_board::place_stone(const unsigned int x, const unsigned int y, const int colour, std::string &err) {
-    if (x < _playing_board_size && y < _playing_board_size && colour != field_type::empty){
-        if (this->_playing_board.at(y).at(x) == field_type::empty) {
+bool playing_board::place_stone(const unsigned int x, const unsigned int y, int colour, std::string &err) {
+    if (x < _playing_board_size && y < _playing_board_size && colour != 0){
+        if (this->_playing_board.at(y).at(x) == 0) {
             this->_playing_board.at(y).at(x) = colour;
             return true;
         } else {

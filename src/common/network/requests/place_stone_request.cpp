@@ -23,7 +23,7 @@ place_stone_request::place_stone_request(client_request::base_class_properties p
 place_stone_request* place_stone_request::from_json(const rapidjson::Value& json) {
     base_class_properties props = client_request::extract_base_class_properties(json);
     if (json.HasMember("x") && json.HasMember("y") && json.HasMember("colour")) {
-        return new place_stone_request(props, (unsigned int) *json["x"].GetString(), (unsigned int) *json["y"].GetString(), playing_board::_string_to_field_type.at(json["colour"].GetString()));
+        return new place_stone_request(props, std::stoul(json["x"].GetString()), std::stoul(json["y"].GetString()), playing_board::_string_to_field_type.at(json["colour"].GetString()));
     } else {
         throw GomokuException("Could not find 'x', 'y' or 'colour' in place_stone_request");
     }
