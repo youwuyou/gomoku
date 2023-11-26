@@ -1,8 +1,7 @@
 project(Gomoku-unit-tests)
 
 set(TEST_SOURCE_FILES
-        card.cpp
-        hand.cpp)
+        playing_board.cpp)
 
 add_executable(Gomoku-tests ${TEST_SOURCE_FILES})
 

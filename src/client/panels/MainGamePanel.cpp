@@ -59,18 +59,18 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
     }
 
     // show stones on the playing board
-    std::vector<std::vector<stone*>> playing_board = gameState->get_playing_board();
+    std::vector<std::vector<int>> playing_board = gameState->get_playing_board();
     unsigned int board_spot_num = playing_board.size();
 
     for(unsigned int i=0; i<board_spot_num; i++){
         for(unsigned int j=0; j<board_spot_num; j++){
             // if a stone is placed at that spot, render it
-            if(playing_board.at(i).at(j) != nullptr){
-                stone current_stone = *playing_board.at(i).at(j);
+            if(playing_board.at(i).at(j) != field_type::empty){
+                int current_stone = playing_board.at(i).at(j);
                 std::string current_stone_image;
-                if(current_stone.get_colour() == "white"){
+                if(current_stone == field_type::white_stone){
                     current_stone_image = "assets/stone_white.png";
-                } else if (current_stone.get_colour() == "black") {
+                } else if (current_stone == field_type::black_stone) {
                     current_stone_image = "assets/stone_black.png";
                 } else {
                     throw GomokuException("Invalid stone colour for current_stone in rendering.");
@@ -83,13 +83,23 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                 if(gameState->get_current_player() == me) {
                     std::string current_player_colour = gameState->get_current_player()->get_colour();
                     std::string transparent_stone_image = "assets/stone_transparent.png";
-                    wxPoint current_stone_position = tableCenter - boardSize/2 + wxPoint(16/scale_factor, 16/scale_factor) + i*wxPoint(0, 63) + j*wxPoint(63,0);
+                    wxPoint current_stone_position = tableCenter - boardSize/2 + wxPoint(16/scale_factor, 16/scale_factor) + i*wxPoint(0, 63/scale_factor) + j*wxPoint(63/scale_factor,0);
                     ImagePanel* new_stone_button = new ImagePanel(this, transparent_stone_image, wxBITMAP_TYPE_ANY, current_stone_position, MainGamePanel::stoneSize);
-                    stone new_stone = stone(serializable_value<std::string>(current_player_colour), serializable_value<int>(j), serializable_value<int>(i));
                     new_stone_button->SetCursor(wxCursor(wxCURSOR_HAND));
                     //new_stone_button->SetToolTip("Place stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
-                    new_stone_button->Bind(wxEVT_LEFT_UP, [&new_stone](wxMouseEvent& event){
-                        GameController::placeStone(&new_stone);
+                    std::string err;
+
+                    field_type new_stone_colour;
+                    if(current_player_colour == "black"){
+                        new_stone_colour = field_type::black_stone;
+                    } else if (current_player_colour == "black"){
+                        new_stone_colour = field_type::white_stone;
+                    } else {
+                        throw GomokuException("Invalid current player colour in new stone button rendering.");
+                    }
+
+                    new_stone_button->Bind(wxEVT_LEFT_UP, [&j, &i, &new_stone_colour, &err](wxMouseEvent& event){
+                        GameController::placeStone(j, i, new_stone_colour, err);
                     });
                 }
             }

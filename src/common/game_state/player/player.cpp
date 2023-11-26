@@ -12,13 +12,16 @@ player::player(std::string name, std::string colour) : unique_serializable() {
     this->_score = new serializable_value<int>(0);
 }
 
+// deserialisation constructor
 player::player(std::string id, serializable_value<std::string>* name,
                serializable_value<int>* score, serializable_value<std::string>* colour) :
         unique_serializable(id),
         _player_name(name),
         _score(score),
         _colour(colour)
-{ }
+{
+    std::cout << "passed player deserialisation\n";
+}
 
 player::~player() {
     if (_player_name != nullptr) {
@@ -91,6 +94,7 @@ void player::reset_score(std::string& err){
 }
 
 void player::swap_colour(std::string& err){
+    std::cout << "\n\n reached player swap_colour \n\n";
     if(this->_colour->get_value() == "black"){
         this->_colour->set_value("white");
     }else if(this->_colour->get_value() == "white"){

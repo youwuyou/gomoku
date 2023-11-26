@@ -41,12 +41,17 @@ bool game_instance::is_finished() {
 
 
 bool game_instance::start_game(player* player, std::string &err) {
+    std::cout << "entering game instance start game \n";
     modification_lock.lock();
     if (_game_state->start_game(err)) {
         // send state update to all other players
+        std::cout << "point1 \n";
         full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
+        std::cout << "point2 \n";
         server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
+        std::cout << "point3 \n";
         modification_lock.unlock();
+        std::cout << "point4 \n";
         return true;
     }
     modification_lock.unlock();
