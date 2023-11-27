@@ -124,12 +124,13 @@ std::vector<player*>& game_state::get_players() {
 
 // state modification functions without diff
 void game_state::setup_round(std::string &err) {
+    this->_is_finished->set_value(false);
     this->_playing_board->setup_round(err);
     this->_players.at(0)->swap_colour(err);
 }
 
 void game_state::wrap_up_round(std::string& err) {
-    // TODO: Implementation Code
+    this->_is_finished->set_value(true);
 }
 
 bool game_state::update_current_player(std::string& err) {
@@ -211,9 +212,42 @@ bool game_state::place_stone(unsigned int x, unsigned int y, int colour, std::st
     return false;
 }
 
-bool check_win_condition() {
-    // TODO: Implementation Code
-    return false;
+bool game_state::check_win_condition(unsigned int x, unsigned int y, int colour) {
+    /*
+     * order of directions in vector
+     *   0  1  2
+     *   3     4
+     *   5  6  7
+     */
+    std::vector<unsigned int> stones_in_directions;
+    for(int i = -1; i<2; ++i){
+        for(int j = -1; j<2; ++j) {
+            if (i == 0 && j == 0) {
+                continue;
+            } else {
+                stones_in_directions.push_back(count_stones_one_direction(x, y, i, j, colour));
+            }
+        }
+    }
+    if( stones_in_directions.at(0)+stones_in_directions.at(7)+1 >= 5 ||
+        stones_in_directions.at(1)+stones_in_directions.at(6)+1 >= 5 ||
+        stones_in_directions.at(2)+stones_in_directions.at(5)+1 >= 5 ||
+        stones_in_directions.at(3)+stones_in_directions.at(4)+1 >= 5) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// recursive function to find the number of same-colour stones in a direction from a given location
+unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour){
+    int next_stone_colour = _playing_board->get_playing_board().at(y+direction_y).at(x+direction_x);
+    //return one if we have reached the end of the line
+    if(next_stone_colour != colour){
+        return 0;
+    } else {
+        return 1 + game_state::count_stones_one_direction(x+direction_x, y+direction_y ,direction_x, direction_y, colour);
+    }
 }
 
 #endif

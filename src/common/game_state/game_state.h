@@ -75,7 +75,8 @@ public:
 
     //// in-round functionalities
     bool place_stone(unsigned int x, unsigned int y, int colour, std::string& err);
-    bool check_win_condition();
+    bool check_win_condition(unsigned int x, unsigned int y, int colour);
+    unsigned int count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour);
 
     //// end of round functions
     bool update_current_player(std::string& err);

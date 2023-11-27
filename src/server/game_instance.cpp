@@ -91,6 +91,9 @@ bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, 
     modification_lock.lock();
     if (_game_state->place_stone(x, y, colour, err)){
         if(_game_state->update_current_player(err)){
+            if(_game_state->check_win_condition(x, y, colour)){
+                _game_state->wrap_up_round(err);
+            }
             full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
             server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
             modification_lock.unlock();
