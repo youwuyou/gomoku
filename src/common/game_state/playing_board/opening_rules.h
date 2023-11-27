@@ -12,7 +12,7 @@
 #include "../../serialization/unique_serializable.h"
 #include "../../serialization/serializable_value.h"
 
-enum RulesetType {
+enum ruleset_type {
     freestyle,
     swap2,
     swap_after_first_move,
@@ -22,14 +22,9 @@ enum RulesetType {
 class opening_rules : public unique_serializable {
 private:
 
-    // for deserialization of ruleset
-    static const std::unordered_map<std::string, RulesetType> _string_to_ruleset_type;
-    // for serialization of ruleset
-    static const std::unordered_map<RulesetType, std::string> _ruleset_type_to_string;
-
     // serializable_value<std::string>* _ruleset;
 
-    RulesetType _ruleset;
+    ruleset_type _ruleset;
     serializable_value<std::string>* _description;
 
 #ifdef GOMOKU_SERVER
@@ -38,31 +33,36 @@ private:
 
     // Deserialization constructor
     opening_rules(std::string id,
-                  RulesetType ruleset,
+                  ruleset_type ruleset,
                   serializable_value<std::string>* description);
 
     // Checks if a string pertains to a valid ruleset, and generate description
-    static std::string generate_description_from_ruleset(RulesetType ruleset);
+    static std::string generate_description_from_ruleset(ruleset_type ruleset);
 
 
 public:
     // constructors
-    explicit opening_rules(RulesetType ruleset);   // for client
+    explicit opening_rules(ruleset_type ruleset);   // for client
     ~opening_rules();
 
 #ifdef GOMOKU_SERVER
-    opening_rules(std::string id, RulesetType ruleset);  // for server
+    opening_rules(std::string id, ruleset_type ruleset);  // for server
     std::string get_game_id();
     void set_game_id(std::string game_id);
 #endif
 
     // accessors
-    RulesetType get_ruleset() const noexcept;
+    ruleset_type get_ruleset() const noexcept;
     std::string get_description() const noexcept;
+
+    // for deserialization of ruleset
+    static const std::unordered_map<std::string, ruleset_type> _string_to_ruleset_type;
+    // for serialization of ruleset
+    static const std::unordered_map<ruleset_type, std::string> _ruleset_type_to_string;
 
 #ifdef GOMOKU_SERVER
     // state update functions
-    void set_opening_rule(RulesetType ruleset);
+    void set_opening_rule(std::string ruleset_string);
 #endif
 
     // serialization

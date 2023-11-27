@@ -101,6 +101,13 @@ request_response* request_handler::handle_request(const client_request* const re
         }
 
         case RequestType::select_game_mode: {
+            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
+                std::string ruleset_string = (dynamic_cast<const select_game_mode_request *>(req))->get_ruleset_string();
+                if (game_instance_ptr->set_game_mode(player, ruleset_string, err)) {
+                    return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                game_instance_ptr->get_game_state()->to_json(), err);
+                }
+            }
             return new request_response("", req_id, false, nullptr, err);
         }
 
@@ -110,8 +117,8 @@ request_response* request_handler::handle_request(const client_request* const re
     }
 }
 
-stone request_handler::get_stone(const place_stone_request * req) {
+/*stone request_handler::get_stone(const place_stone_request * req) {
     return stone(req->get_stone_x(), req->get_stone_y(), req->get_stone_colour());
-}
+}*/
 
 #endif //GOMOKU_REQUEST_HANDLER_CPP

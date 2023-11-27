@@ -3,6 +3,20 @@
 #include "../GameController.h"
 #include "../../common/exceptions/GomokuException.h"
 
+// for game mode choice
+const std::unordered_map<std::string, std::string> MainGamePanel::_pretty_string_to_ruleset_string = {
+        {"Freestyle", "freestyle"},
+        {"Swap2", "swap2"},
+        {"Swap after first move","swap_after_first_move"},
+};
+
+// for game mode choice
+const std::unordered_map<std::string, std::string> MainGamePanel::_ruleset_string_to_pretty_string = {
+        {"freestyle", "Freestyle"},
+        {"swap2", "Swap2"},
+        {"swap_after_first_move", "Swap after first move"},
+};
+
 
 MainGamePanel::MainGamePanel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 680)) {
 }
@@ -47,62 +61,70 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
 
 void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
-    // show the empty board as soon as the game is started
+    // only show the board, stones and buttons if the game has started
     if(gameState->is_started()) {
         // Show board image
         std::string boardImage = "assets/playing_board.png";
 
-        wxPoint playingBoardPosition = MainGamePanel::tableCenter - MainGamePanel::boardSize/2;
+        wxPoint playingBoardPosition = MainGamePanel::table_center - MainGamePanel::board_size / 2;
 
-        ImagePanel* playingBoard = new ImagePanel(this, boardImage, wxBITMAP_TYPE_ANY, playingBoardPosition, MainGamePanel::boardSize);
-    }
+        ImagePanel *playingBoard = new ImagePanel(this, boardImage, wxBITMAP_TYPE_ANY, playingBoardPosition,
+                                                  MainGamePanel::board_size);
 
-    // show stones on the playing board
-    std::vector<std::vector<int>> playing_board = gameState->get_playing_board();
-    unsigned int board_spot_num = playing_board.size();
+        // show stones on the playing board
+        std::vector<std::vector<int>> playing_board = gameState->get_playing_board();
+        unsigned int board_spot_num = playing_board.size();
 
-    for(unsigned int i=0; i<board_spot_num; i++){
-        for(unsigned int j=0; j<board_spot_num; j++){
-            // if a stone is placed at that spot, render it
-            if(playing_board.at(i).at(j) != field_type::empty){
-                int current_stone = playing_board.at(i).at(j);
-                std::string current_stone_image;
-                if(current_stone == field_type::white_stone){
-                    current_stone_image = "assets/stone_white.png";
-                } else if (current_stone == field_type::black_stone) {
-                    current_stone_image = "assets/stone_black.png";
-                } else {
-                    throw GomokuException("Invalid stone colour for current_stone in rendering.");
-                }
-                wxPoint current_stone_position = tableCenter - boardSize/2 + wxPoint(16/scale_factor, 16/scale_factor) + i*wxPoint(0, 63) + j*wxPoint(63,0);
-                ImagePanel* current_stone_panel = new ImagePanel(this, current_stone_image, wxBITMAP_TYPE_ANY, current_stone_position, MainGamePanel::stoneSize);
-                //current_stone_panel->SetToolTip(current_stone.get_colour() + " stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
-            } else {
-                // if no stone is present, show a transparent button on each spot, if it is currently our turn
-                if(gameState->get_current_player() == me) {
-                    std::string current_player_colour = gameState->get_current_player()->get_colour();
-                    std::string transparent_stone_image = "assets/stone_transparent.png";
-                    wxPoint current_stone_position = tableCenter - boardSize/2 + wxPoint(16/scale_factor, 16/scale_factor) + i*wxPoint(0, 63/scale_factor) + j*wxPoint(63/scale_factor,0);
-                    ImagePanel* new_stone_button = new ImagePanel(this, transparent_stone_image, wxBITMAP_TYPE_ANY, current_stone_position, MainGamePanel::stoneSize);
-                    new_stone_button->SetCursor(wxCursor(wxCURSOR_HAND));
-                    //new_stone_button->SetToolTip("Place stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
-                    std::string err;
-
-                    int new_stone_colour = field_type::empty;
-
-                    if(current_player_colour == "black"){
-                        new_stone_colour = field_type::black_stone;
-                    } else if (current_player_colour == "white"){
-                        new_stone_colour = field_type::white_stone;
+        for (unsigned int i = 0; i < board_spot_num; i++) {
+            for (unsigned int j = 0; j < board_spot_num; j++) {
+                // if a stone is placed at that spot, render it
+                if (playing_board.at(i).at(j) != field_type::empty) {
+                    int current_stone = playing_board.at(i).at(j);
+                    std::string current_stone_image;
+                    if (current_stone == field_type::white_stone) {
+                        current_stone_image = "assets/stone_white.png";
+                    } else if (current_stone == field_type::black_stone) {
+                        current_stone_image = "assets/stone_black.png";
                     } else {
-                        throw GomokuException("Invalid current player colour in new stone button rendering.");
+                        throw GomokuException("Invalid stone colour for current_stone in rendering.");
                     }
-                    unsigned int x = j;
-                    unsigned int y = i;
+                    wxPoint current_stone_position = table_center - board_size / 2 + grid_corner_offset +
+                                                     i * wxPoint(0, grid_spacing / scale_factor) +
+                                                     j * wxPoint(grid_spacing / scale_factor, 0) - stone_size / 2;
+                    ImagePanel *current_stone_panel = new ImagePanel(this, current_stone_image, wxBITMAP_TYPE_ANY,
+                                                                     current_stone_position, MainGamePanel::stone_size);
+                    //current_stone_panel->SetToolTip(current_stone.get_colour() + " stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
+                } else {
+                    // if no stone is present, show a transparent button on each spot, if it is currently our turn
+                    if (gameState->get_current_player() == me) {
+                        std::string current_player_colour = gameState->get_current_player()->get_colour();
+                        std::string transparent_stone_image = "assets/stone_transparent.png";
+                        wxPoint current_stone_position = table_center - board_size / 2 + grid_corner_offset +
+                                                         i * wxPoint(0, grid_spacing / scale_factor) +
+                                                         j * wxPoint(grid_spacing / scale_factor, 0) - stone_size / 2;
+                        ImagePanel *new_stone_button = new ImagePanel(this, transparent_stone_image, wxBITMAP_TYPE_ANY,
+                                                                      current_stone_position,
+                                                                      MainGamePanel::stone_size);
+                        new_stone_button->SetCursor(wxCursor(wxCURSOR_HAND));
+                        //new_stone_button->SetToolTip("Place stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
+                        std::string err;
 
-                    new_stone_button->Bind(wxEVT_LEFT_UP, [x, y, new_stone_colour, &err](wxMouseEvent& event){
-                        GameController::placeStone(x, y, new_stone_colour, err);
-                    });
+                        int new_stone_colour = field_type::empty;
+
+                        if (current_player_colour == "black") {
+                            new_stone_colour = field_type::black_stone;
+                        } else if (current_player_colour == "white") {
+                            new_stone_colour = field_type::white_stone;
+                        } else {
+                            throw GomokuException("Invalid current player colour in new stone button rendering.");
+                        }
+                        unsigned int x = j;
+                        unsigned int y = i;
+
+                        new_stone_button->Bind(wxEVT_LEFT_UP, [x, y, new_stone_colour, &err](wxMouseEvent &event) {
+                            GameController::placeStone(x, y, new_stone_colour, err);
+                        });
+                    }
                 }
             }
         }
@@ -118,7 +140,7 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
             turnIndicatorText = "It's your turn!";
         }
 
-        wxPoint turnIndicatorPosition = MainGamePanel::tableCenter - MainGamePanel::boardSize/2 + MainGamePanel::turnIndicatorOffset;
+        wxPoint turnIndicatorPosition = MainGamePanel::table_center - MainGamePanel::board_size/2 + MainGamePanel::turnIndicatorOffset;
 
         this->buildStaticText(
                 turnIndicatorText,
@@ -131,7 +153,7 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
         std::string current_player_colour = gameState->get_current_player()->get_colour();
         std::string currentPlayerStoneImage = "assets/stone_" + current_player_colour + ".png";
         wxPoint turnIndicatorStonePosition = turnIndicatorPosition + MainGamePanel::turnIndicatorStoneOffset;
-        ImagePanel* turnIndicatorStone = new ImagePanel(this, currentPlayerStoneImage, wxBITMAP_TYPE_ANY, turnIndicatorStonePosition, MainGamePanel::stoneSize);
+        ImagePanel* turnIndicatorStone = new ImagePanel(this, currentPlayerStoneImage, wxBITMAP_TYPE_ANY, turnIndicatorStonePosition, MainGamePanel::stone_size);
         turnIndicatorStone->SetToolTip("Colour to play: " + current_player_colour);
     }
 }
@@ -144,6 +166,56 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     this->SetSizer(outerLayout);
     wxBoxSizer* innerLayout = new wxBoxSizer(wxVERTICAL);
     outerLayout->Add(innerLayout, 1, wxALIGN_BOTTOM);
+
+    // show dropdown for game mode selection for first player if the game has not yet started and the opening ruleset is "uninitialized"
+    if(!gameState->is_started() && gameState->get_current_player() == me && gameState->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized){
+
+        wxStaticText* game_rule_dropdown_text = buildStaticText(
+                "Please choose a game style:",
+                wxDefaultPosition,
+                wxSize(200, 18),
+                wxALIGN_CENTER,
+                true
+        );
+        innerLayout->Add(game_rule_dropdown_text, 0, wxALIGN_CENTER);
+
+        wxArrayString game_rule_choices;
+        game_rule_choices.Add("Freestyle");
+        game_rule_choices.Add("Swap after first move");
+        game_rule_choices.Add("Swap2");
+
+        wxComboBox* game_rule_dropdown = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, game_rule_choices, wxCB_DROPDOWN | wxCB_READONLY);
+        innerLayout->Add(game_rule_dropdown, 0, wxALIGN_CENTER, 10);
+        game_rule_dropdown->SetSelection(0);
+
+        // add a button for confirming the ruleset choice
+        std::string err;
+        wxButton* choose_rules_button = new wxButton(this, wxID_ANY, "Confirm choice", wxDefaultPosition, wxSize(150, 40));
+        choose_rules_button->Bind(wxEVT_BUTTON, [game_rule_dropdown, &err](wxCommandEvent& event) {
+            GameController::set_game_rules(_pretty_string_to_ruleset_string.at(std::string(game_rule_dropdown->GetValue())), err);
+        });
+        innerLayout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
+
+        // create a buffer before the start game button
+        innerLayout->AddSpacer(100);
+    }
+
+    // show chosen ruleset type if game has not yet started but ruleset has been chosen
+    if(!gameState->is_started() && gameState->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized){
+        std::string chosen_game_mode_string = std::string("Chosen game style: ");
+        std::string ruleset_string = _ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(gameState->get_opening_rules()->get_ruleset()));
+        chosen_game_mode_string.append(ruleset_string);
+        wxStaticText* game_rule_chosen_text = buildStaticText(
+                chosen_game_mode_string,
+                wxDefaultPosition,
+                wxSize(400, 18),
+                wxALIGN_CENTER,
+                true
+        );
+        innerLayout->Add(game_rule_chosen_text, 0, wxALIGN_CENTER);
+        // create a buffer before the start game button
+        innerLayout->AddSpacer(100);
+    }
 
     // Show the label with our player name
     wxStaticText* playerName = buildStaticText(
@@ -193,10 +265,10 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 GameController::fold();
             });
             innerLayout->Add(foldButton, 0, wxALIGN_CENTER | wxBOTTOM, 8);
-
+        */
 
         // if it's not our turn, display "waiting..."
-        } else {*/
+        if(gameState->get_current_player() != me){
             wxStaticText *playerStatus = buildStaticText(
                     "waiting...",
                     wxDefaultPosition,
@@ -204,7 +276,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                     wxALIGN_CENTER
             );
             innerLayout->Add(playerStatus, 0, wxALIGN_CENTER | wxBOTTOM, 8);
-        //}
+        }
 
     }
 }

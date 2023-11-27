@@ -11,7 +11,7 @@
 game_state::game_state() : unique_serializable() {
     this->_players = std::vector<player*>();
     this->_playing_board = new playing_board();
-    this->_opening_ruleset = new opening_rules("uninitialized");
+    this->_opening_ruleset = new opening_rules(ruleset_type::uninitialized);
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
     this->_turn_number = new serializable_value<int>(0);
@@ -37,7 +37,7 @@ game_state::game_state(std::string id, playing_board* _playing_board, opening_ru
 
 game_state::game_state(std::string id) : unique_serializable(id) {
     this->_playing_board = new playing_board();
-    this->_opening_ruleset = new opening_rules("uninitialized");
+    this->_opening_ruleset = new opening_rules(ruleset_type::uninitialized);
     this->_players = std::vector<player*>();
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
@@ -92,6 +92,10 @@ int game_state::get_turn_number() const {
 
 std::vector<std::vector<int>> game_state::get_playing_board() const{
     return _playing_board->get_playing_board();
+}
+
+opening_rules* game_state::get_opening_rules() const {
+    return _opening_ruleset;
 }
 
 int game_state::get_player_index(player *player) const {
@@ -191,9 +195,9 @@ bool game_state::add_player(player* player_ptr, std::string& err) {
     return true;
 }
 
-bool set_game_mode(std::string rule_name) {
-    // TODO: Implementation Code
-    return false;
+bool game_state::set_game_mode(std::string rule_name, std::string& err) {
+    this->_opening_ruleset->set_opening_rule(rule_name);
+    return true;
 }
 
 bool game_state::place_stone(unsigned int x, unsigned int y, int colour, std::string& err) {

@@ -15,6 +15,9 @@ public:
 
 private:
 
+    static const std::unordered_map<std::string, std::string> _pretty_string_to_ruleset_string;
+    static const std::unordered_map<std::string, std::string> _ruleset_string_to_pretty_string;
+
     void buildPlayingBoard(game_state* gameState, player* me);
     void buildTurnIndicator(game_state* gameState, player* me);
     void buildThisPlayer(game_state* gameState, player* me);
@@ -30,11 +33,13 @@ private:
 
     // define key constant layout values
     wxSize const panelSize = wxSize(960, 680); // also set in the constructor implementation
-    wxPoint const tableCenter = wxPoint(480, 300);
+    wxPoint const table_center = wxPoint(480, 300);
 
     int const scale_factor  = 1000/400;
-    wxSize const stoneSize = wxSize(50/scale_factor, 50/scale_factor);
-    wxSize const boardSize = wxSize(1000/scale_factor, 1000/scale_factor);
+    wxSize const stone_size = wxSize(50/scale_factor, 50/scale_factor);
+    wxSize const board_size = wxSize(1000/scale_factor, 1000/scale_factor);
+    const int grid_spacing = 70;
+    wxSize const grid_corner_offset = wxSize(12/scale_factor,  12/scale_factor);
 
 
     wxPoint const turnIndicatorOffset = wxPoint(1000/(scale_factor*2)-100, -30);

@@ -42,12 +42,18 @@ bool game_instance::is_finished() {
 
 bool game_instance::start_game(player* player, std::string &err) {
     modification_lock.lock();
-    if (_game_state->start_game(err)) {
-        // send state update to all other players
-        full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
-        server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
+    if(_game_state->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
+        if (_game_state->start_game(err)) {
+            // send state update to all other players
+            full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
+            server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
+            modification_lock.unlock();
+            return true;
+        }
+    } else {
+        err = "Player " + _game_state->get_current_player()->get_player_name() + " needs to choose a ruleset before the game can start.";
         modification_lock.unlock();
-        return true;
+        return false;
     }
     modification_lock.unlock();
     return false;
@@ -88,6 +94,17 @@ bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, 
         return true;
     }
     err = "GameInstance: Unable to place stone.";
+    modification_lock.unlock();
+    return false;
+}
+
+bool game_instance::set_game_mode(player* player, std::string ruleset_string, std::string& err){
+    modification_lock.lock();
+    if (_game_state->set_game_mode(ruleset_string, err)){
+        modification_lock.unlock();
+        return true;
+    }
+    err = "GameInstance: Unable to set game rules.";
     modification_lock.unlock();
     return false;
 }

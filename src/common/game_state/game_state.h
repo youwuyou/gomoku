@@ -58,6 +58,7 @@ public:
     std::vector<player*>& get_players();
     int get_turn_number() const;
     std::vector<std::vector<int>> get_playing_board() const;
+    opening_rules* get_opening_rules() const;
 
     player* get_current_player() const;
 
@@ -67,7 +68,7 @@ public:
     bool remove_player(player* player, std::string& err);
     bool add_player(player* player, std::string& err);
     bool start_game(std::string& err);
-    bool set_game_mode(std::string rule_name);
+    bool set_game_mode(std::string rule_name, std::string& err);
 
     //// start of round functions
     void setup_round(std::string& err);

@@ -25,7 +25,6 @@ class playing_board_test : public ::testing::Test {
 protected:
     /* Any object and subroutine declared here can be accessed in the tests */
 
-    // cards[i][j] holds a pointer to the j-th copy of a card of value i
     playing_board board;
     std::string err;
 };

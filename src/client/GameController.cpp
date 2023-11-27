@@ -128,6 +128,11 @@ void GameController::placeStone(unsigned int x, unsigned int y, int colour, std:
     }
 }
 
+void GameController::set_game_rules(std::string ruleset_string,  std::string &err){
+    select_game_mode_request request = select_game_mode_request(GameController::_me->get_id(), GameController::_currentGameState->get_id(), ruleset_string);
+    ClientNetworkManager::sendRequest(request);
+}
+
 
 wxEvtHandler* GameController::getMainThreadEventHandler() {
     return GameController::_gameWindow->GetEventHandler();
