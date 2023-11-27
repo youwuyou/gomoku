@@ -22,17 +22,17 @@ class playing_board : public unique_serializable {
 
 private:
     static const int _playing_board_size = 15;
-    std::vector<std::vector<int>> _playing_board;
+    std::vector<std::vector<field_type>> _playing_board;
 
     playing_board(std::string id);
-    playing_board(std::string id, std::vector<std::vector<int>> playing_board);
+    playing_board(std::string id, std::vector<std::vector<field_type>> playing_board);
     void reset();
 
 public:
     playing_board();
     ~playing_board();
 
-    bool place_stone(unsigned int x, unsigned int y, int colour, std::string &err);
+    bool place_stone(unsigned int x, unsigned int y, field_type colour, std::string &err);
 
 // serializable interface
     static playing_board* from_json(const rapidjson::Value& json);
@@ -44,14 +44,14 @@ public:
     static const std::unordered_map<field_type, std::string> _field_type_to_string;
 
 // accessors
-    std::vector<std::vector<int>> get_playing_board() const;
+    std::vector<std::vector<field_type>> get_playing_board() const;
 
 #ifdef GOMOKU_SERVER
 // state update functions
     void setup_round(std::string& err);
 #endif
 
-    std::vector<std::vector<int>>::iterator get_playing_board_iterator();
+    std::vector<std::vector<field_type>>::iterator get_playing_board_iterator();
 };
 
 

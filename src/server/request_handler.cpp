@@ -87,7 +87,7 @@ request_response* request_handler::handle_request(const client_request* const re
             if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
                 unsigned int x = (dynamic_cast<const place_stone_request *>(req))->get_stone_x();
                 unsigned int y = (dynamic_cast<const place_stone_request *>(req))->get_stone_y();
-                int colour = (dynamic_cast<const place_stone_request *>(req))->get_stone_colour();
+                field_type colour = (dynamic_cast<const place_stone_request *>(req))->get_stone_colour();
                 if (game_instance_ptr->place_stone(player, x, y, colour, err)) {
                     return new request_response(game_instance_ptr->get_id(), req_id, true,
                                                 game_instance_ptr->get_game_state()->to_json(), err);

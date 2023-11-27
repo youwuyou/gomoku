@@ -87,7 +87,7 @@ bool game_instance::try_add_player(player *new_player, std::string &err) {
     return false;
 }
 
-bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, int colour, std::string &err) {
+bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, field_type colour, std::string &err) {
     modification_lock.lock();
     if (_game_state->place_stone(x, y, colour, err)){
         if(_game_state->update_current_player(err)){

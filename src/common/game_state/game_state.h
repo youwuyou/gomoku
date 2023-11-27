@@ -57,7 +57,7 @@ public:
     bool is_allowed_to_play_now(player* player) const;
     std::vector<player*>& get_players();
     int get_turn_number() const;
-    std::vector<std::vector<int>> get_playing_board() const;
+    std::vector<std::vector<field_type>> get_playing_board() const;
     opening_rules* get_opening_rules() const;
 
     player* get_current_player() const;
@@ -74,7 +74,7 @@ public:
     void setup_round(std::string& err);
 
     //// in-round functionalities
-    bool place_stone(unsigned int x, unsigned int y, int colour, std::string& err);
+    bool place_stone(unsigned int x, unsigned int y, field_type colour, std::string& err);
     bool check_win_condition(unsigned int x, unsigned int y, int colour);
     unsigned int count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour);
 

@@ -8,19 +8,19 @@
 #include "../../serialization/vector_utils.h"
 
 playing_board::playing_board() : unique_serializable() {
-    std::vector<int> row(_playing_board_size, field_type::empty);
-    std::vector<std::vector<int>> playing_board (_playing_board_size, row);
+    std::vector<field_type> row(_playing_board_size, field_type::empty);
+    std::vector<std::vector<field_type>> playing_board (_playing_board_size, row);
     this->_playing_board = playing_board;
 }
 
 playing_board::playing_board(std::string id) : unique_serializable(id) {
-    std::vector<int> row(_playing_board_size, field_type::empty);
-    std::vector<std::vector<int>> playing_board (_playing_board_size, row);
+    std::vector<field_type> row(_playing_board_size, field_type::empty);
+    std::vector<std::vector<field_type>> playing_board (_playing_board_size, row);
     this->_playing_board = playing_board;
 }
 
 // deserialization constructor
-playing_board::playing_board(std::string id, std::vector<std::vector<int>> playing_board) : unique_serializable(id) {
+playing_board::playing_board(std::string id, std::vector<std::vector<field_type>> playing_board) : unique_serializable(id) {
     this->_playing_board = playing_board;
 }
 
@@ -42,9 +42,9 @@ void playing_board::reset(){
  *   - the stones coordinates are valid (smaller than the size of the board)
  *   - the spot is not occupied (== field_type::empty)
  */
-bool playing_board::place_stone(const unsigned int x, const unsigned int y, int colour, std::string &err) {
-    if (x < _playing_board_size && y < _playing_board_size && colour != 0){
-        if (this->_playing_board.at(y).at(x) == 0) {
+bool playing_board::place_stone(const unsigned int x, const unsigned int y, field_type colour, std::string &err) {
+    if (x < _playing_board_size && y < _playing_board_size && colour != field_type::empty){
+        if (this->_playing_board.at(y).at(x) == field_type::empty) {
             this->_playing_board.at(y).at(x) = colour;
             return true;
         } else {
@@ -72,11 +72,11 @@ const std::unordered_map<field_type, std::string> playing_board::_field_type_to_
 };
 
 
-std::vector<std::vector<int>> playing_board::get_playing_board() const {
+std::vector<std::vector<field_type>> playing_board::get_playing_board() const {
     return _playing_board;
 }
 
-std::vector<std::vector<int>>::iterator playing_board::get_playing_board_iterator() {
+std::vector<std::vector<field_type>>::iterator playing_board::get_playing_board_iterator() {
     return _playing_board.begin();
 }
 
@@ -109,11 +109,12 @@ playing_board *playing_board::from_json(const rapidjson::Value &json) {
             int current_field = _string_to_field_type.at(serializable_value<std::string>::from_json(serialized_field.GetObject())->get_value());
             deserialized_flattened_playing_board.push_back(current_field);
         }
-        std::vector<int> row(_playing_board_size, field_type::empty);
-        std::vector<std::vector<int>> deserialized_playing_board (_playing_board_size, row);
+        std::vector<field_type> row(_playing_board_size, field_type::empty);
+        std::vector<std::vector<field_type>> deserialized_playing_board (_playing_board_size, row);
         for(int i=0; i<_playing_board_size; i++){
             for(int j=0; j<_playing_board_size; j++){
-                deserialized_playing_board.at(i).at(j) = deserialized_flattened_playing_board.at(i*_playing_board_size + j);
+                deserialized_playing_board.at(i).at(j) = static_cast<field_type>(deserialized_flattened_playing_board.at(
+                        i * _playing_board_size + j));
             }
         }
         return new playing_board(json["id"].GetString(), deserialized_playing_board);

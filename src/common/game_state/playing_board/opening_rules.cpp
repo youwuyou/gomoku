@@ -31,9 +31,8 @@ opening_rules::opening_rules(std::string id, ruleset_type ruleset,
 
 // Client Constructor
 opening_rules::opening_rules(ruleset_type ruleset) : unique_serializable(_ruleset_type_to_string.at(ruleset)) {
-    std::string generated_description = generate_description_from_ruleset(ruleset);
     this->_ruleset = ruleset;
-    this->_description = new serializable_value<std::string>(generated_description);
+    this->_description = new serializable_value<std::string>(generate_description_from_ruleset(ruleset));
 }
 
 // Ruleset and Description Helper Function
@@ -62,9 +61,8 @@ opening_rules::~opening_rules() {
 opening_rules::opening_rules(std::string id, ruleset_type ruleset) :
         unique_serializable(id)
 {
-    std::string generated_description = generate_description_from_ruleset(ruleset);
     this->_ruleset = ruleset;
-    this->_description = new serializable_value<std::string>(generated_description);
+    this->_description = new serializable_value<std::string>(generate_description_from_ruleset(ruleset));
 }
 
 std::string opening_rules::get_game_id() {
@@ -90,13 +88,8 @@ std::string opening_rules::get_description() const noexcept {
 // state update functions
 void opening_rules::set_opening_rule(std::string ruleset_string) {
     ruleset_type ruleset = _string_to_ruleset_type.at(ruleset_string);
-    std::string generated_description = generate_description_from_ruleset(ruleset);
-    if (generated_description.empty()) {
-        throw GomokuException("Failed to instantiate opening_rules object. Invalid ruleset name.");
-    } else {
-        this->_ruleset = ruleset;
-        this->_description = new serializable_value<std::string>(generated_description);
-    }
+    this->_ruleset = ruleset;
+    this->_description = new serializable_value<std::string>(generate_description_from_ruleset(ruleset));
 }
 #endif
 

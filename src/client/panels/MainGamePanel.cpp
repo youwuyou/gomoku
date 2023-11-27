@@ -72,7 +72,7 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                                                   MainGamePanel::board_size);
 
         // show stones on the playing board
-        std::vector<std::vector<int>> playing_board = gameState->get_playing_board();
+        std::vector<std::vector<field_type>> playing_board = gameState->get_playing_board();
         unsigned int board_spot_num = playing_board.size();
 
         for (unsigned int i = 0; i < board_spot_num; i++) {
@@ -109,7 +109,7 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                         //new_stone_button->SetToolTip("Place stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
                         std::string err;
 
-                        int new_stone_colour = field_type::empty;
+                        field_type new_stone_colour = field_type::empty;
 
                         if (current_player_colour == "black") {
                             new_stone_colour = field_type::black_stone;

@@ -90,7 +90,7 @@ int game_state::get_turn_number() const {
     return _turn_number->get_value();
 }
 
-std::vector<std::vector<int>> game_state::get_playing_board() const{
+std::vector<std::vector<field_type>> game_state::get_playing_board() const{
     return _playing_board->get_playing_board();
 }
 
@@ -204,7 +204,7 @@ bool game_state::set_game_mode(std::string rule_name, std::string& err) {
     return true;
 }
 
-bool game_state::place_stone(unsigned int x, unsigned int y, int colour, std::string& err) {
+bool game_state::place_stone(unsigned int x, unsigned int y, field_type colour, std::string& err) {
     if(this->_playing_board->place_stone(x, y, colour, err)){
         return true;
     }
