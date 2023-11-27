@@ -97,7 +97,7 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                 } else {
                     // if no stone is present, show a transparent button on each spot, if it is currently our turn
                     if (gameState->get_current_player() == me) {
-                        std::string current_player_colour = gameState->get_current_player()->get_colour();
+                        player_colour_type current_player_colour = gameState->get_current_player()->get_colour();
                         std::string transparent_stone_image = "assets/stone_transparent.png";
                         wxPoint current_stone_position = table_center - board_size / 2 + grid_corner_offset +
                                                          i * wxPoint(0, grid_spacing / scale_factor) +
@@ -111,9 +111,9 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
                         field_type new_stone_colour = field_type::empty;
 
-                        if (current_player_colour == "black") {
+                        if (current_player_colour == player_colour_type::black) {
                             new_stone_colour = field_type::black_stone;
-                        } else if (current_player_colour == "white") {
+                        } else if (current_player_colour == player_colour_type::white) {
                             new_stone_colour = field_type::white_stone;
                         } else {
                             throw GomokuException("Invalid current player colour in new stone button rendering.");
@@ -150,7 +150,7 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
                 true
         );
 
-        std::string current_player_colour = gameState->get_current_player()->get_colour();
+        std::string current_player_colour = player::_player_colour_type_to_string.at(gameState->get_current_player()->get_colour());
         std::string currentPlayerStoneImage = "assets/stone_" + current_player_colour + ".png";
         wxPoint turnIndicatorStonePosition = turnIndicatorPosition + MainGamePanel::turnIndicatorStoneOffset;
         ImagePanel* turnIndicatorStone = new ImagePanel(this, currentPlayerStoneImage, wxBITMAP_TYPE_ANY, turnIndicatorStonePosition, MainGamePanel::stone_size);
@@ -236,14 +236,14 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxSize(200, 18),
                 wxALIGN_CENTER
         );
-        innerLayout->Add(playerPoints, 0, wxALIGN_CENTER | wxBOTTOM, 8);
+        innerLayout->Add(playerPoints, 0, wxALIGN_CENTER, 8);
 
         // show button that allows our player to start the game
         wxButton* startGameButton = new wxButton(this, wxID_ANY, "Start Game!", wxDefaultPosition, wxSize(160, 64));
         startGameButton->Bind(wxEVT_BUTTON, [](wxCommandEvent& event) {
             GameController::startGame();
         });
-        innerLayout->Add(startGameButton, 0, wxALIGN_CENTER | wxBOTTOM, 8);
+        innerLayout->Add(startGameButton, 0, wxALIGN_CENTER, 8);
 
     } else {
 
@@ -254,7 +254,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxSize(200, 18),
                 wxALIGN_CENTER
         );
-        innerLayout->Add(playerPoints, 0, wxALIGN_CENTER | wxBOTTOM, 8);
+        innerLayout->Add(playerPoints, 0, wxALIGN_CENTER, 8);
 
         /* might be re-usable if we want to have a "give up" button
          *
@@ -275,7 +275,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                     wxSize(200, 32),
                     wxALIGN_CENTER
             );
-            innerLayout->Add(playerStatus, 0, wxALIGN_CENTER | wxBOTTOM, 8);
+            innerLayout->Add(playerStatus, 0, wxALIGN_CENTER, 8);
         }
 
     }

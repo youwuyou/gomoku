@@ -6,15 +6,15 @@
 
 #include "../../exceptions/GomokuException.h"
 
-player::player(std::string name, std::string colour) : unique_serializable() {
+player::player(std::string name, player_colour_type colour) : unique_serializable() {
     this->_player_name = new serializable_value<std::string>(name);
-    this->_colour = new serializable_value<std::string>(colour);
+    this->_colour = colour;
     this->_score = new serializable_value<int>(0);
 }
 
 // deserialisation constructor
 player::player(std::string id, serializable_value<std::string>* name,
-               serializable_value<int>* score, serializable_value<std::string>* colour) :
+               serializable_value<int>* score, player_colour_type colour) :
         unique_serializable(id),
         _player_name(name),
         _score(score),
@@ -25,20 +25,18 @@ player::~player() {
     if (_player_name != nullptr) {
         delete _player_name;
         delete _score;
-        delete _colour;
 
         _player_name = nullptr;
         _score = nullptr;
-        _colour = nullptr;
     }
 }
 
 #ifdef GOMOKU_SERVER
-player::player(std::string id, std::string name, std::string colour) :
+player::player(std::string id, std::string name, player_colour_type colour) :
         unique_serializable(id)
 {
     this->_player_name = new serializable_value<std::string>(name);
-    this->_colour = new serializable_value<std::string>(colour);
+    this->_colour = colour;
     this->_score = new serializable_value<int>(0);
 }
 
@@ -59,10 +57,21 @@ int player::get_score() const noexcept {
     return _score->get_value();
 }
 
-std::string player::get_colour() const noexcept {
-    return this->_colour->get_value();
+player_colour_type player::get_colour() const noexcept {
+    return this->_colour;
 }
 
+// for deserialisation
+const std::unordered_map<std::string, player_colour_type> player::_string_to_player_colour_type = {
+        {"black", player_colour_type::black},
+        {"white", player_colour_type::white},
+};
+
+//for serialisation
+const std::unordered_map<player_colour_type, std::string> player::_player_colour_type_to_string = {
+        {player_colour_type::black, "black"},
+        {player_colour_type::white, "white"},
+};
 
 #ifdef GOMOKU_SERVER
 /* might be cut-able
@@ -92,10 +101,10 @@ void player::reset_score(std::string& err){
 }
 
 void player::swap_colour(std::string& err){
-    if(this->_colour->get_value() == "black"){
-        this->_colour->set_value("white");
-    }else if(this->_colour->get_value() == "white"){
-        this->_colour->set_value("black");
+    if(this->_colour == player_colour_type::black){
+        this->_colour = player_colour_type::white;
+    }else if(this->_colour == player_colour_type::white){
+        this->_colour = player_colour_type::black;
     } else {
         throw GomokuException("Failed to swap player colour. Unknown player colour was given.");
     }
@@ -120,8 +129,9 @@ void player::write_into_json(rapidjson::Value& json, rapidjson::Document::Alloca
     _score->write_into_json(score_val, allocator);
     json.AddMember("score", score_val, allocator);
 
+    serializable_value<std::string> colour_string = serializable_value<std::string>(_player_colour_type_to_string.at(_colour));
     rapidjson::Value colour_val(rapidjson::kObjectType);
-    _colour->write_into_json(colour_val, allocator);
+    colour_string.write_into_json(colour_val, allocator);
     json.AddMember("colour", colour_val, allocator);
 }
 
@@ -132,11 +142,12 @@ player *player::from_json(const rapidjson::Value &json) {
         && json.HasMember("score")
         && json.HasMember("colour"))
     {
+        player_colour_type colour = _string_to_player_colour_type.at(serializable_value<std::string>::from_json(json["colour"].GetObject())->get_value());
         return new player(
                 json["id"].GetString(),
                 serializable_value<std::string>::from_json(json["player_name"].GetObject()),
                 serializable_value<int>::from_json(json["score"].GetObject()),
-                serializable_value<std::string>::from_json(json["colour"].GetObject()));
+                colour);
     } else {
         throw GomokuException("Failed to deserialize player from json. Required json entries were missing.");
     }

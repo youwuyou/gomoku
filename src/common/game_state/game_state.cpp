@@ -127,6 +127,7 @@ void game_state::setup_round(std::string &err) {
     this->_is_finished->set_value(false);
     this->_playing_board->setup_round(err);
     this->_players.at(0)->swap_colour(err);
+    this->_players.at(1)->swap_colour(err);
 }
 
 void game_state::wrap_up_round(std::string& err) {

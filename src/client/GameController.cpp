@@ -76,7 +76,7 @@ void GameController::connectToServer() {
     ClientNetworkManager::init(host, port);
 
     // send request to join game
-    GameController::_me = new player(playerName, "white");
+    GameController::_me = new player(playerName, player_colour_type::white);
     join_game_request request = join_game_request(GameController::_me->get_id(), GameController::_me->get_player_name());
     ClientNetworkManager::sendRequest(request);
 
