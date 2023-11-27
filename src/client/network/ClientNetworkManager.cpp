@@ -102,7 +102,6 @@ void ClientNetworkManager::sendRequest(const client_request &request) {
 
         // send message to server
         ssize_t bytesSent = ClientNetworkManager::_connection->write(message);
-        std::cout << "point6\n";
 
         // if the number of bytes sent does not match the length of the message, probably something went wrong
         if (bytesSent != ssize_t(message.length())) {

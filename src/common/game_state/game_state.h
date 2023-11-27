@@ -78,7 +78,7 @@ public:
     bool check_win_condition();
 
     //// end of round functions
-    void update_current_player(std::string& err);
+    bool update_current_player(std::string& err);
     void wrap_up_round(std::string& err);
 
 #endif

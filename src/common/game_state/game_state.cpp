@@ -132,13 +132,16 @@ void game_state::wrap_up_round(std::string& err) {
     // TODO: Implementation Code
 }
 
-void game_state::update_current_player(std::string& err) {
+bool game_state::update_current_player(std::string& err) {
     if(_current_player_idx->get_value() == 0){
         _current_player_idx->set_value(1);
-    } else if (_current_player_idx->get_value() == 0){
+        return true;
+    } else if (_current_player_idx->get_value() == 1){
         _current_player_idx->set_value(0);
+        return true;
     } else {
         err = "Invalid current player index for player index update.";
+        return false;
     }
 }
 
