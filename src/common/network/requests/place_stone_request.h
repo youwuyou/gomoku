@@ -9,19 +9,24 @@
 #include "client_request.h"
 #include <string>
 #include "../../../../rapidjson/include/rapidjson/document.h"
+#include "../../game_state/playing_board/playing_board.h"
 
 class place_stone_request : public client_request {
 
 private:
 
-    std::string _stone_id;
+    unsigned int _x;
+    unsigned int _y;
+    field_type _colour;
 
     //Private constructor for deserialization
-    place_stone_request(base_class_properties, std::string stone_id);
+    place_stone_request(base_class_properties, unsigned int x, unsigned int y, field_type colour);
 
 public:
-    place_stone_request(std::string player_id, std::string game_id, std::string stone_id);
-    [[nodiscard]] std::string get_stone_id() const { return this->_stone_id; }
+    place_stone_request(std::string player_id, std::string game_id, unsigned int x, unsigned int y, field_type colour);
+    [[nodiscard]] unsigned int get_stone_x() const { return this->_x; }
+    [[nodiscard]] unsigned int get_stone_y() const { return this->_y; }
+    [[nodiscard]] field_type get_stone_colour() const { return this->_colour; }
 
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
     static place_stone_request* from_json(const rapidjson::Value& json);

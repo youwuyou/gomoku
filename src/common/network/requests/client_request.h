@@ -22,8 +22,9 @@ enum RequestType {
     join_game,
     start_game,
     place_stone,
-    swap_color,
+    swap_colour,
     select_game_mode,
+    restart_game,
 };
 
 class client_request : public serializable {

@@ -11,7 +11,7 @@
 game_state::game_state() : unique_serializable() {
     this->_players = std::vector<player*>();
     this->_playing_board = new playing_board();
-    this->_opening_ruleset = new opening_rules("uninitialized");
+    this->_opening_ruleset = new opening_rules(ruleset_type::uninitialized);
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
     this->_turn_number = new serializable_value<int>(0);
@@ -20,9 +20,9 @@ game_state::game_state() : unique_serializable() {
 }
 
 // deserialization constructor
-game_state::game_state(std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
-                       std::vector<player *> &players, serializable_value<bool> *is_started,
-                       serializable_value<bool> *is_finished, serializable_value<int> *current_player_idx,
+game_state::game_state (std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
+                        std::vector<player *> &players, serializable_value<bool> *is_started,
+                        serializable_value<bool> *is_finished, serializable_value<int> *current_player_idx,
                         serializable_value<int>* turn_number, serializable_value<int> *starting_player_idx)
         : unique_serializable(id),
         _playing_board(_playing_board),
@@ -33,11 +33,11 @@ game_state::game_state(std::string id, playing_board* _playing_board, opening_ru
         _current_player_idx(current_player_idx),
         _turn_number(turn_number),
         _starting_player_idx(starting_player_idx)
-    {  }
+{  }
 
 game_state::game_state(std::string id) : unique_serializable(id) {
     this->_playing_board = new playing_board();
-    this->_opening_ruleset = new opening_rules("uninitialized");
+    this->_opening_ruleset = new opening_rules(ruleset_type::uninitialized);
     this->_players = std::vector<player*>();
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
@@ -68,7 +68,7 @@ game_state::~game_state() {
 
 // accessors
 player* game_state::get_current_player() const {
-    if(_current_player_idx == nullptr || _players.size() == 0) {
+    if (_current_player_idx == nullptr || _players.size() == 0) {
         return nullptr;
     }
     return _players[_current_player_idx->get_value()];
@@ -90,8 +90,12 @@ int game_state::get_turn_number() const {
     return _turn_number->get_value();
 }
 
-std::vector<std::vector<stone*>> game_state::get_playing_board() const{
+std::vector<std::vector<field_type>> game_state::get_playing_board() const{
     return _playing_board->get_playing_board();
+}
+
+opening_rules* game_state::get_opening_rules() const {
+    return _opening_ruleset;
 }
 
 int game_state::get_player_index(player *player) const {
@@ -120,15 +124,65 @@ std::vector<player*>& game_state::get_players() {
 
 // state modification functions without diff
 void game_state::setup_round(std::string &err) {
-    // TODO: Implementation Code
+    this->_is_finished->set_value(false);
+    this->_playing_board->setup_round(err);
+    this->_turn_number->set_value(0);
+    if (this->_current_player_idx != this->_starting_player_idx){
+        this->_current_player_idx = this->_starting_player_idx;
+    }
+    // set starting player colour as black, other player colour as white
+    if(this->_players.at(this->_starting_player_idx->get_value())->get_colour() != player_colour_type::black){
+        this->_players.at(0)->change_colour(err);
+        this->_players.at(1)->change_colour(err);
+    }
 }
 
 void game_state::wrap_up_round(std::string& err) {
-    // TODO: Implementation Code
+    if(_turn_number->get_value() != MAX_TURN_NUM){
+        this->get_current_player()->increment_score(err);
+    }
+    this->switch_starting_player(err);
+    this->_is_started->set_value(false);
+    this->_is_finished->set_value(true);
 }
 
-void game_state::update_current_player(std::string& err) {
-    // TODO: Implementation Code
+bool game_state::update_current_player(std::string& err) {
+    this->_turn_number->set_value(this->get_turn_number()+1);
+    if (_current_player_idx->get_value() == 0){
+        _current_player_idx->set_value(1);
+        return true;
+    } else if (_current_player_idx->get_value() == 1) {
+        _current_player_idx->set_value(0);
+        return true;
+    } else {
+        err = "Invalid current player index for player index update.";
+        return false;
+    }
+}
+
+bool game_state::switch_starting_player(std::string& err) {
+    if (_starting_player_idx->get_value() == 0){
+        _starting_player_idx->set_value(1);
+        return true;
+    } else if (_starting_player_idx->get_value() == 1) {
+        _starting_player_idx->set_value(0);
+        return true;
+    } else {
+        err = "Invalid starting player index for player index update.";
+        return false;
+    }
+}
+
+bool game_state::prepare_game(player* player, std::string &err) {
+    if(_players.at(_starting_player_idx->get_value()) != player){
+        this->switch_starting_player(err);
+    }
+    if(_players.at(_current_player_idx->get_value())->get_colour() != player_colour_type::black){
+        this->_players.at(0)->change_colour(err);
+        this->_players.at(1)->change_colour(err);
+    }
+    _is_finished->set_value(false);
+    return true;
 }
 
 bool game_state::start_game(std::string &err) {
@@ -184,19 +238,63 @@ bool game_state::add_player(player* player_ptr, std::string& err) {
     return true;
 }
 
-bool set_game_mode(std::string rule_name) {
-    // TODO: Implementation Code
+bool game_state::set_game_mode(const std::string& rule_name, std::string& err) {
+    this->_opening_ruleset->set_opening_rule(rule_name);
+    return true;
+}
+
+bool game_state::place_stone(unsigned int x, unsigned int y, field_type colour, std::string& err) {
+    if (this->_playing_board->place_stone(x, y, colour, err)) {
+        return true;
+    }
+    err = "GameState: Unable to place stone.";
     return false;
 }
 
-bool place_stone(player* player, std::string& err) {
-    // TODO: Implementation Code
-    return false;
+bool game_state::check_win_condition(unsigned int x, unsigned int y, int colour) {
+    /*
+     * order of directions in vector
+     *   0  1  2
+     *   3     4
+     *   5  6  7
+     */
+    std::vector<unsigned int> stones_in_directions;
+    for (int i = -1; i<2; ++i) {
+        for (int j = -1; j<2; ++j) {
+            if (i != 0 || j != 0) {
+                stones_in_directions.push_back(count_stones_one_direction(x, y, i, j, colour));
+            }
+        }
+    }
+    if (stones_in_directions.at(0)+stones_in_directions.at(7)+1 >= 5 ||
+        stones_in_directions.at(1)+stones_in_directions.at(6)+1 >= 5 ||
+        stones_in_directions.at(2)+stones_in_directions.at(5)+1 >= 5 ||
+        stones_in_directions.at(3)+stones_in_directions.at(4)+1 >= 5) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-bool check_win_condition() {
-    // TODO: Implementation Code
-    return false;
+// recursive function to find the number of same-colour stones in a direction from a given location
+unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour) {
+    // edge checking
+    if (x == 0 && direction_x == -1 ||
+        y == 0 && direction_y == -1 ||
+        x == 14 && direction_x == 1 ||
+        y == 14 && direction_y == 1){
+        return 0;
+    } else {
+        int next_stone_colour = _playing_board->get_playing_board().at(y + direction_y).at(x + direction_x);
+        //return one if we have reached the end of the line
+        if (next_stone_colour != colour) {
+            return 0;
+        } else {
+            return 1 +
+                   game_state::count_stones_one_direction(x + direction_x, y + direction_y, direction_x, direction_y,
+                                                          colour);
+        }
+    }
 }
 
 #endif
@@ -249,6 +347,7 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
         && json.HasMember("playing_board")
         && json.HasMember("opening_ruleset"))
     {
+
         std::vector<player*> deserialized_players;
         for (auto &serialized_player : json["players"].GetArray()) {
             deserialized_players.push_back(player::from_json(serialized_player.GetObject()));

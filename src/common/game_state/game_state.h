@@ -9,7 +9,6 @@
 #include <string>
 #include "../../rapidjson/include/rapidjson/document.h"
 #include "player/player.h"
-#include "playing_board/stone.h"
 #include "playing_board/playing_board.h"
 #include "playing_board/opening_rules.h"
 #include "../serialization/serializable.h"
@@ -50,7 +49,10 @@ public:
     game_state();
     ~game_state();
 
-// accessors
+    // constants
+    static const int MAX_TURN_NUM = 224;
+
+    // accessors
     bool is_full() const;
     bool is_started() const;
     bool is_finished() const;
@@ -58,7 +60,8 @@ public:
     bool is_allowed_to_play_now(player* player) const;
     std::vector<player*>& get_players();
     int get_turn_number() const;
-    std::vector<std::vector<stone*>> get_playing_board() const;
+    std::vector<std::vector<field_type>> get_playing_board() const;
+    opening_rules* get_opening_rules() const;
 
     player* get_current_player() const;
 
@@ -67,18 +70,21 @@ public:
     //// lobby functionalities
     bool remove_player(player* player, std::string& err);
     bool add_player(player* player, std::string& err);
+    bool prepare_game(player* player, std::string& err);
     bool start_game(std::string& err);
-    bool set_game_mode(std::string rule_name);
+    bool set_game_mode(const std::string& rule_name, std::string& err);
 
     //// start of round functions
     void setup_round(std::string& err);
 
     //// in-round functionalities
-    bool place_stone(player* player, std::string& err);
-    bool check_win_condition();
+    bool place_stone(unsigned int x, unsigned int y, field_type colour, std::string& err);
+    bool check_win_condition(unsigned int x, unsigned int y, int colour);
+    unsigned int count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour);
+    bool update_current_player(std::string& err);
 
     //// end of round functions
-    void update_current_player(std::string& err);
+    bool switch_starting_player(std::string& err);
     void wrap_up_round(std::string& err);
 
 #endif

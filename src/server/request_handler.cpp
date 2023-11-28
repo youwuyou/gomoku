@@ -12,8 +12,10 @@
 #include "game_instance.h"
 
 #include "../common/network/requests/join_game_request.h"
-//#include "../common/network/requests/draw_card_request.h"
-//#include "../common/network/requests/play_card_request.h"
+#include "../common/network/requests/place_stone_request.h"
+#include "../common/network/requests/swap_colour_request.h"
+#include "../common/network/requests/select_game_mode_request.h"
+#include "../common/network/requests/restart_game_request.h"
 
 
 request_response* request_handler::handle_request(const client_request* const req) {
@@ -82,11 +84,69 @@ request_response* request_handler::handle_request(const client_request* const re
             return new request_response("", req_id, false, nullptr, err);
         }
 
+        // ##################### PLACE STONE ##################### //
+        case RequestType::place_stone: {
+            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
+                unsigned int x = (dynamic_cast<const place_stone_request *>(req))->get_stone_x();
+                unsigned int y = (dynamic_cast<const place_stone_request *>(req))->get_stone_y();
+                field_type colour = (dynamic_cast<const place_stone_request *>(req))->get_stone_colour();
+                if (game_instance_ptr->place_stone(player, x, y, colour, err)) {
+                    return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                game_instance_ptr->get_game_state()->to_json(), err);
+                }
+            }
+            return new request_response("", req_id, false, nullptr, err);
+        }
+
+        // ##################### SWAP COLOUR ##################### //
+        case RequestType::swap_colour: {
+            return new request_response("", req_id, false, nullptr, err);
+        }
+
+        // ##################### SELECT GAME MODE ##################### //
+        case RequestType::select_game_mode: {
+            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
+                const std::string& ruleset_string = (dynamic_cast<const select_game_mode_request *>(req))->get_ruleset_string();
+                if (game_instance_ptr->set_game_mode(player, ruleset_string, err)) {
+                    return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                game_instance_ptr->get_game_state()->to_json(), err);
+                }
+            }
+            return new request_response("", req_id, false, nullptr, err);
+        }
+
+        // ##################### RESTART GAME ##################### //
+        case RequestType::restart_game: {
+            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
+                bool change_ruleset = (dynamic_cast<const restart_game_request *>(req))->get_change_ruleset();
+                if (change_ruleset){
+                    if(game_instance_ptr->get_game_state()->prepare_game(player, err)){
+                        if (game_instance_ptr->get_game_state()->get_players().at(0)->reset_score(err) &&
+                            game_instance_ptr->get_game_state()->get_players().at(1)->reset_score(err)){
+                            if (game_instance_ptr->set_game_mode(player, "uninitialized", err)){
+                                return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                        game_instance_ptr->get_game_state()->to_json(), err);
+                            }
+                        }
+                    }
+                } else {
+                    if (game_instance_ptr->start_game(player, err)) {
+                        return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                    game_instance_ptr->get_game_state()->to_json(), err);
+                    }
+                }
+            }
+            return new request_response("", req_id, false, nullptr, err);
+        }
 
         // ##################### UNKNOWN REQUEST ##################### //
         default:
             return new request_response("", req_id, false, nullptr, "Unknown RequestType " + type);
     }
 }
+
+/*stone request_handler::get_stone(const place_stone_request * req) {
+    return stone(req->get_stone_x(), req->get_stone_y(), req->get_stone_colour());
+}*/
 
 #endif //GOMOKU_REQUEST_HANDLER_CPP

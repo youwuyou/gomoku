@@ -32,6 +32,18 @@ namespace vector_utils {
         return arr_val;
     }
 
+    template<class T>
+    static rapidjson::Value serialize_vector(const std::vector<T>& serializables, rapidjson::Document::AllocatorType& allocator) {
+        derived_from<T,serializable>(); // ensure T derives from serializable
+        rapidjson::Value arr_val(rapidjson::kArrayType);
+        for (int i = 0; i < serializables.size(); i++) {
+            rapidjson::Value elem(rapidjson::kObjectType);
+            T current_value = serializables[i];
+            current_value.write_into_json(elem, allocator);
+            arr_val.PushBack(elem, allocator);
+        }
+        return arr_val;
+    }
 }
 
 #endif //GOMOKU_VECTOR_UTILS_H

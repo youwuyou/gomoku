@@ -16,6 +16,8 @@ public:
     static void connectToServer();
     static void updateGameState(game_state* newGameState);
     static void startGame();
+    static void placeStone(unsigned int x, unsigned int y, field_type colour, std::string &err);
+    static void set_game_rules(std::string ruleset_string,  std::string &err);
 
     static wxEvtHandler* getMainThreadEventHandler();
     static void showError(const std::string& title, const std::string& message);

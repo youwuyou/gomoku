@@ -24,7 +24,7 @@ public:
 
     rapidjson::Value* get_state_json() const;
 
-    virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
+    void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
     static full_state_response* from_json(const rapidjson::Value& json);
 
 #ifdef GOMOKU_CLIENT

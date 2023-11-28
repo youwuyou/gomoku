@@ -27,12 +27,12 @@ GameWindow::GameWindow(const wxString& title, const wxPoint& pos, const wxSize& 
 void GameWindow::showPanel(wxPanel* panel) {
 
     // if we are already showing the panel, we don't need to do anything
-    if(this->_currentPanel == panel) {
+    if (this->_currentPanel == panel) {
         return;
     }
 
     // remove previous panel
-    if(this->_currentPanel != nullptr) {
+    if (this->_currentPanel != nullptr) {
         this->_mainLayout->Detach(this->_currentPanel);
         this->_currentPanel->Show(false);
         this->_currentPanel = nullptr;
