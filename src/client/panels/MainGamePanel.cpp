@@ -190,6 +190,10 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
         innerLayout->Add(game_rule_dropdown, 0, wxALIGN_CENTER, 10);
         game_rule_dropdown->SetSelection(0);
 
+        // add a spacer for the gap
+        int gapHeight = 10;
+        innerLayout->AddSpacer(gapHeight);
+
         // add a button for confirming the ruleset choice
         std::string err;
         wxButton* choose_rules_button = new wxButton(this, wxID_ANY, "Confirm choice", wxDefaultPosition, wxSize(150, 40));
