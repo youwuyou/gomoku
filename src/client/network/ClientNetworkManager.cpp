@@ -24,20 +24,20 @@ void::ClientNetworkManager::init(const std::string& host, const uint16_t port) {
     ClientNetworkManager::_failedToConnect = false;
 
     // delete exiting connection and create new one
-    if(ClientNetworkManager::_connection != nullptr) {
+    if (ClientNetworkManager::_connection != nullptr) {
         ClientNetworkManager::_connection->shutdown();
         delete ClientNetworkManager::_connection;
     }
     ClientNetworkManager::_connection = new sockpp::tcp_connector();
 
     // try to connect to server
-    if(ClientNetworkManager::connect(host, port)) {
+    if (ClientNetworkManager::connect(host, port)) {
         GameController::showStatus("Connected to " + host + ":" + std::to_string(port));
         ClientNetworkManager::_connectionSuccess = true;
 
         // start network thread
         ResponseListenerThread* responseListenerThread = new ResponseListenerThread(ClientNetworkManager::_connection);
-        if(responseListenerThread->Run() != wxTHREAD_NO_ERROR) {
+        if (responseListenerThread->Run() != wxTHREAD_NO_ERROR) {
             GameController::showError("Connection error", "Could not create client network thread");
         }
 
@@ -72,7 +72,7 @@ bool ClientNetworkManager::connect(const std::string& host, const uint16_t port)
 void ClientNetworkManager::sendRequest(const client_request &request) {
     // wait until network is connected (max. 5 seconds)
     int connectionCheckCounter = 0;
-    while(!ClientNetworkManager::_connectionSuccess
+    while (!ClientNetworkManager::_connectionSuccess
           && !ClientNetworkManager::_failedToConnect
           && connectionCheckCounter < 200) {
         wxMilliSleep(25);
@@ -80,11 +80,11 @@ void ClientNetworkManager::sendRequest(const client_request &request) {
     }
 
     // do not continue if failed to connect to server
-    if(ClientNetworkManager::_failedToConnect) {
+    if (ClientNetworkManager::_failedToConnect) {
         return;
     }
 
-    if(ClientNetworkManager::_connectionSuccess && ClientNetworkManager::_connection->is_connected()) {
+    if (ClientNetworkManager::_connectionSuccess && ClientNetworkManager::_connection->is_connected()) {
         // serialize request into JSON string
         rapidjson::Document* jsonDocument = request.to_json();
         std::string message = json_utils::to_string(jsonDocument);

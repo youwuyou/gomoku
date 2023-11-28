@@ -28,7 +28,7 @@ playing_board::~playing_board() {
     _playing_board.clear();
 }
 
-void playing_board::reset(){
+void playing_board::reset() {
     for (int i = 0; i < _playing_board.size(); i++) {
         for (int j = 0; j < _playing_board.size(); j++) {
             _playing_board.at((i)).at((j)) = field_type::empty;
@@ -43,7 +43,7 @@ void playing_board::reset(){
  *   - the spot is not occupied (== field_type::empty)
  */
 bool playing_board::place_stone(const unsigned int x, const unsigned int y, field_type colour, std::string &err) {
-    if (x < _playing_board_size && y < _playing_board_size && colour != field_type::empty){
+    if (x < _playing_board_size && y < _playing_board_size && colour != field_type::empty) {
         if (this->_playing_board.at(y).at(x) == field_type::empty) {
             this->_playing_board.at(y).at(x) = colour;
             return true;
@@ -82,7 +82,7 @@ std::vector<std::vector<field_type>>::iterator playing_board::get_playing_board_
 
 
 #ifdef GOMOKU_SERVER
-void playing_board::setup_round(std::string& err){
+void playing_board::setup_round(std::string& err) {
     this->reset();
 }
 
@@ -92,8 +92,8 @@ void playing_board::setup_round(std::string& err){
 void playing_board::write_into_json(rapidjson::Value &json, rapidjson::Document::AllocatorType& allocator) const {
     unique_serializable::write_into_json(json, allocator);
     std::vector<serializable_value<std::string>> flattened_playing_board;
-    for(int i=0; i<_playing_board.size(); ++i){
-        for(int j=0; j<_playing_board.size(); ++j){
+    for (int i=0; i<_playing_board.size(); ++i) {
+        for (int j=0; j<_playing_board.size(); ++j) {
             serializable_value<std::string> current_value = serializable_value<std::string>(_field_type_to_string.at(
                     static_cast<const field_type>(_playing_board.at(i).at(j))));
             flattened_playing_board.push_back(current_value);
@@ -111,8 +111,8 @@ playing_board *playing_board::from_json(const rapidjson::Value &json) {
         }
         std::vector<field_type> row(_playing_board_size, field_type::empty);
         std::vector<std::vector<field_type>> deserialized_playing_board (_playing_board_size, row);
-        for(int i=0; i<_playing_board_size; i++){
-            for(int j=0; j<_playing_board_size; j++){
+        for (int i=0; i<_playing_board_size; i++) {
+            for (int j=0; j<_playing_board_size; j++) {
                 deserialized_playing_board.at(i).at(j) = static_cast<field_type>(deserialized_flattened_playing_board.at(
                         i * _playing_board_size + j));
             }

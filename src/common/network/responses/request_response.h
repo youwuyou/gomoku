@@ -16,14 +16,14 @@ private:
     std::string _req_id;
     rapidjson::Value* _state_json = nullptr;
 
-    request_response(base_class_properties props, std::string req_id, bool success, rapidjson::Value* state_json, std::string& err);
+    request_response(const base_class_properties& props, std::string req_id, bool success, rapidjson::Value* state_json, std::string err);
 
 public:
 
-    request_response(std::string game_id, std::string req_id, bool success, rapidjson::Value* state_json, std::string err);
+    request_response(const std::string& game_id, std::string req_id, bool success, rapidjson::Value* state_json, std::string err);
     ~request_response();
 
-    virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
+    void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
     static request_response* from_json(const rapidjson::Value& json);
 
 #ifdef GOMOKU_CLIENT

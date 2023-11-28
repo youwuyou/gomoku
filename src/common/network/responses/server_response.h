@@ -51,7 +51,7 @@ public:
     static server_response* from_json(const rapidjson::Value& json);
 
     // Serializes the server_response into a json object that can be sent over the network
-    virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
+    void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
 
 #ifdef GOMOKU_CLIENT
     virtual void Process() const = 0;

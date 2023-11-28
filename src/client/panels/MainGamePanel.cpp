@@ -31,7 +31,7 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
 
     // find our own player object in the list of players
     int myPosition = -1;
-    std::vector<player*>::iterator it = std::find_if(players.begin(), players.end(), [me](const player* x) {
+    std::vector<player*>::iterator it = std::find_if (players.begin(), players.end(), [me](const player* x) {
         return x->get_id() == me->get_id();
     });
     if (it < players.end()) {
@@ -62,7 +62,7 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
 void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
     // only show the board, stones and buttons if the game has started
-    if(gameState->is_started()) {
+    if (gameState->is_started()) {
         // Show board image
         std::string boardImage = "assets/playing_board.png";
 
@@ -133,10 +133,10 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 }
 
 void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
-    if(gameState->is_started() && gameState->get_current_player() != nullptr) {
+    if (gameState->is_started() && gameState->get_current_player() != nullptr) {
 
         std::string turnIndicatorText = "It's " + gameState->get_current_player()->get_player_name() + "'s turn!";
-        if(gameState->get_current_player() == me) {
+        if (gameState->get_current_player() == me) {
             turnIndicatorText = "It's your turn!";
         }
 
@@ -168,7 +168,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     outerLayout->Add(innerLayout, 1, wxALIGN_BOTTOM);
 
     // show dropdown for game mode selection for first player if the game has not yet started and the opening ruleset is "uninitialized"
-    if(!gameState->is_started() && gameState->get_current_player() == me && gameState->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized){
+    if (!gameState->is_started() && gameState->get_current_player() == me && gameState->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
 
         wxStaticText* game_rule_dropdown_text = buildStaticText(
                 "Please choose a game style:",
@@ -201,7 +201,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     }
 
     // show chosen ruleset type if game has not yet started but ruleset has been chosen
-    if(!gameState->is_started() && gameState->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized){
+    if (!gameState->is_started() && gameState->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
         std::string chosen_game_mode_string = std::string("Chosen game style: ");
         std::string ruleset_string = _ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(gameState->get_opening_rules()->get_ruleset()));
         chosen_game_mode_string.append(ruleset_string);
@@ -228,7 +228,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     innerLayout->Add(playerName, 0, wxALIGN_CENTER);
 
     // if the game has not yet started we say so
-    if(!gameState->is_started()) {
+    if (!gameState->is_started()) {
 
         wxStaticText* playerPoints = buildStaticText(
                 "waiting for game to start...",
@@ -268,7 +268,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
         */
 
         // if it's not our turn, display "waiting..."
-        if(gameState->get_current_player() != me){
+        if (gameState->get_current_player() != me) {
             wxStaticText *playerStatus = buildStaticText(
                     "waiting...",
                     wxDefaultPosition,
@@ -284,7 +284,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
 
 wxStaticText* MainGamePanel::buildStaticText(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold) {
     wxStaticText* staticText = new wxStaticText(this, wxID_ANY, content, position, size, textAlignment);
-    if(bold) {
+    if (bold) {
         wxFont font = staticText->GetFont();
         font.SetWeight(wxFONTWEIGHT_BOLD);
         staticText->SetFont(font);

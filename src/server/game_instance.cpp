@@ -42,7 +42,7 @@ bool game_instance::is_finished() {
 
 bool game_instance::start_game(player* player, std::string &err) {
     modification_lock.lock();
-    if(_game_state->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
+    if (_game_state->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
         if (_game_state->start_game(err)) {
             // send state update to all other players
             full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
@@ -89,9 +89,9 @@ bool game_instance::try_add_player(player *new_player, std::string &err) {
 
 bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, field_type colour, std::string &err) {
     modification_lock.lock();
-    if (_game_state->place_stone(x, y, colour, err)){
-        if(_game_state->update_current_player(err)){
-            if(_game_state->check_win_condition(x, y, colour)){
+    if (_game_state->place_stone(x, y, colour, err)) {
+        if (_game_state->update_current_player(err)) {
+            if (_game_state->check_win_condition(x, y, colour)) {
                 _game_state->wrap_up_round(err);
             }
             full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
@@ -108,9 +108,9 @@ bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, 
     return false;
 }
 
-bool game_instance::set_game_mode(player* player, std::string ruleset_string, std::string& err){
+bool game_instance::set_game_mode(player* player, const std::string& ruleset_string, std::string& err) {
     modification_lock.lock();
-    if (_game_state->set_game_mode(ruleset_string, err)){
+    if (_game_state->set_game_mode(ruleset_string, err)) {
         modification_lock.unlock();
         return true;
     }

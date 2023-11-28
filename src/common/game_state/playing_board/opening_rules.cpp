@@ -86,7 +86,7 @@ std::string opening_rules::get_description() const noexcept {
 // WIP HERE
 #ifdef GOMOKU_SERVER
 // state update functions
-void opening_rules::set_opening_rule(std::string ruleset_string) {
+void opening_rules::set_opening_rule(const std::string& ruleset_string) {
     ruleset_type ruleset = _string_to_ruleset_type.at(ruleset_string);
     this->_ruleset = ruleset;
     this->_description = new serializable_value<std::string>(generate_description_from_ruleset(ruleset));

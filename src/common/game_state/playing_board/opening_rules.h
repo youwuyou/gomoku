@@ -62,7 +62,7 @@ public:
 
 #ifdef GOMOKU_SERVER
     // state update functions
-    void set_opening_rule(std::string ruleset_string);
+    void set_opening_rule(const std::string& ruleset_string);
 #endif
 
     // serialization

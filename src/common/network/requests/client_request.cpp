@@ -16,15 +16,15 @@ const std::unordered_map<std::string, RequestType> client_request::_string_to_re
         {"join_game", RequestType::join_game },
         {"start_game", RequestType::start_game},
         {"place_stone", RequestType::place_stone},
-        {"swap_color", RequestType::swap_color},
+        {"swap_colour", RequestType::swap_colour},
         {"select_game_mode", RequestType::select_game_mode}
 };
 // for serialization
 const std::unordered_map<RequestType, std::string> client_request::_request_type_to_string = {
-        { RequestType::join_game, "join_game" },
-        { RequestType::start_game, "start_game"},
-        { RequestType::place_stone, "place_stone"},
-        { RequestType::swap_color, "swap_color"},
+        { RequestType::join_game,       "join_game" },
+        { RequestType::start_game,      "start_game"},
+        { RequestType::place_stone,     "place_stone"},
+        { RequestType::swap_colour,     "swap_colour"},
         {RequestType::select_game_mode, "select_game_mode"}
 };
 
@@ -95,7 +95,7 @@ client_request* client_request::from_json(const rapidjson::Value &json) {
         if (request_type == RequestType::place_stone) {
             return place_stone_request::from_json(json);
         }
-        else if (request_type == RequestType::swap_color) {
+        else if (request_type == RequestType::swap_colour) {
             return swap_color_request::from_json(json);
         }
         else if (request_type == RequestType::select_game_mode) {

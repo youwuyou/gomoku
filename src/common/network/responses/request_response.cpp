@@ -12,20 +12,20 @@
 #endif
 
 
-request_response::request_response(server_response::base_class_properties props, std::string req_id, bool success, rapidjson::Value* state_json, std::string &err) :
+request_response::request_response(const server_response::base_class_properties& props, std::string req_id, const bool success, rapidjson::Value* state_json, std::string err) :
     server_response(props),
-    _req_id(req_id),
+    _req_id(std::move(req_id)),
     _state_json(state_json),
     _success(success),
-    _err(err)
+    _err(std::move(err))
 { }
 
-request_response::request_response(std::string game_id, std::string req_id, bool success, rapidjson::Value* state_json, std::string err):
+request_response::request_response(const std::string& game_id, std::string req_id, bool success, rapidjson::Value* state_json, std::string err):
     server_response(server_response::create_base_class_properties(ResponseType::req_response, game_id)),
-    _req_id(req_id),
+    _req_id(std::move(req_id)),
     _state_json(state_json),
     _success(success),
-    _err(err)
+    _err(std::move(err))
 { }
 
 

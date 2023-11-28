@@ -68,7 +68,7 @@ game_state::~game_state() {
 
 // accessors
 player* game_state::get_current_player() const {
-    if(_current_player_idx == nullptr || _players.size() == 0) {
+    if (_current_player_idx == nullptr || _players.size() == 0) {
         return nullptr;
     }
     return _players[_current_player_idx->get_value()];
@@ -135,10 +135,10 @@ void game_state::wrap_up_round(std::string& err) {
 }
 
 bool game_state::update_current_player(std::string& err) {
-    if(_current_player_idx->get_value() == 0){
+    if (_current_player_idx->get_value() == 0) {
         _current_player_idx->set_value(1);
         return true;
-    } else if (_current_player_idx->get_value() == 1){
+    } else if (_current_player_idx->get_value() == 1) {
         _current_player_idx->set_value(0);
         return true;
     } else {
@@ -200,13 +200,13 @@ bool game_state::add_player(player* player_ptr, std::string& err) {
     return true;
 }
 
-bool game_state::set_game_mode(std::string rule_name, std::string& err) {
+bool game_state::set_game_mode(const std::string& rule_name, std::string& err) {
     this->_opening_ruleset->set_opening_rule(rule_name);
     return true;
 }
 
 bool game_state::place_stone(unsigned int x, unsigned int y, field_type colour, std::string& err) {
-    if(this->_playing_board->place_stone(x, y, colour, err)){
+    if (this->_playing_board->place_stone(x, y, colour, err)) {
         return true;
     }
     err = "GameState: Unable to place stone.";
@@ -221,8 +221,8 @@ bool game_state::check_win_condition(unsigned int x, unsigned int y, int colour)
      *   5  6  7
      */
     std::vector<unsigned int> stones_in_directions;
-    for(int i = -1; i<2; ++i){
-        for(int j = -1; j<2; ++j) {
+    for (int i = -1; i<2; ++i) {
+        for (int j = -1; j<2; ++j) {
             if (i == 0 && j == 0) {
                 continue;
             } else {
@@ -230,7 +230,7 @@ bool game_state::check_win_condition(unsigned int x, unsigned int y, int colour)
             }
         }
     }
-    if( stones_in_directions.at(0)+stones_in_directions.at(7)+1 >= 5 ||
+    if ( stones_in_directions.at(0)+stones_in_directions.at(7)+1 >= 5 ||
         stones_in_directions.at(1)+stones_in_directions.at(6)+1 >= 5 ||
         stones_in_directions.at(2)+stones_in_directions.at(5)+1 >= 5 ||
         stones_in_directions.at(3)+stones_in_directions.at(4)+1 >= 5) {
@@ -241,10 +241,10 @@ bool game_state::check_win_condition(unsigned int x, unsigned int y, int colour)
 }
 
 // recursive function to find the number of same-colour stones in a direction from a given location
-unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour){
+unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour) {
     int next_stone_colour = _playing_board->get_playing_board().at(y+direction_y).at(x+direction_x);
     //return one if we have reached the end of the line
-    if(next_stone_colour != colour){
+    if (next_stone_colour != colour) {
         return 0;
     } else {
         return 1 + game_state::count_stones_one_direction(x+direction_x, y+direction_y ,direction_x, direction_y, colour);

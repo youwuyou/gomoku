@@ -4,12 +4,12 @@
 ImagePanel::ImagePanel(wxWindow* parent, wxString file, wxBitmapType format, wxPoint position, wxSize size, double rotation) :
         wxPanel(parent, wxID_ANY, position, size)
 {
-    if(!wxFileExists(file)) {
+    if (!wxFileExists(file)) {
         wxMessageBox("Could not find file: " + file, "File error", wxICON_ERROR);
         return;
     }
 
-    if(!this->_image.LoadFile(file, format)) {
+    if (!this->_image.LoadFile(file, format)) {
         wxMessageBox("Could not load file: " + file, "File error", wxICON_ERROR);
         return;
     }
@@ -27,7 +27,7 @@ ImagePanel::ImagePanel(wxWindow* parent, wxString file, wxBitmapType format, wxP
 void ImagePanel::paintEvent(wxPaintEvent& event) {
     // this code is called when the system requests this panel to be redrawn.
 
-    if(!this->_image.IsOk()) {
+    if (!this->_image.IsOk()) {
         return;
     }
 
@@ -37,11 +37,11 @@ void ImagePanel::paintEvent(wxPaintEvent& event) {
     int newHeight;
     deviceContext.GetSize(&newWidth, &newHeight);
 
-    if(newWidth != this->_width || newHeight != this->_height) {
+    if (newWidth != this->_width || newHeight != this->_height) {
 
         wxImage transformed;
 
-        if(this->_rotation == 0.0) {
+        if (this->_rotation == 0.0) {
             transformed = this->_image.Scale(newWidth, newHeight, wxIMAGE_QUALITY_BILINEAR);
 
         } else {
