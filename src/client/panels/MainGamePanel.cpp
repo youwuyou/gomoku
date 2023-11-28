@@ -160,6 +160,8 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
 
 
 void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
+    // close all open dialogs
+    MainGamePanel::close_all_dialogs();
 
     // Setup two nested box sizers, in order to align our player's UI to the bottom center
     wxBoxSizer* outerLayout = new wxBoxSizer(wxHORIZONTAL);
@@ -306,4 +308,12 @@ double MainGamePanel::getEdgeLengthOfRotatedSquare(double originalEdgeLength, do
 
 wxPoint MainGamePanel::getPointOnEllipse(double horizontalRadius, double verticalRadius, double angle) {
     return wxPoint((int) (sin(angle) * horizontalRadius), (int) (cos(angle) * verticalRadius));
+}
+
+void MainGamePanel::close_all_dialogs(){
+    for (wxDialog* dialog : this->_open_dialogs){
+        if(dialog){
+            dialog->Close();
+        }
+    }
 }

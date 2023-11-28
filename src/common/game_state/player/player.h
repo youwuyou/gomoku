@@ -61,7 +61,7 @@ public:
 #ifdef GOMOKU_SERVER
     // state update functions
     void increment_score(std::string& err);
-    void reset_score(std::string& err);
+    bool reset_score(std::string& err);
     void swap_colour(std::string& err);
 
 #endif

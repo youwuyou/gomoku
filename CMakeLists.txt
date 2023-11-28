@@ -31,12 +31,13 @@ set(CLIENT_SOURCE_FILES
         # client requests
         src/common/network/requests/client_request.cpp src/common/network/requests/client_request.h
         src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
-        src/common/network/requests/swap_color_request.cpp src/common/network/requests/swap_color_request.h
+        src/common/network/requests/swap_colour_request.cpp src/common/network/requests/swap_colour_request.h
         src/common/network/requests/join_game_request.cpp src/common/network/requests/join_game_request.h
         src/common/network/requests/place_stone_request.cpp src/common/network/requests/place_stone_request.h
         src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
         src/common/network/requests/start_game_request.cpp src/common/network/requests/start_game_request.h
-        src/common/network/requests/swap_color_request.cpp src/common/network/requests/swap_color_request.h
+        src/common/network/requests/swap_colour_request.cpp src/common/network/requests/swap_colour_request.h
+        src/common/network/requests/restart_game_request.cpp src/common/network/requests/restart_game_request.h
         # server responses
         src/common/network/responses/server_response.cpp src/common/network/responses/server_response.h
         src/common/network/responses/request_response.cpp src/common/network/responses/request_response.h
@@ -49,6 +50,8 @@ set(CLIENT_SOURCE_FILES
         src/common/serialization/json_utils.h
         src/common/serialization/uuid_generator.h
         src/common/serialization/unique_serializable.cpp src/common/serialization/unique_serializable.h
+
+
 )
 
 # define a variable SERVER_SOURCE_FILES that contains the paths to all source files required to compile the server executable
@@ -69,7 +72,8 @@ set(SERVER_SOURCE_FILES
         src/common/network/requests/place_stone_request.cpp src/common/network/requests/place_stone_request.h
         src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
         src/common/network/requests/start_game_request.cpp src/common/network/requests/start_game_request.h
-        src/common/network/requests/swap_color_request.cpp src/common/network/requests/swap_color_request.h
+        src/common/network/requests/swap_colour_request.cpp src/common/network/requests/swap_colour_request.h
+        src/common/network/requests/restart_game_request.cpp src/common/network/requests/restart_game_request.h
         # server responses
         src/common/network/responses/server_response.cpp src/common/network/responses/server_response.h
         src/common/network/responses/request_response.cpp src/common/network/responses/request_response.h

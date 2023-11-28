@@ -2,7 +2,8 @@ project(Gomoku-unit-tests)
 
 set(TEST_SOURCE_FILES
         playing_board.cpp
-        opening_rules.cpp)
+        opening_rules.cpp
+        player.cpp)
 
 add_executable(Gomoku-tests ${TEST_SOURCE_FILES})
 

@@ -126,16 +126,24 @@ std::vector<player*>& game_state::get_players() {
 void game_state::setup_round(std::string &err) {
     this->_is_finished->set_value(false);
     this->_playing_board->setup_round(err);
-    this->_players.at(0)->swap_colour(err);
-    this->_players.at(1)->swap_colour(err);
+    this->_turn_number->set_value(0);
+    // only update starting player if we are not on the first round of a game
+    if(this->_players.at(0)->get_score() != 0 || this->_players.at(1)->get_score() != 0) {
+        this->_players.at(0)->swap_colour(err);
+        this->_players.at(1)->swap_colour(err);
+        this->update_current_player(err);
+    }
 }
 
 void game_state::wrap_up_round(std::string& err) {
+    this->get_current_player()->increment_score(err);
+    this->_is_started->set_value(false);
     this->_is_finished->set_value(true);
 }
 
 bool game_state::update_current_player(std::string& err) {
-    if (_current_player_idx->get_value() == 0) {
+    this->_turn_number->set_value(this->get_turn_number()+1);
+    if (_current_player_idx->get_value() == 0){
         _current_player_idx->set_value(1);
         return true;
     } else if (_current_player_idx->get_value() == 1) {
@@ -145,6 +153,18 @@ bool game_state::update_current_player(std::string& err) {
         err = "Invalid current player index for player index update.";
         return false;
     }
+}
+
+bool game_state::prepare_game(player* player, std::string &err) {
+    if(_players.at(_current_player_idx->get_value()) != player){
+        update_current_player(err);
+    }
+    if(_players.at(_current_player_idx->get_value())->get_colour() != player_colour_type::black){
+        this->_players.at(0)->swap_colour(err);
+        this->_players.at(1)->swap_colour(err);
+    }
+    _is_finished->set_value(false);
+    return true;
 }
 
 bool game_state::start_game(std::string &err) {
@@ -223,9 +243,7 @@ bool game_state::check_win_condition(unsigned int x, unsigned int y, int colour)
     std::vector<unsigned int> stones_in_directions;
     for (int i = -1; i<2; ++i) {
         for (int j = -1; j<2; ++j) {
-            if (i == 0 && j == 0) {
-                continue;
-            } else {
+            if (i != 0 || j != 0) {
                 stones_in_directions.push_back(count_stones_one_direction(x, y, i, j, colour));
             }
         }

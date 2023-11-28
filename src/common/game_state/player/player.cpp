@@ -92,12 +92,14 @@ void player::wrap_up_round(std::string &err) {
     _score->set_value(new_score);
 }*/
 
-void player::increment_score(std::string& err) {
-    this->_score++;
+void player::increment_score(std::string& err){
+    int current_score = this->_score->get_value();
+    this->_score->set_value(current_score + 1);
 }
 
-void player::reset_score(std::string& err) {
-    this->_score = 0;
+bool player::reset_score(std::string& err){
+    this->_score->set_value(0);
+    return true;
 }
 
 void player::swap_colour(std::string& err) {

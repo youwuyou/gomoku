@@ -12,6 +12,7 @@ public:
 
     void buildGameState(game_state* gameState, player* me);
 
+    std::vector<wxDialog*> _open_dialogs;
 
 private:
 
@@ -22,6 +23,8 @@ private:
     void buildTurnIndicator(game_state* gameState, player* me);
     void buildThisPlayer(game_state* gameState, player* me);
     void buildAbout(game_state* gameState, player* me);
+
+    void close_all_dialogs();
 
     wxStaticText* buildStaticText(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
 

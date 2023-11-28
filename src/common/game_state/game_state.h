@@ -67,6 +67,7 @@ public:
     //// lobby functionalities
     bool remove_player(player* player, std::string& err);
     bool add_player(player* player, std::string& err);
+    bool prepare_game(player* player, std::string& err);
     bool start_game(std::string& err);
     bool set_game_mode(const std::string& rule_name, std::string& err);
 

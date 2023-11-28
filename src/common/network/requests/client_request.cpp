@@ -4,20 +4,22 @@
 
 #include "client_request.h"
 #include "place_stone_request.h"
-#include "swap_color_request.h"
+#include "swap_colour_request.h"
 #include "select_game_mode_request.h"
 #include "join_game_request.h"
 #include "start_game_request.h"
+#include "restart_game_request.h"
 
 #include <iostream>
 
 // for deserialization
 const std::unordered_map<std::string, RequestType> client_request::_string_to_request_type = {
-        {"join_game", RequestType::join_game },
-        {"start_game", RequestType::start_game},
-        {"place_stone", RequestType::place_stone},
-        {"swap_colour", RequestType::swap_colour},
-        {"select_game_mode", RequestType::select_game_mode}
+        {"join_game",        RequestType::join_game },
+        {"start_game",       RequestType::start_game},
+        {"place_stone",      RequestType::place_stone},
+        {"swap_colour",      RequestType::swap_colour},
+        {"select_game_mode", RequestType::select_game_mode},
+        {"restart_game",     RequestType::restart_game}
 };
 // for serialization
 const std::unordered_map<RequestType, std::string> client_request::_request_type_to_string = {
@@ -25,7 +27,8 @@ const std::unordered_map<RequestType, std::string> client_request::_request_type
         { RequestType::start_game,      "start_game"},
         { RequestType::place_stone,     "place_stone"},
         { RequestType::swap_colour,     "swap_colour"},
-        {RequestType::select_game_mode, "select_game_mode"}
+        {RequestType::select_game_mode, "select_game_mode"},
+        {RequestType::restart_game,     "restart_game"}
 };
 
 // protected constructor. only used by subclasses
@@ -96,7 +99,7 @@ client_request* client_request::from_json(const rapidjson::Value &json) {
             return place_stone_request::from_json(json);
         }
         else if (request_type == RequestType::swap_colour) {
-            return swap_color_request::from_json(json);
+            return swap_colour_request::from_json(json);
         }
         else if (request_type == RequestType::select_game_mode) {
             return select_game_mode_request::from_json(json);
@@ -106,7 +109,10 @@ client_request* client_request::from_json(const rapidjson::Value &json) {
         }
         else if (request_type == RequestType::start_game) {
             return start_game_request::from_json(json);
-        } else {
+        }
+        else if (request_type == RequestType::restart_game) {
+            return restart_game_request::from_json(json);
+        }else {
             throw GomokuException("Encountered unknown ClientRequest type " + type);
         }
     }

@@ -13,8 +13,9 @@
 
 #include "../common/network/requests/join_game_request.h"
 #include "../common/network/requests/place_stone_request.h"
-#include "../common/network/requests/swap_color_request.h"
+#include "../common/network/requests/swap_colour_request.h"
 #include "../common/network/requests/select_game_mode_request.h"
+#include "../common/network/requests/restart_game_request.h"
 
 
 request_response* request_handler::handle_request(const client_request* const req) {
@@ -109,6 +110,30 @@ request_response* request_handler::handle_request(const client_request* const re
                 if (game_instance_ptr->set_game_mode(player, ruleset_string, err)) {
                     return new request_response(game_instance_ptr->get_id(), req_id, true,
                                                 game_instance_ptr->get_game_state()->to_json(), err);
+                }
+            }
+            return new request_response("", req_id, false, nullptr, err);
+        }
+
+        // ##################### RESTART GAME ##################### //
+        case RequestType::restart_game: {
+            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
+                bool change_ruleset = (dynamic_cast<const restart_game_request *>(req))->get_change_ruleset();
+                if (change_ruleset){
+                    if(game_instance_ptr->get_game_state()->prepare_game(player, err)){
+                        if (game_instance_ptr->get_game_state()->get_players().at(0)->reset_score(err) &&
+                            game_instance_ptr->get_game_state()->get_players().at(1)->reset_score(err)){
+                            if (game_instance_ptr->set_game_mode(player, "uninitialized", err)){
+                                return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                        game_instance_ptr->get_game_state()->to_json(), err);
+                            }
+                        }
+                    }
+                } else {
+                    if (game_instance_ptr->start_game(player, err)) {
+                        return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                    game_instance_ptr->get_game_state()->to_json(), err);
+                    }
                 }
             }
             return new request_response("", req_id, false, nullptr, err);

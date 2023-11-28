@@ -38,8 +38,8 @@ TEST_F(playing_board_test, add_one_stone) {
 
 // The initial state must be an empty board
 TEST_F(playing_board_test, add_no_stones) {
-    std::vector<int> row(15, field_type::empty);
-    std::vector<std::vector<int>> expected_board(15, row);
+    std::vector<field_type> row(15, field_type::empty);
+    std::vector<std::vector<field_type>> expected_board(15, row);
     EXPECT_EQ(expected_board, board.get_playing_board());
 }
 
@@ -69,8 +69,8 @@ TEST_F(playing_board_test, place_outside_board) {
     EXPECT_FALSE(board.place_stone(0, 15, field_type::white_stone, err));
     EXPECT_FALSE(board.place_stone(15, 15, field_type::black_stone, err));
 
-    std::vector<int> row(15, field_type::empty);
-    std::vector<std::vector<int>> expected_board(15, row);
+    std::vector<field_type> row(15, field_type::empty);
+    std::vector<std::vector<field_type>> expected_board(15, row);
     EXPECT_EQ(expected_board, board.get_playing_board());
 }
 
@@ -79,8 +79,8 @@ TEST_F(playing_board_test, place_empty_stone) {
     EXPECT_FALSE(board.place_stone(0, 0, field_type::empty, err));
     EXPECT_FALSE(board.place_stone(5, 5, field_type::empty, err));
 
-    std::vector<int> row(15, field_type::empty);
-    std::vector<std::vector<int>> expected_board(15, row);
+    std::vector<field_type> row(15, field_type::empty);
+    std::vector<std::vector<field_type>> expected_board(15, row);
     EXPECT_EQ(expected_board, board.get_playing_board());
 }
 
@@ -91,8 +91,8 @@ TEST_F(playing_board_test, reset_board) {
 
     board.setup_round(err);
 
-    std::vector<int> row(15, field_type::empty);
-    std::vector<std::vector<int>> expected_board(15, row);
+    std::vector<field_type> row(15, field_type::empty);
+    std::vector<std::vector<field_type>> expected_board(15, row);
     EXPECT_EQ(expected_board, board.get_playing_board());
 }
 
