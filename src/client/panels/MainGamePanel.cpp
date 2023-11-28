@@ -258,6 +258,13 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
         );
         innerLayout->Add(playerPoints, 0, wxALIGN_CENTER, 8);
 
+        // show our player's colour next to their name and points
+        std::string my_stone_colour_image = "assets/stone_" + player::_player_colour_type_to_string.at(me->get_colour()) + ".png";
+        wxPoint myColourStonePosition = wxDefaultPosition;
+        ImagePanel* myColourStone = new ImagePanel(this, my_stone_colour_image, wxBITMAP_TYPE_ANY, myColourStonePosition, MainGamePanel::stone_size);
+
+        innerLayout->Add(myColourStone, 0, wxALIGN_CENTER, 10);
+        innerLayout->AddSpacer(10);
         /* might be re-usable if we want to have a "give up" button
          *
         // if we haven't folded yet, and it's our turn, display Fold button
