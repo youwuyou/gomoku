@@ -78,9 +78,10 @@ public:
     bool place_stone(unsigned int x, unsigned int y, field_type colour, std::string& err);
     bool check_win_condition(unsigned int x, unsigned int y, int colour);
     unsigned int count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour);
+    bool update_current_player(std::string& err);
 
     //// end of round functions
-    bool update_current_player(std::string& err);
+    bool switch_starting_player(std::string& err);
     void wrap_up_round(std::string& err);
 
 #endif
