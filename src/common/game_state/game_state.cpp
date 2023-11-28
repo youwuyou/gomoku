@@ -132,13 +132,13 @@ void game_state::setup_round(std::string &err) {
     }
     // set starting player colour as black, other player colour as white
     if(this->_players.at(this->_starting_player_idx->get_value())->get_colour() != player_colour_type::black){
-        this->_players.at(0)->swap_colour(err);
-        this->_players.at(1)->swap_colour(err);
+        this->_players.at(0)->change_colour(err);
+        this->_players.at(1)->change_colour(err);
     }
 }
 
 void game_state::wrap_up_round(std::string& err) {
-    if(_turn_number->get_value() != 224){
+    if(_turn_number->get_value() != MAX_TURN_NUM){
         this->get_current_player()->increment_score(err);
     }
     this->switch_starting_player(err);
@@ -178,8 +178,8 @@ bool game_state::prepare_game(player* player, std::string &err) {
         this->switch_starting_player(err);
     }
     if(_players.at(_current_player_idx->get_value())->get_colour() != player_colour_type::black){
-        this->_players.at(0)->swap_colour(err);
-        this->_players.at(1)->swap_colour(err);
+        this->_players.at(0)->change_colour(err);
+        this->_players.at(1)->change_colour(err);
     }
     _is_finished->set_value(false);
     return true;

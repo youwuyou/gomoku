@@ -102,7 +102,7 @@ bool player::reset_score(std::string& err){
     return true;
 }
 
-void player::swap_colour(std::string& err) {
+void player::change_colour(std::string& err) {
     if (this->_colour == player_colour_type::black) {
         this->_colour = player_colour_type::white;
     } else if (this->_colour == player_colour_type::white) {

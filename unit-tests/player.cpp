@@ -40,9 +40,9 @@ TEST_F(player_test, initialize_valid) {
 // swapping a valid player's colour must result in a player with the opposite colour
 TEST_F(player_test, swap_colour) {
     player test_player = player("test_player", player_colour_type::black);
-    test_player.swap_colour(err);
+    test_player.change_colour(err);
     EXPECT_EQ(test_player.get_colour(), player_colour_type::white);
-    test_player.swap_colour(err);
+    test_player.change_colour(err);
     EXPECT_EQ(test_player.get_colour(), player_colour_type::black);
 }
 

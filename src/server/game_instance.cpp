@@ -90,7 +90,7 @@ bool game_instance::try_add_player(player *new_player, std::string &err) {
 bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, field_type colour, std::string &err) {
     modification_lock.lock();
     if (_game_state->place_stone(x, y, colour, err)){
-        if (_game_state->check_win_condition(x, y, colour) || (_game_state->get_turn_number() == 224)) {
+        if (_game_state->check_win_condition(x, y, colour) || (_game_state->get_turn_number() == _game_state->MAX_TURN_NUM)) {
             _game_state->wrap_up_round(err);
             full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
             server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);

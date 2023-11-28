@@ -49,7 +49,10 @@ public:
     game_state();
     ~game_state();
 
-// accessors
+    // constants
+    static const int MAX_TURN_NUM = 224;
+
+    // accessors
     bool is_full() const;
     bool is_started() const;
     bool is_finished() const;

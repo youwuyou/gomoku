@@ -62,7 +62,7 @@ public:
     // state update functions
     void increment_score(std::string& err);
     bool reset_score(std::string& err);
-    void swap_colour(std::string& err);
+    void change_colour(std::string& err);
 
 #endif
 
