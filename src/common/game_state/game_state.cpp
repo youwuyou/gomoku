@@ -20,9 +20,9 @@ game_state::game_state() : unique_serializable() {
 }
 
 // deserialization constructor
-game_state::game_state(std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
-                       std::vector<player *> &players, serializable_value<bool> *is_started,
-                       serializable_value<bool> *is_finished, serializable_value<int> *current_player_idx,
+game_state::game_state (std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
+                        std::vector<player *> &players, serializable_value<bool> *is_started,
+                        serializable_value<bool> *is_finished, serializable_value<int> *current_player_idx,
                         serializable_value<int>* turn_number, serializable_value<int> *starting_player_idx)
         : unique_serializable(id),
         _playing_board(_playing_board),
@@ -33,7 +33,7 @@ game_state::game_state(std::string id, playing_board* _playing_board, opening_ru
         _current_player_idx(current_player_idx),
         _turn_number(turn_number),
         _starting_player_idx(starting_player_idx)
-    {  }
+{  }
 
 game_state::game_state(std::string id) : unique_serializable(id) {
     this->_playing_board = new playing_board();
@@ -138,8 +138,10 @@ void game_state::setup_round(std::string &err) {
 }
 
 void game_state::wrap_up_round(std::string& err) {
+    if(_turn_number->get_value() != 224){
+        this->get_current_player()->increment_score(err);
+    }
     this->switch_starting_player(err);
-    this->get_current_player()->increment_score(err);
     this->_is_started->set_value(false);
     this->_is_finished->set_value(true);
 }
@@ -264,7 +266,7 @@ bool game_state::check_win_condition(unsigned int x, unsigned int y, int colour)
             }
         }
     }
-    if ( stones_in_directions.at(0)+stones_in_directions.at(7)+1 >= 5 ||
+    if (stones_in_directions.at(0)+stones_in_directions.at(7)+1 >= 5 ||
         stones_in_directions.at(1)+stones_in_directions.at(6)+1 >= 5 ||
         stones_in_directions.at(2)+stones_in_directions.at(5)+1 >= 5 ||
         stones_in_directions.at(3)+stones_in_directions.at(4)+1 >= 5) {
@@ -276,12 +278,22 @@ bool game_state::check_win_condition(unsigned int x, unsigned int y, int colour)
 
 // recursive function to find the number of same-colour stones in a direction from a given location
 unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour) {
-    int next_stone_colour = _playing_board->get_playing_board().at(y+direction_y).at(x+direction_x);
-    //return one if we have reached the end of the line
-    if (next_stone_colour != colour) {
+    // edge checking
+    if (x == 0 && direction_x == -1 ||
+        y == 0 && direction_y == -1 ||
+        x == 14 && direction_x == 1 ||
+        y == 14 && direction_y == 1){
         return 0;
     } else {
-        return 1 + game_state::count_stones_one_direction(x+direction_x, y+direction_y ,direction_x, direction_y, colour);
+        int next_stone_colour = _playing_board->get_playing_board().at(y + direction_y).at(x + direction_x);
+        //return one if we have reached the end of the line
+        if (next_stone_colour != colour) {
+            return 0;
+        } else {
+            return 1 +
+                   game_state::count_stones_one_direction(x + direction_x, y + direction_y, direction_x, direction_y,
+                                                          colour);
+        }
     }
 }
 

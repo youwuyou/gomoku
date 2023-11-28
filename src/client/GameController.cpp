@@ -160,7 +160,8 @@ void GameController::showGameOverMessage() {
 
         // current player of game state is the winner
         std::string winnerText = "";
-        if (GameController::_currentGameState->get_current_player() == playerState) {
+        if (GameController::_currentGameState->get_current_player() == playerState
+            && GameController::_currentGameState->get_turn_number() != 224) {
             winnerText = "     Winner!";
         }
 
