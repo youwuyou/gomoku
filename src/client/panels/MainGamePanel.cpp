@@ -96,6 +96,13 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                                                      j * wxPoint(grid_spacing / scale_factor, 0) - stone_size / 2;
                     ImagePanel *current_stone_panel = new ImagePanel(this, current_stone_image, wxBITMAP_TYPE_ANY,
                                                                      current_stone_position, MainGamePanel::stone_size);
+
+                    // add drop shadow to stone
+                    std::string stone_shadow_image = "assets/stone_shadow.png";
+                    wxPoint current_stone_shadow_position = current_stone_position + stone_size/17;
+                    ImagePanel *current_stone_shadow_panel = new ImagePanel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
+                                                                     current_stone_shadow_position, MainGamePanel::stone_size);
+
                     //current_stone_panel->SetToolTip(current_stone.get_colour() + " stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
                 } else {
                     // if no stone is present, show a transparent button on each spot, if it is currently our turn
@@ -145,19 +152,26 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
 
         wxPoint turnIndicatorPosition = MainGamePanel::table_center - MainGamePanel::board_size/2 + MainGamePanel::turnIndicatorOffset;
 
-        this->buildStaticText(
+        wxStaticText* turn_indicator_text = this->buildStaticText(
                 turnIndicatorText,
                 turnIndicatorPosition,
                 wxSize(200, 18),
                 wxALIGN_CENTER,
                 true
         );
+        turn_indicator_text->SetForegroundColour(wxColour(255,255,255));
 
         std::string current_player_colour = player::_player_colour_type_to_string.at(gameState->get_current_player()->get_colour());
         std::string currentPlayerStoneImage = "assets/stone_" + current_player_colour + ".png";
         wxPoint turnIndicatorStonePosition = turnIndicatorPosition + MainGamePanel::turnIndicatorStoneOffset;
         ImagePanel* turnIndicatorStone = new ImagePanel(this, currentPlayerStoneImage, wxBITMAP_TYPE_ANY, turnIndicatorStonePosition, MainGamePanel::stone_size);
         turnIndicatorStone->SetToolTip("Colour to play: " + current_player_colour);
+
+        // add drop shadow to stone
+        std::string stone_shadow_image = "assets/stone_shadow.png";
+        wxPoint turn_indicator_stone_shadow_position = turnIndicatorStonePosition + stone_size/17;
+        ImagePanel *turn_indicator_stone_shadow_panel = new ImagePanel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
+                                                                turn_indicator_stone_shadow_position, MainGamePanel::stone_size);
     }
 }
 
@@ -189,6 +203,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                     wxALIGN_CENTER,
                     true
             );
+            game_rule_dropdown_text->SetForegroundColour(wxColour(255,255,255));
             innerLayout->Add(game_rule_dropdown_text, 0, wxALIGN_CENTER);
 
             wxArrayString game_rule_choices;
@@ -231,6 +246,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxALIGN_CENTER,
                 true
         );
+        game_rule_chosen_text->SetForegroundColour(wxColour(255,255,255));
         innerLayout->Add(game_rule_chosen_text, 0, wxALIGN_CENTER);
         // create a buffer before the start game button
         innerLayout->AddSpacer(100);
@@ -244,6 +260,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             wxALIGN_CENTER,
             true
     );
+    playerName->SetForegroundColour(wxColour(255,255,255));
     innerLayout->Add(playerName, 0, wxALIGN_CENTER);
 
     // if the game has not yet started we say so
@@ -255,7 +272,9 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxSize(200, 18),
                 wxALIGN_CENTER
         );
+        playerPoints->SetForegroundColour(wxColour(255,255,255));
         innerLayout->Add(playerPoints, 0, wxALIGN_CENTER, 8);
+        innerLayout->AddSpacer(10);
 
         // show button that allows our player to start the game
         wxButton* startGameButton = new wxButton(this, wxID_ANY, "Start Game!", wxDefaultPosition, wxSize(160, 64));
@@ -263,6 +282,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             GameController::startGame();
         });
         innerLayout->Add(startGameButton, 0, wxALIGN_CENTER, 8);
+        innerLayout->AddSpacer(10);
 
     } else {
 
@@ -273,6 +293,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxSize(200, 18),
                 wxALIGN_CENTER
         );
+        playerPoints->SetForegroundColour(wxColour(255,255,255));
         innerLayout->Add(playerPoints, 0, wxALIGN_CENTER, 8);
 
         // show our player's colour next to their name and points
@@ -281,7 +302,15 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
         ImagePanel* myColourStone = new ImagePanel(this, my_stone_colour_image, wxBITMAP_TYPE_ANY, myColourStonePosition, MainGamePanel::stone_size);
 
         innerLayout->Add(myColourStone, 0, wxALIGN_CENTER, 10);
+
+        // add drop shadow to stone
+        std::string stone_shadow_image = "assets/stone_shadow.png";
+        wxPoint player_stone_shadow_position = myColourStonePosition + stone_size/17;
+        ImagePanel *turn_indicator_stone_shadow_panel = new ImagePanel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
+                                                                       player_stone_shadow_position, MainGamePanel::stone_size);
+
         innerLayout->AddSpacer(10);
+
         /* might be re-usable if we want to have a "give up" button
          *
         // if we haven't folded yet, and it's our turn, display Fold button
@@ -301,6 +330,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                     wxSize(200, 32),
                     wxALIGN_CENTER
             );
+            playerStatus->SetForegroundColour(wxColour(255,255,255));
             innerLayout->Add(playerStatus, 0, wxALIGN_CENTER, 8);
         }
 
