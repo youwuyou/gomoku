@@ -58,18 +58,21 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
     this->Layout();
 }
 
-
 void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
     // only show the board, stones and buttons if the game has started
     if (gameState->is_started()) {
-        // Show board image
+
+        // show background
+        std::string backgroundImage = "assets/background.jpg"; // replace with your image file path
+        wxSize panelSize = this->GetSize();
+        ImagePanel *backgroundPanel = new ImagePanel(this, backgroundImage, wxBITMAP_TYPE_ANY, wxDefaultPosition, panelSize);
+        backgroundPanel->Lower(); // This ensures the background is behind all other elements
+
+        // show board image
         std::string boardImage = "assets/playing_board.png";
-
         wxPoint playingBoardPosition = MainGamePanel::table_center - MainGamePanel::board_size / 2;
-
-        ImagePanel *playingBoard = new ImagePanel(this, boardImage, wxBITMAP_TYPE_ANY, playingBoardPosition,
-                                                  MainGamePanel::board_size);
+        ImagePanel *playingBoard = new ImagePanel(this, boardImage, wxBITMAP_TYPE_ANY, playingBoardPosition, MainGamePanel::board_size);
 
         // show stones on the playing board
         std::vector<std::vector<field_type>> playing_board = gameState->get_playing_board();
