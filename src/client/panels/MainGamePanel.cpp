@@ -173,41 +173,51 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     outerLayout->Add(innerLayout, 1, wxALIGN_BOTTOM);
 
     // show dropdown for game mode selection for first player if the game has not yet started and the opening ruleset is "uninitialized"
-    if (!gameState->is_started() && gameState->get_current_player() == me && gameState->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
+    if(!gameState->is_started()){
+        // show background for game mode selection
+        std::string backgroundImage = "assets/gameselec_background.png"; // Replace with your image file path
+        wxSize panelSize = this->GetSize();
+        ImagePanel *backgroundPanel = new ImagePanel(this, backgroundImage, wxBITMAP_TYPE_ANY, wxDefaultPosition, panelSize);
+        backgroundPanel->Lower(); // This ensures the background is behind all other elements
 
-        wxStaticText* game_rule_dropdown_text = buildStaticText(
-                "Please choose a game style:",
-                wxDefaultPosition,
-                wxSize(200, 18),
-                wxALIGN_CENTER,
-                true
-        );
-        innerLayout->Add(game_rule_dropdown_text, 0, wxALIGN_CENTER);
+        if (gameState->get_current_player() == me && gameState->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
 
-        wxArrayString game_rule_choices;
-        game_rule_choices.Add("Freestyle");
-        game_rule_choices.Add("Swap after first move");
-        game_rule_choices.Add("Swap2");
+            wxStaticText* game_rule_dropdown_text = buildStaticText(
+                    "Please choose a game style:",
+                    wxDefaultPosition,
+                    wxSize(200, 18),
+                    wxALIGN_CENTER,
+                    true
+            );
+            innerLayout->Add(game_rule_dropdown_text, 0, wxALIGN_CENTER);
 
-        wxComboBox* game_rule_dropdown = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, game_rule_choices, wxCB_DROPDOWN | wxCB_READONLY);
-        innerLayout->Add(game_rule_dropdown, 0, wxALIGN_CENTER, 10);
-        game_rule_dropdown->SetSelection(0);
+            wxArrayString game_rule_choices;
+            game_rule_choices.Add("Freestyle");
+            game_rule_choices.Add("Swap after first move");
+            game_rule_choices.Add("Swap2");
 
-        // add a spacer for the gap
-        int gapHeight = 10;
-        innerLayout->AddSpacer(gapHeight);
+            wxComboBox* game_rule_dropdown = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, game_rule_choices, wxCB_DROPDOWN | wxCB_READONLY);
+            innerLayout->Add(game_rule_dropdown, 0, wxALIGN_CENTER, 10);
+            game_rule_dropdown->SetSelection(0);
 
-        // add a button for confirming the ruleset choice
-        std::string err;
-        wxButton* choose_rules_button = new wxButton(this, wxID_ANY, "Confirm choice", wxDefaultPosition, wxSize(150, 40));
-        choose_rules_button->Bind(wxEVT_BUTTON, [game_rule_dropdown, &err](wxCommandEvent& event) {
-            GameController::set_game_rules(_pretty_string_to_ruleset_string.at(std::string(game_rule_dropdown->GetValue())), err);
-        });
-        innerLayout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
+            // add a spacer for the gap
+            int gapHeight = 10;
+            innerLayout->AddSpacer(gapHeight);
 
-        // create a buffer before the start game button
-        innerLayout->AddSpacer(100);
+            // add a button for confirming the ruleset choice
+            std::string err;
+            wxButton* choose_rules_button = new wxButton(this, wxID_ANY, "Confirm choice", wxDefaultPosition, wxSize(150, 40));
+            choose_rules_button->Bind(wxEVT_BUTTON, [game_rule_dropdown, &err](wxCommandEvent& event) {
+                GameController::set_game_rules(_pretty_string_to_ruleset_string.at(std::string(game_rule_dropdown->GetValue())), err);
+            });
+            innerLayout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
+
+            // create a buffer before the start game button
+            innerLayout->AddSpacer(100);
+        }
+
     }
+
 
     // show chosen ruleset type if game has not yet started but ruleset has been chosen
     if (!gameState->is_started() && gameState->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
