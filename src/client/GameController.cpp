@@ -177,7 +177,7 @@ void GameController::showGameOverMessage() {
     }
 
     // display the round results in a box, without the useless minimize button
-    wxDialog* dialog_box = new wxDialog(_gameWindow, wxID_ANY, wxString(title), wxDefaultPosition, wxSize(400, 250));
+    wxDialog* dialog_box = new wxDialog(_gameWindow, wxID_ANY, wxString(title), wxDefaultPosition, wxSize(400, 300));
 
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);

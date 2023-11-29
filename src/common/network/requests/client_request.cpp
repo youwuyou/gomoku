@@ -17,7 +17,7 @@ const std::unordered_map<std::string, RequestType> client_request::_string_to_re
         {"join_game",        RequestType::join_game },
         {"start_game",       RequestType::start_game},
         {"place_stone",      RequestType::place_stone},
-        {"change_colour",      RequestType::swap_colour},
+        {"swap_colour",      RequestType::swap_colour},
         {"select_game_mode", RequestType::select_game_mode},
         {"restart_game",     RequestType::restart_game}
 };
@@ -26,7 +26,7 @@ const std::unordered_map<RequestType, std::string> client_request::_request_type
         { RequestType::join_game,       "join_game" },
         { RequestType::start_game,      "start_game"},
         { RequestType::place_stone,     "place_stone"},
-        { RequestType::swap_colour,     "change_colour"},
+        { RequestType::swap_colour,     "swap_colour"},
         {RequestType::select_game_mode, "select_game_mode"},
         {RequestType::restart_game,     "restart_game"}
 };
