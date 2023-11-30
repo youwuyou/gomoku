@@ -27,6 +27,8 @@ private:
     serializable_value<int>* _turn_number;
     serializable_value<int>* _current_player_idx;
     serializable_value<int>* _starting_player_idx;
+    serializable_value<bool>* _swap_next_turn;
+    serializable_value<bool>* _swap_is_deferred;
 
     // from_diff constructor
     game_state(std::string id);
@@ -41,7 +43,9 @@ private:
             serializable_value<bool>* is_finished,
             serializable_value<int>* current_player_idx,
             serializable_value<int>* turn_number,
-            serializable_value<int>* starting_player_idx);
+            serializable_value<int>* starting_player_idx,
+            serializable_value<bool>* swap_next_turn,
+            serializable_value<bool>* swap_is_deferred);
 
     // returns the index of 'player' in the '_players' vector
     int get_player_index(player* player) const;

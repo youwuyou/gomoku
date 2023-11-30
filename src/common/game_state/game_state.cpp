@@ -17,13 +17,16 @@ game_state::game_state() : unique_serializable() {
     this->_turn_number = new serializable_value<int>(0);
     this->_current_player_idx = new serializable_value<int>(0);
     this->_starting_player_idx = new serializable_value<int>(0);
+    this->_swap_next_turn = new serializable_value<bool>(false);
+    this->_swap_is_deferred = new serializable_value<bool>(false);
 }
 
 // deserialization constructor
 game_state::game_state (std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
                         std::vector<player *> &players, serializable_value<bool> *is_started,
                         serializable_value<bool> *is_finished, serializable_value<int> *current_player_idx,
-                        serializable_value<int>* turn_number, serializable_value<int> *starting_player_idx)
+                        serializable_value<int>* turn_number, serializable_value<int> *starting_player_idx,
+                        serializable_value<bool>* swap_next_turn, serializable_value<bool>* swap_is_deferred)
         : unique_serializable(id),
         _playing_board(_playing_board),
         _opening_ruleset(_opening_ruleset),
@@ -32,7 +35,9 @@ game_state::game_state (std::string id, playing_board* _playing_board, opening_r
         _is_finished(is_finished),
         _current_player_idx(current_player_idx),
         _turn_number(turn_number),
-        _starting_player_idx(starting_player_idx)
+        _starting_player_idx(starting_player_idx),
+        _swap_next_turn(swap_next_turn),
+        _swap_is_deferred(swap_is_deferred)
 {  }
 
 game_state::game_state(std::string id) : unique_serializable(id) {
@@ -44,6 +49,8 @@ game_state::game_state(std::string id) : unique_serializable(id) {
     this->_current_player_idx = new serializable_value<int>(0);
     this->_turn_number = new serializable_value<int>(0);
     this->_starting_player_idx = new serializable_value<int>(0);
+    this->_swap_next_turn = new serializable_value<bool>(false);
+    this->_swap_is_deferred = new serializable_value<bool>(false);
 }
 
 game_state::~game_state() {
@@ -55,6 +62,8 @@ game_state::~game_state() {
         delete _current_player_idx;
         delete _starting_player_idx;
         delete _turn_number;
+        delete _swap_next_turn;
+        delete _swap_is_deferred;
 
         _is_started = nullptr;
         _is_finished = nullptr;
@@ -63,6 +72,8 @@ game_state::~game_state() {
         _current_player_idx = nullptr;
         _starting_player_idx = nullptr;
         _turn_number = nullptr;
+        _swap_next_turn = nullptr;
+        _swap_is_deferred = nullptr;
     }
 }
 
@@ -334,6 +345,14 @@ void game_state::write_into_json(rapidjson::Value &json,
     json.AddMember("opening_ruleset", opening_ruleset_val, allocator);
 
     json.AddMember("players", vector_utils::serialize_vector(_players, allocator), allocator);
+
+    rapidjson::Value swap_next_turn_val(rapidjson::kObjectType);
+    _swap_next_turn->write_into_json(swap_next_turn_val, allocator);
+    json.AddMember("swap_next_turn", swap_next_turn_val, allocator);
+
+    rapidjson::Value swap_is_deferred_val(rapidjson::kObjectType);
+    _swap_is_deferred->write_into_json(swap_is_deferred_val, allocator);
+    json.AddMember("swap_is_deferred", swap_is_deferred_val, allocator);
 }
 
 game_state* game_state::from_json(const rapidjson::Value &json) {
@@ -345,7 +364,9 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
         && json.HasMember("starting_player_idx")
         && json.HasMember("players")
         && json.HasMember("playing_board")
-        && json.HasMember("opening_ruleset"))
+        && json.HasMember("opening_ruleset")
+        && json.HasMember("swap_next_turn")
+        && json.HasMember("swap_is_deferred"))
     {
 
         std::vector<player*> deserialized_players;
@@ -361,7 +382,9 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
                               serializable_value<bool>::from_json(json["is_finished"].GetObject()),
                               serializable_value<int>::from_json(json["current_player_idx"].GetObject()),
                               serializable_value<int>::from_json(json["turn_number"].GetObject()),
-                              serializable_value<int>::from_json(json["starting_player_idx"].GetObject()));
+                              serializable_value<int>::from_json(json["starting_player_idx"].GetObject()),
+                              serializable_value<bool>::from_json(json["swap_next_turn"].GetObject()),
+                              serializable_value<bool>::from_json(json["swap_is_deferred"].GetObject()));
     } else {
         throw GomokuException("Failed to deserialize game_state. Required entries were missing.");
     }
