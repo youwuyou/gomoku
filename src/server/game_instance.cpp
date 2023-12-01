@@ -111,6 +111,12 @@ bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, 
     return false;
 }
 
+bool game_instance::do_swap_decision(player *player, std::string &swap_decision, std::string &err) {
+    // Swap decision could be "do_swap", "do_not_swap", "defer_swap"
+
+    return false;
+}
+
 bool game_instance::set_game_mode(player* player, const std::string& ruleset_string, std::string& err) {
     modification_lock.lock();
     if (_game_state->set_game_mode(ruleset_string, err)) {

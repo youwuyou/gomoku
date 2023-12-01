@@ -15,6 +15,12 @@
 #include "../serialization/serializable_value.h"
 #include "../serialization/unique_serializable.h"
 
+enum swap_decision_type {
+    do_swap,
+    do_not_swap,
+    defer_swap,
+    no_decision_yet,
+};
 
 class game_state : public unique_serializable {
 private:
@@ -28,7 +34,7 @@ private:
     serializable_value<int>* _current_player_idx;
     serializable_value<int>* _starting_player_idx;
     serializable_value<bool>* _swap_next_turn;
-    serializable_value<bool>* _swap_is_deferred;
+    swap_decision_type _swap_decision;
 
     // from_diff constructor
     game_state(std::string id);
@@ -45,7 +51,7 @@ private:
             serializable_value<int>* turn_number,
             serializable_value<int>* starting_player_idx,
             serializable_value<bool>* swap_next_turn,
-            serializable_value<bool>* swap_is_deferred);
+            swap_decision_type swap_decision);
 
     // returns the index of 'player' in the '_players' vector
     int get_player_index(player* player) const;
@@ -69,6 +75,11 @@ public:
 
     player* get_current_player() const;
 
+    // for deserialization of swap_decision
+    static const std::unordered_map<std::string, swap_decision_type> _string_to_swap_decision_type;
+    // for serialization of swap_decision
+    static const std::unordered_map<swap_decision_type, std::string> _swap_decision_type_to_string;
+
 #ifdef GOMOKU_SERVER
     // server-side state update functions
     //// lobby functionalities
@@ -86,6 +97,7 @@ public:
     bool check_win_condition(unsigned int x, unsigned int y, int colour);
     unsigned int count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour);
     bool update_current_player(std::string& err);
+    bool alternate_current_player(std::string& err);
 
     //// end of round functions
     bool switch_starting_player(std::string& err);
