@@ -19,6 +19,8 @@ enum swap_decision_type {
     do_swap,
     do_not_swap,
     defer_swap,
+    deferred_do_swap,
+    deferred_do_not_swap,
     no_decision_yet,
 };
 

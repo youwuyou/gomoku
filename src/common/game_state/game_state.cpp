@@ -14,6 +14,8 @@ const std::unordered_map<std::string, swap_decision_type> game_state::_string_to
         {"do_not_swap", swap_decision_type::do_not_swap },
         {"defer_swap", swap_decision_type::defer_swap },
         {"no_decision_yet", swap_decision_type::no_decision_yet },
+        {"deferred_do_swap", swap_decision_type::deferred_do_swap },
+        {"deferred_do_not_swap", swap_decision_type::deferred_do_not_swap },
 };
 
 // for serialization
