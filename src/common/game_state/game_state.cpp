@@ -199,6 +199,7 @@ bool game_state::update_current_player(std::string& err) {
                             break;
                         case swap_decision_type::do_not_swap:
                             _swap_next_turn->set_value(false);
+                            result = true;
                             break;
                         default:
                             result = false;
@@ -211,7 +212,81 @@ bool game_state::update_current_player(std::string& err) {
             }
             break;
         case swap2:
-            result = alternate_current_player(err);
+            switch(current_turn_val) {
+                case 0:
+                    result = true;
+                    break;
+                case 1:
+                    this->get_current_player()->change_colour(err);
+                    result = true;
+                    break;
+                case 2:
+                    this->get_current_player()->change_colour(err);
+                    _swap_next_turn->set_value(true);
+                    result = alternate_current_player(err);
+                    break;
+                case 3:
+                    switch(_swap_decision) {
+                        case swap_decision_type::do_swap:
+                            _players.at(0)->change_colour(err);
+                            _players.at(1)->change_colour(err);
+                            _swap_next_turn->set_value(false);
+                            result = alternate_current_player(err);
+                            break;
+                        case swap_decision_type::do_not_swap:
+                            _swap_next_turn->set_value(false);
+                            result = true;
+                            break;
+                        case swap_decision_type::defer_swap:
+                            result = true;
+                            break;
+                        default:
+                            result = false;
+                            break;
+                    }
+                default:
+                    // If swap has not been deferred
+                    if (_swap_decision == do_swap || _swap_decision == do_not_swap) {
+                        result = alternate_current_player(err);
+                        break;
+                    // If swap has been deferred
+                    } else if (_swap_decision == defer_swap
+                        || _swap_decision == deferred_do_swap
+                        || _swap_decision == deferred_do_not_swap) {
+                        switch(current_turn_val) {
+                            case 4:
+                                this->get_current_player()->change_colour(err);
+                                result = true;
+                                break;
+                            case 5:
+                                this->get_current_player()->change_colour(err);
+                                _swap_next_turn->set_value(true);
+                                result = alternate_current_player(err);
+                                break;
+                            case 6:
+                                switch (_swap_decision) {
+                                    case swap_decision_type::deferred_do_swap:
+                                        _players.at(0)->change_colour(err);
+                                        _players.at(1)->change_colour(err);
+                                        _swap_next_turn->set_value(false);
+                                        result = alternate_current_player(err);
+                                        break;
+                                    case swap_decision_type::deferred_do_not_swap:
+                                        _swap_next_turn->set_value(false);
+                                        result = true;
+                                    default:
+                                        return false;
+                                }
+                            default:
+                                result = alternate_current_player(err);
+                                break;
+                        }
+
+                    } else {
+                        result = false;
+                        break;
+                    }
+            }
             break;
         default:
             throw GomokuException("Failed to update current player. Invalid ruleset name.");
@@ -237,6 +312,15 @@ bool game_state::alternate_current_player(std::string& err) {
 bool game_state::do_swap_decision(std::string swap_decision, std::string &err) {
     swap_decision_type swap_decision_enum = _string_to_swap_decision_type.at(swap_decision);
     if (swap_decision_enum != no_decision_yet) {
+        if (_swap_decision == defer_swap) {
+            if (swap_decision_enum == do_swap) {
+                _swap_decision = deferred_do_swap;
+                return true;
+            } else if (swap_decision_enum == do_not_swap) {
+                _swap_decision = deferred_do_not_swap;
+                return true;
+            }
+        }
         _swap_decision = swap_decision_enum;
         return true;
     }
