@@ -80,7 +80,7 @@ public:
     // for serialization of swap_decision
     static const std::unordered_map<swap_decision_type, std::string> _swap_decision_type_to_string;
 
-#ifdef GOMOKU_SERVER
+// #ifdef GOMOKU_SERVER
     // server-side state update functions
     //// lobby functionalities
     bool remove_player(player* player, std::string& err);
@@ -98,12 +98,13 @@ public:
     unsigned int count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour);
     bool update_current_player(std::string& err);
     bool alternate_current_player(std::string& err);
+    bool do_swap_decision(std::string swap_decision, std::string &err);
 
     //// end of round functions
     bool switch_starting_player(std::string& err);
     void wrap_up_round(std::string& err);
 
-#endif
+// #endif
 
 // serializable interface
     static game_state* from_json(const rapidjson::Value& json);

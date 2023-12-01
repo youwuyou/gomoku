@@ -111,9 +111,22 @@ bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, 
     return false;
 }
 
-bool game_instance::do_swap_decision(player *player, std::string &swap_decision, std::string &err) {
+bool game_instance::do_swap_decision(player *player, std::string swap_decision, std::string &err) {
     // Swap decision could be "do_swap", "do_not_swap", "defer_swap"
-
+    modification_lock.lock();
+    if (_game_state->do_swap_decision(swap_decision, err)) {
+        if (_game_state->update_current_player(err)){
+            full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
+            server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
+            modification_lock.unlock();
+            return true;
+        } else {
+            err = "GameInstance: Unable to update current player.";
+        }
+    } else {
+        err = "GameInstance: Unable to carry out swap decision";
+    }
+    modification_lock.unlock();
     return false;
 }
 

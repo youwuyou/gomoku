@@ -146,7 +146,7 @@ std::vector<player*>& game_state::get_players() {
 }
 
 
-#ifdef GOMOKU_SERVER
+// #ifdef GOMOKU_SERVER
 
 // state modification functions without diff
 void game_state::setup_round(std::string &err) {
@@ -182,13 +182,26 @@ bool game_state::update_current_player(std::string& err) {
             result = alternate_current_player(err);
             break;
         case swap_after_first_move:
-            // result = freestyle_player_update(err);
             switch(current_turn_val) {
                 case 0:
-                    this->_swap_next_turn->set_value(true);
+                    _swap_next_turn->set_value(true);
                     result = alternate_current_player(err);
                     break;
                 case 1:
+                    switch(_swap_decision) {
+                        case swap_decision_type::do_swap:
+                            _players.at(0)->change_colour(err);
+                            _players.at(1)->change_colour(err);
+                            _swap_next_turn->set_value(false);
+                            result = alternate_current_player(err);
+                            break;
+                        case swap_decision_type::do_not_swap:
+                            _swap_next_turn->set_value(false);
+                            break;
+                        default:
+                            result = false;
+                            break;
+                    }
                     break;
                 default:
                     result = alternate_current_player(err);
@@ -217,6 +230,16 @@ bool game_state::alternate_current_player(std::string& err) {
         err = "Invalid current player index for player index update.";
         return false;
     }
+}
+
+bool game_state::do_swap_decision(std::string swap_decision, std::string &err) {
+    swap_decision_type swap_decision_enum = _string_to_swap_decision_type.at(swap_decision);
+    if (swap_decision_enum != no_decision_yet) {
+        _swap_decision = swap_decision_enum;
+        return true;
+    }
+    err = "GameState: Unable to carry out swap decision";
+    return false;
 }
 
 bool game_state::switch_starting_player(std::string& err) {
@@ -356,7 +379,7 @@ unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int
     }
 }
 
-#endif
+// #endif
 
 
 // Serializable interface
