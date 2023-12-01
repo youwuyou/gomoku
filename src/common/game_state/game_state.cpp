@@ -175,7 +175,6 @@ void game_state::wrap_up_round(std::string& err) {
 }
 
 bool game_state::update_current_player(std::string& err) {
-
     bool result;
     int current_turn_val = this->get_turn_number();
 
@@ -192,10 +191,7 @@ bool game_state::update_current_player(std::string& err) {
                 case 1:
                     switch(_swap_decision) {
                         case swap_decision_type::do_swap:
-                            _players.at(0)->change_colour(err);
-                            _players.at(1)->change_colour(err);
-                            _swap_next_turn->set_value(false);
-                            result = alternate_current_player(err);
+                            result = execute_swap(err);
                             break;
                         case swap_decision_type::do_not_swap:
                             _swap_next_turn->set_value(false);
@@ -228,16 +224,14 @@ bool game_state::update_current_player(std::string& err) {
                 case 3:
                     switch(_swap_decision) {
                         case swap_decision_type::do_swap:
-                            _players.at(0)->change_colour(err);
-                            _players.at(1)->change_colour(err);
-                            _swap_next_turn->set_value(false);
-                            result = alternate_current_player(err);
+                            result = execute_swap(err);
                             break;
                         case swap_decision_type::do_not_swap:
                             _swap_next_turn->set_value(false);
                             result = true;
                             break;
                         case swap_decision_type::defer_swap:
+                            _swap_next_turn->set_value(false);
                             result = true;
                             break;
                         default:
@@ -266,14 +260,12 @@ bool game_state::update_current_player(std::string& err) {
                             case 6:
                                 switch (_swap_decision) {
                                     case swap_decision_type::deferred_do_swap:
-                                        _players.at(0)->change_colour(err);
-                                        _players.at(1)->change_colour(err);
-                                        _swap_next_turn->set_value(false);
-                                        result = alternate_current_player(err);
+                                        result = execute_swap(err);
                                         break;
                                     case swap_decision_type::deferred_do_not_swap:
                                         _swap_next_turn->set_value(false);
                                         result = true;
+                                        break;
                                     default:
                                         return false;
                                 }
@@ -281,7 +273,6 @@ bool game_state::update_current_player(std::string& err) {
                                 result = alternate_current_player(err);
                                 break;
                         }
-
                     } else {
                         result = false;
                         break;
@@ -291,11 +282,10 @@ bool game_state::update_current_player(std::string& err) {
         default:
             throw GomokuException("Failed to update current player. Invalid ruleset name.");
     }
-
-    this->_turn_number->set_value(current_turn_val+1);
     return result;
 }
 
+// Helper function of update_current_player, which makes the other player the new current player
 bool game_state::alternate_current_player(std::string& err) {
     if (_current_player_idx->get_value() == 0){
         _current_player_idx->set_value(1);
@@ -309,9 +299,23 @@ bool game_state::alternate_current_player(std::string& err) {
     }
 }
 
-bool game_state::do_swap_decision(std::string swap_decision, std::string &err) {
+// Helper function of update_current_player, which swaps the colours of both players
+bool game_state::execute_swap(std::string& err) {
+    _players.at(0)->change_colour(err);
+    _players.at(1)->change_colour(err);
+    _swap_next_turn->set_value(false);
+    bool res = alternate_current_player(err);
+    return res;
+}
+
+void game_state::iterate_turn() {
+    this->_turn_number->set_value(this->get_turn_number()+1);
+}
+
+bool game_state::determine_swap_decision(std::string swap_decision, std::string &err) {
     swap_decision_type swap_decision_enum = _string_to_swap_decision_type.at(swap_decision);
-    if (swap_decision_enum != no_decision_yet) {
+    if (swap_decision_enum == do_swap || swap_decision_enum == do_not_swap || swap_decision_enum == defer_swap) {
+        // If swap has been deferred in a prior turn, set _swap_decision to the deferred enums after second swap
         if (_swap_decision == defer_swap) {
             if (swap_decision_enum == do_swap) {
                 _swap_decision = deferred_do_swap;
@@ -321,6 +325,7 @@ bool game_state::do_swap_decision(std::string swap_decision, std::string &err) {
                 return true;
             }
         }
+        // Otherwise, set _swap_decision directly as the enum parameter
         _swap_decision = swap_decision_enum;
         return true;
     }

@@ -100,7 +100,9 @@ public:
     unsigned int count_stones_one_direction(unsigned int x, unsigned int y, int direction_x, int direction_y, int colour);
     bool update_current_player(std::string& err);
     bool alternate_current_player(std::string& err);
-    bool do_swap_decision(std::string swap_decision, std::string &err);
+    bool determine_swap_decision(std::string swap_decision, std::string &err);
+    bool execute_swap(std::string& err);
+    void iterate_turn();
 
     //// end of round functions
     bool switch_starting_player(std::string& err);

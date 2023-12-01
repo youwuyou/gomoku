@@ -97,6 +97,7 @@ bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, 
             modification_lock.unlock();
             return true;
         } else if (_game_state->update_current_player(err)){
+            _game_state->iterate_turn();
             full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
             server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
             modification_lock.unlock();
@@ -112,10 +113,12 @@ bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, 
 }
 
 bool game_instance::do_swap_decision(player *player, std::string swap_decision, std::string &err) {
-    // Swap decision could be "do_swap", "do_not_swap", "defer_swap"
+    // NOTE: This method expects swap_decision to be "do_swap", "do_not_swap", or "defer_swap".
+    // Anything else will result in an error, or return false, to occur.
     modification_lock.lock();
-    if (_game_state->do_swap_decision(swap_decision, err)) {
+    if (_game_state->determine_swap_decision(swap_decision, err)) {
         if (_game_state->update_current_player(err)){
+            _game_state->iterate_turn();
             full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
             server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
             modification_lock.unlock();
