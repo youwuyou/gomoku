@@ -7,6 +7,9 @@
 
 
 ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
+    // play bgm
+    wxSound connectSound("assets/music/chinese-journey.wav");
+    connectSound.Play(wxSOUND_ASYNC | wxSOUND_LOOP);
 
     // wxColor white = wxColor(255, 255, 255);
     // this->SetBackgroundColour(white);
