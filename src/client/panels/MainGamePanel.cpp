@@ -25,9 +25,7 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
 
     // remove any existing UI
     this->DestroyChildren();
-
     std::vector<player*> players = gameState->get_players();
-    int numberOfPlayers = 2;
 
     // find our own player object in the list of players
     int myPosition = -1;
@@ -42,17 +40,20 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
         return;
     }
 
+
     // show the board at the center
     this->buildPlayingBoard(gameState, me);
 
+
     // show turn indicator below card piles
     this->buildTurnIndicator(gameState, me);
+
 
     // show our own player
     this->buildThisPlayer(gameState, me);
 
     // build About button
-    //this->buildAbout(gameState, me);
+    this->buildAbout(gameState, me);
 
     // update layout
     this->Layout();
@@ -337,6 +338,24 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     }
 }
 
+void MainGamePanel::buildAbout(game_state* gameState, player *me) {
+    // create the About button with a default position
+    wxButton* aboutButton = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxSize(100, 30));
+
+    // manually set the position of the About button to the upper left corner
+    int margin = 20;
+    wxPoint buttonPosition(margin, margin); // setting the position to the top-left corner with margin
+    aboutButton->SetPosition(buttonPosition);
+
+    // bind the event handler
+    aboutButton->Bind(wxEVT_BUTTON, &MainGamePanel::buildAboutText, this);
+}
+
+
+void MainGamePanel::buildAboutText(wxCommandEvent& event) {
+    wxString aboutInfo = wxT("Gomoku Game\n\nAuthors: Haoanqin Gao, Julius König, Stephen Lincon, \n                Nicolas Müller, Rana Singh, You Wu \nVersion: 1.0.0\n\n© 2023 Wizards of the C Inc.");
+    wxMessageBox(aboutInfo, wxT("About Gomoku"), wxOK | wxICON_INFORMATION, this);
+}
 
 wxStaticText* MainGamePanel::buildStaticText(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold) {
     wxStaticText* staticText = new wxStaticText(this, wxID_ANY, content, position, size, textAlignment);

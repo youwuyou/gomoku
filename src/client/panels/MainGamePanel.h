@@ -26,6 +26,7 @@ private:
 
     void close_all_dialogs();
 
+    void buildAboutText(wxCommandEvent& event);
     wxStaticText* buildStaticText(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
 
     wxSize getBoundsOfRotatedSquare(double edgeLength, double rotationAngle);
