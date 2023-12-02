@@ -1,4 +1,5 @@
-![Gomoku-logo](./assets/gomoku_logo.png?raw=true)
+<img src="./assets/gomoku_logo.png" alt="Gomoku-logo" width="300"/>
+
 
 This is a simple C++ implementation of a classical Japanese board game called "Gomoku". You can read the game's rules [here](https://www.wikiwand.com/en/Gomoku). The implementation features a client/server architecture for 2-player scenarios.
 
