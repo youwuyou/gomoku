@@ -1,6 +1,7 @@
 #ifndef GOMOKUUI_GAMECONTROLLER_H
 #define GOMOKUUI_GAMECONTROLLER_H
 
+#include <wx/sound.h>
 #include "windows/GameWindow.h"
 #include "panels/ConnectionPanel.h"
 #include "panels/MainGamePanel.h"
@@ -32,7 +33,6 @@ private:
 
     static player* _me;
     static game_state* _currentGameState;
-
 };
 
 

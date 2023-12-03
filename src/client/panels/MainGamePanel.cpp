@@ -18,8 +18,7 @@ const std::unordered_map<std::string, std::string> MainGamePanel::_ruleset_strin
 };
 
 
-MainGamePanel::MainGamePanel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 680)) {
-}
+MainGamePanel::MainGamePanel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 680)) {}
 
 void MainGamePanel::buildGameState(game_state* gameState, player* me) {
 
@@ -133,7 +132,10 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                         unsigned int y = i;
 
                         new_stone_button->Bind(wxEVT_LEFT_UP, [x, y, new_stone_colour, &err](wxMouseEvent &event) {
-                            GameController::placeStone(x, y, new_stone_colour, err);
+                        wxSound stonePlaceSound("assets/music/place-stone-sound.wav");
+                        stonePlaceSound.Play(wxSOUND_ASYNC);
+
+                        GameController::placeStone(x, y, new_stone_colour, err);
                         });
                     }
                 }
@@ -224,6 +226,8 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             std::string err;
             wxButton* choose_rules_button = new wxButton(this, wxID_ANY, "Confirm choice", wxDefaultPosition, wxSize(150, 40));
             choose_rules_button->Bind(wxEVT_BUTTON, [game_rule_dropdown, &err](wxCommandEvent& event) {
+                wxSound buttonClickSound("assets/music/click-button.wav");
+                buttonClickSound.Play(wxSOUND_ASYNC);
                 GameController::set_game_rules(_pretty_string_to_ruleset_string.at(std::string(game_rule_dropdown->GetValue())), err);
             });
             innerLayout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
@@ -280,6 +284,8 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
         // show button that allows our player to start the game
         wxButton* startGameButton = new wxButton(this, wxID_ANY, "Start Game!", wxDefaultPosition, wxSize(160, 64));
         startGameButton->Bind(wxEVT_BUTTON, [](wxCommandEvent& event) {
+            wxSound buttonClickSound("assets/music/click-button.wav");
+            buttonClickSound.Play(wxSOUND_ASYNC);
             GameController::startGame();
         });
         innerLayout->Add(startGameButton, 0, wxALIGN_CENTER, 8);
@@ -347,9 +353,15 @@ void MainGamePanel::buildAbout(game_state* gameState, player *me) {
     wxPoint buttonPosition(margin, margin); // setting the position to the top-left corner with margin
     aboutButton->SetPosition(buttonPosition);
 
-    // bind the event handler
-    aboutButton->Bind(wxEVT_BUTTON, &MainGamePanel::buildAboutText, this);
+    // bind the event handler with sound
+    aboutButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+        wxSound buttonClickSound("assets/music/info-click.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
+        this->buildAboutText(event); // call the original handler
+    });
 }
+
+
 
 
 void MainGamePanel::buildAboutText(wxCommandEvent& event) {

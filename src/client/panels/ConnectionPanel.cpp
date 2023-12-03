@@ -7,10 +7,6 @@
 
 
 ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
-    // play bgm
-    wxSound connectSound("assets/music/chinese-journey.wav");
-    connectSound.Play(wxSOUND_ASYNC | wxSOUND_LOOP);
-
     // wxColor white = wxColor(255, 255, 255);
     // this->SetBackgroundColour(white);
     wxBoxSizer* verticalLayout = new wxBoxSizer(wxVERTICAL);
@@ -47,8 +43,11 @@ ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
 
     wxButton* connectButton = new wxButton(this, wxID_ANY, "Connect", wxDefaultPosition, wxSize(100, 40));
     connectButton->Bind(wxEVT_BUTTON, [](wxCommandEvent& event) {
+        wxSound buttonClickSound("assets/music/click-button.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
         GameController::connectToServer();
     });
+
     verticalLayout->Add(connectButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
     this->SetSizerAndFit(verticalLayout);

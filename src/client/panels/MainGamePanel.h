@@ -2,6 +2,7 @@
 #define GOMOKU_CLIENT_MAINGAMEPANEL_H
 
 #include <wx/wx.h>
+#include <wx/mediactrl.h> // background music
 #include "../../common/game_state/game_state.h"
 
 
@@ -15,7 +16,8 @@ public:
     std::vector<wxDialog*> _open_dialogs;
 
 private:
-
+    wxMediaCtrl* backgroundMusicPlayer; // wxMediaCtrl for background music
+    void OnMusicStop(wxMediaEvent& WXUNUSED(event));
     static const std::unordered_map<std::string, std::string> _pretty_string_to_ruleset_string;
     static const std::unordered_map<std::string, std::string> _ruleset_string_to_pretty_string;
 

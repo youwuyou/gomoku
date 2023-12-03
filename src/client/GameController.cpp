@@ -12,11 +12,8 @@
 GameWindow* GameController::_gameWindow = nullptr;
 ConnectionPanel* GameController::_connectionPanel = nullptr;
 MainGamePanel* GameController::_mainGamePanel = nullptr;
-
 player* GameController::_me = nullptr;
 game_state* GameController::_currentGameState = nullptr;
-
-
 
 void GameController::init(GameWindow* gameWindow) {
 
@@ -137,7 +134,6 @@ void GameController::showError(const std::string& title, const std::string& mess
 void GameController::showStatus(const std::string& message) {
     GameController::_gameWindow->setStatus(message);
 }
-
 
 void GameController::showGameOverMessage() {
     std::string title = "Round Over!";
