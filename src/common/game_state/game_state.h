@@ -82,7 +82,7 @@ public:
     // for serialization of swap_decision
     static const std::unordered_map<swap_decision_type, std::string> _swap_decision_type_to_string;
 
-// #ifdef GOMOKU_SERVER
+#ifdef GOMOKU_SERVER
     // server-side state update functions
     //// lobby functionalities
     bool remove_player(player* player, std::string& err);
@@ -108,7 +108,7 @@ public:
     bool switch_starting_player(std::string& err);
     void wrap_up_round(std::string& err);
 
-// #endif
+#endif
 
 // serializable interface
     static game_state* from_json(const rapidjson::Value& json);

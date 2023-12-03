@@ -148,7 +148,7 @@ std::vector<player*>& game_state::get_players() {
 }
 
 
-// #ifdef GOMOKU_SERVER
+#ifdef GOMOKU_SERVER
 
 // state modification functions without diff
 void game_state::setup_round(std::string &err) {
@@ -470,7 +470,7 @@ unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int
     }
 }
 
-// #endif
+#endif
 
 
 // Serializable interface
