@@ -50,6 +50,8 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
 
     // build About button
     this->build_about(gameState, me);
+    this->build_settings(gameState, me);
+    this->build_help(gameState, me);
 
     // update layout
     this->Layout();
@@ -102,7 +104,7 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
 
                 } else {
                     // if no stone is present, show a transparent button on each spot, if it is currently our turn
-                    if (gameState->get_current_player() == me) {
+                    if (gameState->get_current_player() == me && !gameState->get_swap_next_turn()) {
                         player_colour_type current_player_colour = gameState->get_current_player()->get_colour();
                         std::string transparent_stone_image = "assets/stone_transparent.png";
                         wxPoint current_stone_position = table_center - board_size / 2 + grid_corner_offset +
@@ -348,23 +350,57 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     }
 }
 
+// void MainGamePanel::build_about(game_state* gameState, player *me) {
+//     // create the About button with a default position
+//     wxButton* about_button = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxSize(100, 30));
+
+//     // manually set the position of the About button to the upper left corner
+//     wxPoint button_position(20, 20); // setting the position to the top-left corner with margin
+//     about_button->SetPosition(button_position);
+
+//     // bind the event handler with sound
+//     about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+//         wxSound buttonClickSound("assets/music/info-click.wav");
+//         buttonClickSound.Play(wxSOUND_ASYNC);
+//         this->buildAboutText(event); // call the original handler
+//     });
+// }
+
+// create the About button
 void MainGamePanel::build_about(game_state* gameState, player *me) {
-    // create the About button with a default position
-    wxButton* about_button = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxSize(100, 30));
-
-    // manually set the position of the About button to the upper left corner
-    wxPoint button_position(20, 20); // setting the position to the top-left corner with margin
-    about_button->SetPosition(button_position);
-
-    // bind the event handler with sound
+    wxBitmap aboutButtonBitmap(wxT("assets/icons/info.png"), wxBITMAP_TYPE_PNG);
+    wxBitmapButton* about_button = new wxBitmapButton(this, wxID_ANY, aboutButtonBitmap, wxDefaultPosition, wxSize(50,50), wxBORDER_NONE);
+    about_button->SetPosition(wxPoint(30, 40)); // Set position to top-left corner with margin
     about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
         wxSound buttonClickSound("assets/music/info-click.wav");
         buttonClickSound.Play(wxSOUND_ASYNC);
-        this->buildAboutText(event); // call the original handler
+        this->buildAboutText(event);
     });
 }
 
+// create the setting button
+void MainGamePanel::build_settings(game_state* gameState, player *me) {
+    wxBitmap aboutButtonBitmap(wxT("assets/icons/cog.png"), wxBITMAP_TYPE_PNG);
+    wxBitmapButton* about_button = new wxBitmapButton(this, wxID_ANY, aboutButtonBitmap, wxDefaultPosition, wxSize(50,50), wxBORDER_NONE);
+    about_button->SetPosition(wxPoint(30, 100)); // Set position to top-left corner with margin
+    about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+        wxSound buttonClickSound("assets/music/info-click.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
+        this->buildAboutText(event);
+    });
+}
 
+// create the help button
+void MainGamePanel::build_help(game_state* gameState, player *me) {
+    wxBitmap aboutButtonBitmap(wxT("assets/icons/help.png"), wxBITMAP_TYPE_PNG);
+    wxBitmapButton* about_button = new wxBitmapButton(this, wxID_ANY, aboutButtonBitmap, wxDefaultPosition, wxSize(50,50), wxBORDER_NONE);
+    about_button->SetPosition(wxPoint(30, 160)); // Set position to top-left corner with margin
+    about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+        wxSound buttonClickSound("assets/music/info-click.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
+        this->buildAboutText(event);
+    });
+}
 
 
 void MainGamePanel::buildAboutText(wxCommandEvent& event) {

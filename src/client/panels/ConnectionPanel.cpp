@@ -7,10 +7,10 @@
 
 
 ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
+
     wxBoxSizer* verticalLayout = new wxBoxSizer(wxVERTICAL);
     ImagePanel* logo = new ImagePanel(this, "assets/gomoku_logo.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, wxSize(400, 400));
     verticalLayout->Add(logo, 0, wxALIGN_CENTER, 10);
-
 
     this->_serverAddressField = new InputField(
         this, // parent element
@@ -19,6 +19,7 @@ ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
         default_server_host, // default value (variable from "default.conf")
         240 // width of field
     );
+    this->_serverAddressField->SetForegroundColour(wxColor(0, 0, 0));
     verticalLayout->Add(this->_serverAddressField, 0, wxTOP | wxLEFT | wxRIGHT, 10);
 
     this->_serverPortField = new InputField(
@@ -28,6 +29,7 @@ ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
         wxString::Format("%i", default_port), // default value (variable from "default.conf")
         240 // width of field
     );
+    this->_serverPortField->SetForegroundColour(wxColor(0, 0, 0));
     verticalLayout->Add(this->_serverPortField, 0, wxTOP | wxLEFT | wxRIGHT, 10);
 
     this->_playerNameField = new InputField(
@@ -37,6 +39,7 @@ ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
         "", // default value
         240 // width of field
     );
+    this->_playerNameField->SetForegroundColour(wxColor(0, 0, 0));
     verticalLayout->Add(this->_playerNameField, 0, wxTOP | wxLEFT | wxRIGHT, 10);
 
     wxButton* connectButton = new wxButton(this, wxID_ANY, "Connect", wxDefaultPosition, wxSize(100, 40));
@@ -46,7 +49,7 @@ ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
         GameController::connectToServer();
     });
 
-    verticalLayout->Add(connectButton, 0, wxALIGN_RIGHT | wxALL, 10);
+    verticalLayout->Add(connectButton, 0, wxALIGN_CENTRE_HORIZONTAL | wxALL, 10);
 
     this->SetSizerAndFit(verticalLayout);
 }

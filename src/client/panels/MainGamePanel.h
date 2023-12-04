@@ -29,7 +29,11 @@ private:
     void buildPlayingBoard(game_state* gameState, player* me);
     void buildTurnIndicator(game_state* gameState, player* me);
     void buildThisPlayer(game_state* gameState, player* me);
+
+    // todo: just one method for all three buttons!
     void build_about(game_state* gameState, player* me);
+    void build_settings(game_state* gameState, player *me);
+    void build_help(game_state* gameState, player *me);
 
     void close_all_dialogs();
 
