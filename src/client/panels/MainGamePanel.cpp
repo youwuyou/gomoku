@@ -39,14 +39,11 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
         return;
     }
 
-
     // show the board at the center
     this->buildPlayingBoard(gameState, me);
 
-
     // show turn indicator below card piles
     this->buildTurnIndicator(gameState, me);
-
 
     // show our own player
     this->buildThisPlayer(gameState, me);
@@ -64,7 +61,7 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
     if (gameState->is_started()) {
 
         // show background
-        std::string backgroundImage = "assets/background.jpg"; // replace with your image file path
+        std::string backgroundImage = "assets/background.jpg";
         wxSize panelSize = this->GetSize();
         ImagePanel *backgroundPanel = new ImagePanel(this, backgroundImage, wxBITMAP_TYPE_ANY, wxDefaultPosition, panelSize);
         backgroundPanel->Lower(); // This ensures the background is behind all other elements
@@ -190,10 +187,10 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     // show dropdown for game mode selection for first player if the game has not yet started and the opening ruleset is "uninitialized"
     if(!gameState->is_started()){
         // show background for game mode selection
-        std::string backgroundImage = "assets/gameselec_background.png"; // Replace with your image file path
+        std::string backgroundImage = "assets/gameselec_background.png";
         wxSize panelSize = this->GetSize();
         ImagePanel *backgroundPanel = new ImagePanel(this, backgroundImage, wxBITMAP_TYPE_ANY, wxDefaultPosition, panelSize);
-        backgroundPanel->Lower(); // This ensures the background is behind all other elements
+        backgroundPanel->Lower(); // background at bottom-most layer
 
         if (gameState->get_current_player() == me && gameState->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
 
@@ -204,7 +201,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                     wxALIGN_CENTER,
                     true
             );
-            game_rule_dropdown_text->SetForegroundColour(wxColour(255,255,255));
+            game_rule_dropdown_text->SetForegroundColour(white);
             innerLayout->Add(game_rule_dropdown_text, 0, wxALIGN_CENTER);
 
             wxArrayString game_rule_choices;
@@ -217,8 +214,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             game_rule_dropdown->SetSelection(0);
 
             // add a spacer for the gap
-            int gapHeight = 10;
-            innerLayout->AddSpacer(gapHeight);
+            innerLayout->AddSpacer(10);
 
             // add a button for confirming the ruleset choice
             std::string err;
@@ -249,7 +245,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxALIGN_CENTER,
                 true
         );
-        game_rule_chosen_text->SetForegroundColour(wxColour(255,255,255));
+        game_rule_chosen_text->SetForegroundColour(white);
         innerLayout->Add(game_rule_chosen_text, 0, wxALIGN_CENTER);
         // create a buffer before the start game button
         innerLayout->AddSpacer(100);
@@ -263,7 +259,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             wxALIGN_CENTER,
             true
     );
-    playerName->SetForegroundColour(wxColour(255,255,255));
+    playerName->SetForegroundColour(white);
     innerLayout->Add(playerName, 0, wxALIGN_CENTER);
 
     // if the game has not yet started we say so
@@ -275,7 +271,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxSize(200, 18),
                 wxALIGN_CENTER
         );
-        playerPoints->SetForegroundColour(wxColour(255,255,255));
+        playerPoints->SetForegroundColour(white);
         innerLayout->Add(playerPoints, 0, wxALIGN_CENTER, 8);
         innerLayout->AddSpacer(10);
 
@@ -298,7 +294,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                 wxSize(200, 18),
                 wxALIGN_CENTER
         );
-        playerPoints->SetForegroundColour(wxColour(255,255,255));
+        playerPoints->SetForegroundColour(white);
         innerLayout->Add(playerPoints, 0, wxALIGN_CENTER, 8);
 
         // show our player's colour next to their name and points
@@ -335,7 +331,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
                     wxSize(200, 32),
                     wxALIGN_CENTER
             );
-            playerStatus->SetForegroundColour(wxColour(255,255,255));
+            playerStatus->SetForegroundColour(white);
             innerLayout->Add(playerStatus, 0, wxALIGN_CENTER, 8);
         }
 
