@@ -32,6 +32,7 @@ public:
     ~playing_board();
 
     static const int _playing_board_size = 15;
+    static const int MAX_NUM_STONES = _playing_board_size*_playing_board_size;
 
     bool place_stone(unsigned int x, unsigned int y, field_type colour, std::string &err);
 
