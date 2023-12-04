@@ -41,8 +41,8 @@ ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
 
     wxButton* connectButton = new wxButton(this, wxID_ANY, "Connect", wxDefaultPosition, wxSize(100, 40));
     connectButton->Bind(wxEVT_BUTTON, [](wxCommandEvent& event) {
-        //wxSound buttonClickSound("assets/music/click-button.wav");
-        //buttonClickSound.Play(wxSOUND_ASYNC);
+        wxSound buttonClickSound("assets/music/click-button.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
         GameController::connectToServer();
     });
 

@@ -198,16 +198,22 @@ void GameController::showGameOverMessage() {
     _mainGamePanel->_open_dialogs.push_back(dialog_box);
 
     rematch_button->Bind(wxEVT_BUTTON, [dialog_box](wxCommandEvent& event) {
+        wxSound buttonClickSound("assets/music/info-click.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
         restart_game_request request = restart_game_request(GameController::_me->get_id(), GameController::_currentGameState->get_id(), false);
         ClientNetworkManager::sendRequest(request);
         dialog_box->EndModal(wxID_OK);
     });
     change_ruleset_button->Bind(wxEVT_BUTTON, [dialog_box](wxCommandEvent& event) {
+        wxSound buttonClickSound("assets/music/info-click.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
         restart_game_request request = restart_game_request(GameController::_me->get_id(), GameController::_currentGameState->get_id(), true);
         ClientNetworkManager::sendRequest(request);
         dialog_box->EndModal(wxID_OK);
     });
     close_button->Bind(wxEVT_BUTTON, [dialog_box](wxCommandEvent& event) {
+        wxSound buttonClickSound("assets/music/info-click.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
         GameController::_gameWindow->Close();
         dialog_box->EndModal(wxID_OK);
     });
@@ -259,11 +265,15 @@ void GameController::show_swap_message() {
             main_sizer->Add(swap_button, 0, wxALIGN_CENTER | wxALL, 1);
             main_sizer->Add(no_swap_button, 0, wxALIGN_CENTER | wxALL, 1);
             swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
+                wxSound buttonClickSound("assets/music/info-click.wav");
+                buttonClickSound.Play(wxSOUND_ASYNC);
                 swap_colour_request request = swap_colour_request(GameController::_me->get_id(), GameController::_currentGameState->get_id(), swap_decision_type::do_swap);
                 ClientNetworkManager::sendRequest(request);
                 swap_dialog_box->Show(false);
             });
             no_swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
+                wxSound buttonClickSound("assets/music/info-click.wav");
+                buttonClickSound.Play(wxSOUND_ASYNC);
                 swap_colour_request request = swap_colour_request(GameController::_me->get_id(), GameController::_currentGameState->get_id(), swap_decision_type::do_not_swap);
                 ClientNetworkManager::sendRequest(request);
                 swap_dialog_box->Show(false);;
@@ -276,12 +286,16 @@ void GameController::show_swap_message() {
             main_sizer->Add(no_swap_button, 0, wxALIGN_CENTER | wxALL, 1);
 
             swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
+                wxSound buttonClickSound("assets/music/info-click.wav");
+                buttonClickSound.Play(wxSOUND_ASYNC);
                 swap_colour_request request = swap_colour_request(GameController::_me->get_id(),
                                                                   GameController::_currentGameState->get_id(), swap_decision_type::do_swap);
                 ClientNetworkManager::sendRequest(request);
                 swap_dialog_box->Show(false);
             });
             no_swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
+                wxSound buttonClickSound("assets/music/info-click.wav");
+                buttonClickSound.Play(wxSOUND_ASYNC);
                 swap_colour_request request = swap_colour_request(GameController::_me->get_id(), GameController::_currentGameState->get_id(), swap_decision_type::do_not_swap);
                 ClientNetworkManager::sendRequest(request);
                 swap_dialog_box->Show(false);
@@ -292,6 +306,8 @@ void GameController::show_swap_message() {
                 wxButton *defer_button = new wxButton(swap_dialog_box, wxID_ANY, "Defer choice");
                 main_sizer->Add(defer_button, 0, wxALIGN_CENTER | wxALL, 1);
                 defer_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
+                    wxSound buttonClickSound("assets/music/info-click.wav");
+                    buttonClickSound.Play(wxSOUND_ASYNC);
                     swap_colour_request request = swap_colour_request(GameController::_me->get_id(), GameController::_currentGameState->get_id(), swap_decision_type::defer_swap);
                     ClientNetworkManager::sendRequest(request);
                     swap_dialog_box->Show(false);
