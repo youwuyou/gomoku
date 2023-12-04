@@ -7,8 +7,6 @@
 
 
 ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
-    // wxColor white = wxColor(255, 255, 255);
-    // this->SetBackgroundColour(white);
     wxBoxSizer* verticalLayout = new wxBoxSizer(wxVERTICAL);
     ImagePanel* logo = new ImagePanel(this, "assets/gomoku_logo.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, wxSize(400, 400));
     verticalLayout->Add(logo, 0, wxALIGN_CENTER, 10);

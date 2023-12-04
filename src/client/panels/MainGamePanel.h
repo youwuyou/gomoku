@@ -15,27 +15,26 @@ public:
 
     std::vector<wxDialog*> _open_dialogs;
 
-private:
-    wxMediaCtrl* backgroundMusicPlayer; // wxMediaCtrl for background music
-    void OnMusicStop(wxMediaEvent& WXUNUSED(event));
+
     static const std::unordered_map<std::string, std::string> _pretty_string_to_ruleset_string;
     static const std::unordered_map<std::string, std::string> _ruleset_string_to_pretty_string;
+
+private:
+    wxColor white = wxColor(255, 255, 255);
+    wxColor black = wxColor(0, 0, 0);
+
+    wxMediaCtrl* backgroundMusicPlayer; // wxMediaCtrl for background music
+    void OnMusicStop(wxMediaEvent& WXUNUSED(event));
 
     void buildPlayingBoard(game_state* gameState, player* me);
     void buildTurnIndicator(game_state* gameState, player* me);
     void buildThisPlayer(game_state* gameState, player* me);
-    void buildAbout(game_state* gameState, player* me);
+    void build_about(game_state* gameState, player* me);
 
     void close_all_dialogs();
 
     void buildAboutText(wxCommandEvent& event);
     wxStaticText* buildStaticText(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
-
-    wxSize getBoundsOfRotatedSquare(double edgeLength, double rotationAngle);
-    double getEdgeLengthOfRotatedSquare(double originalEdgeLength, double rotationAngle);
-
-    // might be cut-able
-    wxPoint getPointOnEllipse(double horizontalRadius, double verticalRadius, double angle);
 
     // define key constant layout values
     wxSize const panelSize = wxSize(960, 680); // also set in the constructor implementation
@@ -51,8 +50,6 @@ private:
     wxPoint const turnIndicatorOffset = wxPoint(1000/(scale_factor*2)-100, -30);
     wxPoint const turnIndicatorStoneOffset = wxPoint(200, -5);
 
-    // might be cut-able
-    double const twoPi = 6.28318530718;
 
 };
 

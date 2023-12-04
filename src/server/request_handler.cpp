@@ -100,6 +100,13 @@ request_response* request_handler::handle_request(const client_request* const re
 
         // ##################### SWAP COLOUR ##################### //
         case RequestType::swap_colour: {
+            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
+                const swap_decision_type swap_decision = (dynamic_cast<const swap_colour_request *>(req))->get_swap_decision();
+                if (game_instance_ptr->do_swap_decision(player, swap_decision, err)) {
+                    return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                game_instance_ptr->get_game_state()->to_json(), err);
+                }
+            }
             return new request_response("", req_id, false, nullptr, err);
         }
 

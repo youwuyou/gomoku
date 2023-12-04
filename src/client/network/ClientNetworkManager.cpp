@@ -97,7 +97,7 @@ void ClientNetworkManager::sendRequest(const client_request &request) {
 
         // output message for debugging purposes
 #ifdef PRINT_NETWORK_MESSAGES
-        std::cout << "Sending request : " << message << std::endl;
+        std::cout << "\nSending request : " << message << std::endl;
 #endif
 
         // send message to server
@@ -118,7 +118,7 @@ void ClientNetworkManager::parseResponse(const std::string& message) {
 
     // output message for debugging purposes
 #ifdef PRINT_NETWORK_MESSAGES
-    std::cout << "Received response : " << message << std::endl;
+    std::cout << "\nReceived response : " << message << std::endl;
 #endif
 
     rapidjson::Document json = rapidjson::Document(rapidjson::kObjectType);

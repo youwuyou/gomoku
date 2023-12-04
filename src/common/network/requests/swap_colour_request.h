@@ -8,22 +8,23 @@
 #include <string>
 #include "client_request.h"
 #include "../../../../rapidjson/include/rapidjson/document.h"
+#include "../../game_state/game_state.h"
 
 class swap_colour_request : public client_request {
 
 private:
-    int _nof_cards;
+     swap_decision_type _swap_decision;
 
     /*
      * Private constructor for deserialization
      */
-    swap_colour_request(base_class_properties, int val);
+    swap_colour_request(base_class_properties, swap_decision_type swap_decision);
 
 public:
 
-    [[nodiscard]] int get_nof_cards() const { return this->_nof_cards; }
+    [[nodiscard]] swap_decision_type get_swap_decision() const { return this->_swap_decision; }
 
-    swap_colour_request(std::string game_id, std::string player_id, int nof_cards = 1);
+    swap_colour_request(std::string game_id, std::string player_id, swap_decision_type swap_decision);
     virtual void write_into_json(rapidjson::Value& json, rapidjson::Document::AllocatorType& allocator) const override;
     static swap_colour_request* from_json(const rapidjson::Value& json);
 };

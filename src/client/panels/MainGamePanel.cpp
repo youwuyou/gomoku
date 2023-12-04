@@ -52,7 +52,7 @@ void MainGamePanel::buildGameState(game_state* gameState, player* me) {
     this->buildThisPlayer(gameState, me);
 
     // build About button
-    this->buildAbout(gameState, me);
+    this->build_about(gameState, me);
 
     // update layout
     this->Layout();
@@ -103,7 +103,6 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                     ImagePanel *current_stone_shadow_panel = new ImagePanel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
                                                                      current_stone_shadow_position, MainGamePanel::stone_size);
 
-                    //current_stone_panel->SetToolTip(current_stone.get_colour() + " stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
                 } else {
                     // if no stone is present, show a transparent button on each spot, if it is currently our turn
                     if (gameState->get_current_player() == me) {
@@ -116,7 +115,6 @@ void MainGamePanel::buildPlayingBoard(game_state* gameState, player *me) {
                                                                       current_stone_position,
                                                                       MainGamePanel::stone_size);
                         new_stone_button->SetCursor(wxCursor(wxCURSOR_HAND));
-                        //new_stone_button->SetToolTip("Place stone at (" + std::to_string(i) + ", " + std::to_string(j) + ")");
                         std::string err;
 
                         field_type new_stone_colour = field_type::empty;
@@ -162,7 +160,7 @@ void MainGamePanel::buildTurnIndicator(game_state *gameState, player *me) {
                 wxALIGN_CENTER,
                 true
         );
-        turn_indicator_text->SetForegroundColour(wxColour(255,255,255));
+        turn_indicator_text->SetForegroundColour(black);
 
         std::string current_player_colour = player::_player_colour_type_to_string.at(gameState->get_current_player()->get_colour());
         std::string currentPlayerStoneImage = "assets/stone_" + current_player_colour + ".png";
@@ -344,17 +342,17 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
     }
 }
 
-void MainGamePanel::buildAbout(game_state* gameState, player *me) {
+void MainGamePanel::build_about(game_state* gameState, player *me) {
     // create the About button with a default position
-    wxButton* aboutButton = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxSize(100, 30));
+    wxButton* about_button = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxSize(100, 30));
 
     // manually set the position of the About button to the upper left corner
     int margin = 20;
-    wxPoint buttonPosition(margin, margin); // setting the position to the top-left corner with margin
-    aboutButton->SetPosition(buttonPosition);
+    wxPoint button_position(margin, margin); // setting the position to the top-left corner with margin
+    about_button->SetPosition(button_position);
 
     // bind the event handler with sound
-    aboutButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+    about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
         wxSound buttonClickSound("assets/music/info-click.wav");
         buttonClickSound.Play(wxSOUND_ASYNC);
         this->buildAboutText(event); // call the original handler
@@ -377,22 +375,6 @@ wxStaticText* MainGamePanel::buildStaticText(std::string content, wxPoint positi
         staticText->SetFont(font);
     }
     return staticText;
-}
-
-
-wxSize MainGamePanel::getBoundsOfRotatedSquare(double edgeLength, double rotationAngle) {
-    double newEdgeLength = this->getEdgeLengthOfRotatedSquare(edgeLength, rotationAngle);
-    return wxSize(newEdgeLength, newEdgeLength);
-}
-
-
-double MainGamePanel::getEdgeLengthOfRotatedSquare(double originalEdgeLength, double rotationAngle) {
-    return originalEdgeLength * (abs(sin(rotationAngle)) + abs(cos(rotationAngle)));
-}
-
-
-wxPoint MainGamePanel::getPointOnEllipse(double horizontalRadius, double verticalRadius, double angle) {
-    return wxPoint((int) (sin(angle) * horizontalRadius), (int) (cos(angle) * verticalRadius));
 }
 
 void MainGamePanel::close_all_dialogs(){
