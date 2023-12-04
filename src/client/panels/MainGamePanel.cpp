@@ -227,7 +227,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             innerLayout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
 
             // create a buffer before the start game button
-            innerLayout->AddSpacer(100);
+            innerLayout->AddSpacer(90);
         }
 
     }
@@ -247,8 +247,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
         );
         game_rule_chosen_text->SetForegroundColour(white);
         innerLayout->Add(game_rule_chosen_text, 0, wxALIGN_CENTER);
-        // create a buffer before the start game button
-        innerLayout->AddSpacer(100);
+        innerLayout->AddSpacer(170);
     }
 
     // Show the label with our player name
@@ -283,10 +282,9 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             GameController::startGame();
         });
         innerLayout->Add(startGameButton, 0, wxALIGN_CENTER, 8);
-        innerLayout->AddSpacer(10);
+        innerLayout->AddSpacer(65);
 
     } else {
-
         // show our player's points
         wxStaticText *playerPoints = buildStaticText(
                 std::to_string(me->get_score()) + " points",
@@ -310,7 +308,7 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
         ImagePanel *turn_indicator_stone_shadow_panel = new ImagePanel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
                                                                        player_stone_shadow_position, MainGamePanel::stone_size);
 
-        innerLayout->AddSpacer(10);
+        innerLayout->AddSpacer(5);
 
         /* might be re-usable if we want to have a "give up" button
          *
@@ -335,6 +333,18 @@ void MainGamePanel::buildThisPlayer(game_state* gameState, player* me) {
             innerLayout->Add(playerStatus, 0, wxALIGN_CENTER, 8);
         }
 
+        else {
+            wxStaticText *playerStatus = buildStaticText(
+                    "",
+                    wxDefaultPosition,
+                    wxSize(200, 32),
+                    wxALIGN_CENTER
+            );
+            playerStatus->SetForegroundColour(white);
+            innerLayout->Add(playerStatus, 0, wxALIGN_CENTER, 8);
+        }
+
+
     }
 }
 
@@ -343,8 +353,7 @@ void MainGamePanel::build_about(game_state* gameState, player *me) {
     wxButton* about_button = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxSize(100, 30));
 
     // manually set the position of the About button to the upper left corner
-    int margin = 20;
-    wxPoint button_position(margin, margin); // setting the position to the top-left corner with margin
+    wxPoint button_position(20, 20); // setting the position to the top-left corner with margin
     about_button->SetPosition(button_position);
 
     // bind the event handler with sound
