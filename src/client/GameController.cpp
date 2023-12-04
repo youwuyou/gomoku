@@ -229,7 +229,12 @@ void GameController::show_swap_message() {
     std::string title = MainGamePanel::_ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(ruleset_name));
     std::string dialog_text = "How do you wish to proceed?";
 
-    wxDialog* swap_dialog_box = new wxDialog(_gameWindow, wxID_ANY, wxString(title), wxPoint(500, 300), wxSize(300, 300), wxDEFAULT_DIALOG_STYLE);
+    wxSize dialog_box_size(300,200);
+    if(ruleset_name == swap2 && GameController::_currentGameState->get_swap_decision() == no_decision_yet){
+        dialog_box_size = wxSize(300,260);
+    }
+
+    wxDialog* swap_dialog_box = new wxDialog(_gameWindow, wxID_ANY, wxString(title), wxPoint(500, 300), dialog_box_size);
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
 
     // Disable close button to force a choice
@@ -264,12 +269,11 @@ void GameController::show_swap_message() {
                 swap_dialog_box->Show(false);;
             });
 
-            //swap_dialog_box->Show();
             break;
 
         case swap2:
-            main_sizer->Add(swap_button, 0, wxALIGN_CENTER | wxALL, 10);
-            main_sizer->Add(no_swap_button, 0, wxALIGN_CENTER | wxALL, 10);
+            main_sizer->Add(swap_button, 0, wxALIGN_CENTER | wxALL, 1);
+            main_sizer->Add(no_swap_button, 0, wxALIGN_CENTER | wxALL, 1);
 
             swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
                 swap_colour_request request = swap_colour_request(GameController::_me->get_id(),
@@ -286,7 +290,7 @@ void GameController::show_swap_message() {
             // add defer button if there hasn't been a swap decision yet
             if(GameController::_currentGameState->get_swap_decision() == swap_decision_type::no_decision_yet) {
                 wxButton *defer_button = new wxButton(swap_dialog_box, wxID_ANY, "Defer choice");
-                main_sizer->Add(defer_button, 0, wxALIGN_CENTER | wxALL, 10);
+                main_sizer->Add(defer_button, 0, wxALIGN_CENTER | wxALL, 1);
                 defer_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
                     swap_colour_request request = swap_colour_request(GameController::_me->get_id(), GameController::_currentGameState->get_id(), swap_decision_type::defer_swap);
                     ClientNetworkManager::sendRequest(request);
