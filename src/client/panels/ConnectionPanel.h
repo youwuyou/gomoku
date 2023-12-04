@@ -2,6 +2,8 @@
 #define TEST_CONNECTIONPANEL_H
 
 #include <wx/wx.h>
+#include <wx/sound.h>
+
 #include "../uiElements/InputField.h"
 
 

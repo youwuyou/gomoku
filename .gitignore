@@ -8,6 +8,7 @@
 .DS_Store
 .bundle
 .chef
+.cache
 .directory
 .eslintcache
 /.envrc

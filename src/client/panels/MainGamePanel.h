@@ -2,6 +2,7 @@
 #define GOMOKU_CLIENT_MAINGAMEPANEL_H
 
 #include <wx/wx.h>
+#include <wx/mediactrl.h> // background music
 #include "../../common/game_state/game_state.h"
 
 
@@ -14,10 +15,13 @@ public:
 
     std::vector<wxDialog*> _open_dialogs;
 
+
     static const std::unordered_map<std::string, std::string> _pretty_string_to_ruleset_string;
     static const std::unordered_map<std::string, std::string> _ruleset_string_to_pretty_string;
 
 private:
+    wxMediaCtrl* backgroundMusicPlayer; // wxMediaCtrl for background music
+    void OnMusicStop(wxMediaEvent& WXUNUSED(event));
 
     void buildPlayingBoard(game_state* gameState, player* me);
     void buildTurnIndicator(game_state* gameState, player* me);
@@ -26,6 +30,7 @@ private:
 
     void close_all_dialogs();
 
+    void buildAboutText(wxCommandEvent& event);
     wxStaticText* buildStaticText(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
 
     wxSize getBoundsOfRotatedSquare(double edgeLength, double rotationAngle);

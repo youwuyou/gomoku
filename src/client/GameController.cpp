@@ -12,11 +12,8 @@
 GameWindow* GameController::_gameWindow = nullptr;
 ConnectionPanel* GameController::_connectionPanel = nullptr;
 MainGamePanel* GameController::_mainGamePanel = nullptr;
-
 player* GameController::_me = nullptr;
 game_state* GameController::_currentGameState = nullptr;
-
-
 
 void GameController::init(GameWindow* gameWindow) {
 
@@ -142,7 +139,6 @@ void GameController::showStatus(const std::string& message) {
     GameController::_gameWindow->setStatus(message);
 }
 
-
 void GameController::showGameOverMessage() {
     std::string title = "Round Over!";
     std::string message = "Current scores:\n";
@@ -180,7 +176,8 @@ void GameController::showGameOverMessage() {
         message += "\n" + playerName + ":     " + scoreText + winnerText;
     }
 
-    wxDialog* dialog_box = new wxDialog(_gameWindow, wxID_ANY, wxString(title), wxDefaultPosition, wxSize(400, 400));
+    // display the round results in a box, without the useless minimize button
+    wxDialog* dialog_box = new wxDialog(_gameWindow, wxID_ANY, wxString(title), wxDefaultPosition, wxSize(400, 300));
 
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);

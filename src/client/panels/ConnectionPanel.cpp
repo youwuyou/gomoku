@@ -7,14 +7,12 @@
 
 
 ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
-
-    wxColor white = wxColor(255, 255, 255);
-    this->SetBackgroundColour(white);
-
+    // wxColor white = wxColor(255, 255, 255);
+    // this->SetBackgroundColour(white);
     wxBoxSizer* verticalLayout = new wxBoxSizer(wxVERTICAL);
-
-    ImagePanel* logo = new ImagePanel(this, "assets/gomoku_logo.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, wxSize(600, 450));
+    ImagePanel* logo = new ImagePanel(this, "assets/gomoku_logo.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, wxSize(400, 400));
     verticalLayout->Add(logo, 0, wxALIGN_CENTER, 10);
+
 
     this->_serverAddressField = new InputField(
         this, // parent element
@@ -45,8 +43,11 @@ ConnectionPanel::ConnectionPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
 
     wxButton* connectButton = new wxButton(this, wxID_ANY, "Connect", wxDefaultPosition, wxSize(100, 40));
     connectButton->Bind(wxEVT_BUTTON, [](wxCommandEvent& event) {
+        wxSound buttonClickSound("assets/music/click-button.wav");
+        buttonClickSound.Play(wxSOUND_ASYNC);
         GameController::connectToServer();
     });
+
     verticalLayout->Add(connectButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
     this->SetSizerAndFit(verticalLayout);
