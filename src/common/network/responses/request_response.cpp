@@ -85,7 +85,7 @@ void request_response::Process() const {
             GameController::showError("Network error", "Expected a state as JSON inside the request_response. But there was none.");
         }
     } else {
-        GameController::showError("Not possible", _err);
+        GameController::showError("Warning!", _err);
     }
 
 }
