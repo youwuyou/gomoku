@@ -22,8 +22,9 @@ public:
     static wxEvtHandler* getMainThreadEventHandler();
     static void showError(const std::string& title, const std::string& message);
     static void showStatus(const std::string& message);
-    static void showNewRoundMessage(game_state* oldGameState, game_state* newGameState);
+    //static void showNewRoundMessage(game_state* oldGameState, game_state* newGameState);
     static void showGameOverMessage();
+    static void show_swap_message();
 
 private:
     static GameWindow* _gameWindow;

@@ -43,7 +43,7 @@ public:
     bool try_remove_player(player* player, std::string& err);
     bool place_stone(player* player, unsigned int x, unsigned int y, field_type colour, std::string& err);
     bool set_game_mode(player* player, const std::string& ruleset_string, std::string& err);
-    bool do_swap_decision(player *player, std::string swap_decision, std::string &err);
+    bool do_swap_decision(player *player, swap_decision_type swap_decision, std::string &err);
 };
 
 

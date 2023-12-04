@@ -24,6 +24,8 @@ const std::unordered_map<swap_decision_type, std::string> game_state::_swap_deci
         { swap_decision_type::do_not_swap, "do_not_swap"},
         { swap_decision_type::defer_swap, "defer_swap"},
         { swap_decision_type::no_decision_yet, "no_decision_yet"},
+        { swap_decision_type::deferred_do_swap, "deferred_do_swap"},
+        { swap_decision_type::deferred_do_not_swap, "deferred_do_not_swap"},
 };
 
 game_state::game_state() : unique_serializable() {
@@ -32,9 +34,10 @@ game_state::game_state() : unique_serializable() {
     this->_opening_ruleset = new opening_rules(ruleset_type::uninitialized);
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
-    this->_turn_number = new serializable_value<int>(0);
+    this->_is_tied = new serializable_value<bool>(false);
     this->_current_player_idx = new serializable_value<int>(0);
     this->_starting_player_idx = new serializable_value<int>(0);
+    this->_turn_number = new serializable_value<int>(0);
     this->_swap_next_turn = new serializable_value<bool>(false);
     this->_swap_decision = swap_decision_type::no_decision_yet;
 
@@ -43,8 +46,9 @@ game_state::game_state() : unique_serializable() {
 // deserialization constructor
 game_state::game_state (std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
                         std::vector<player *> &players, serializable_value<bool> *is_started,
-                        serializable_value<bool> *is_finished, serializable_value<int> *current_player_idx,
-                        serializable_value<int>* turn_number, serializable_value<int> *starting_player_idx,
+                        serializable_value<bool> *is_finished, serializable_value<bool> *is_tied,
+                        serializable_value<int> *current_player_idx, serializable_value<int> *starting_player_idx,
+                        serializable_value<int>* turn_number,
                         serializable_value<bool>* swap_next_turn, swap_decision_type swap_decision)
         : unique_serializable(id),
         _playing_board(_playing_board),
@@ -52,9 +56,10 @@ game_state::game_state (std::string id, playing_board* _playing_board, opening_r
         _players(players),
         _is_started(is_started),
         _is_finished(is_finished),
+        _is_tied(is_tied),
         _current_player_idx(current_player_idx),
-        _turn_number(turn_number),
         _starting_player_idx(starting_player_idx),
+        _turn_number(turn_number),
         _swap_next_turn(swap_next_turn),
         _swap_decision(swap_decision)
 {  }
@@ -65,9 +70,10 @@ game_state::game_state(std::string id) : unique_serializable(id) {
     this->_players = std::vector<player*>();
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
+    this->_is_tied = new serializable_value<bool>(false);
     this->_current_player_idx = new serializable_value<int>(0);
-    this->_turn_number = new serializable_value<int>(0);
     this->_starting_player_idx = new serializable_value<int>(0);
+    this->_turn_number = new serializable_value<int>(0);
     this->_swap_next_turn = new serializable_value<bool>(false);
     this->_swap_decision = swap_decision_type::no_decision_yet;
 }
@@ -76,6 +82,7 @@ game_state::~game_state() {
     if (_is_started != nullptr) {
         delete _is_started;
         delete _is_finished;
+        delete _is_tied;
         delete _playing_board;
         delete _opening_ruleset;
         delete _current_player_idx;
@@ -85,6 +92,7 @@ game_state::~game_state() {
 
         _is_started = nullptr;
         _is_finished = nullptr;
+        _is_tied = nullptr;
         _playing_board = nullptr;
         _opening_ruleset = nullptr;
         _current_player_idx = nullptr;
@@ -114,6 +122,10 @@ bool game_state::is_finished() const {
     return _is_finished->get_value();
 }
 
+bool game_state::is_tied() const {
+    return _is_tied->get_value();
+}
+
 int game_state::get_turn_number() const {
     return _turn_number->get_value();
 }
@@ -124,6 +136,14 @@ std::vector<std::vector<field_type>> game_state::get_playing_board() const{
 
 opening_rules* game_state::get_opening_rules() const {
     return _opening_ruleset;
+}
+
+bool game_state::get_swap_next_turn() const {
+    return _swap_next_turn->get_value();
+}
+
+swap_decision_type game_state::get_swap_decision() const {
+    return _swap_decision;
 }
 
 int game_state::get_player_index(player *player) const {
@@ -155,8 +175,9 @@ void game_state::setup_round(std::string &err) {
     this->_is_finished->set_value(false);
     this->_playing_board->setup_round(err);
     this->_turn_number->set_value(0);
-    if (this->_current_player_idx != this->_starting_player_idx){
-        this->_current_player_idx = this->_starting_player_idx;
+    this->_swap_decision = swap_decision_type::no_decision_yet;
+    if (this->_current_player_idx->get_value() != this->_starting_player_idx->get_value()){
+        this->_current_player_idx->set_value(this->_starting_player_idx->get_value());
     }
     // set starting player colour as black, other player colour as white
     if(this->_players.at(this->_starting_player_idx->get_value())->get_colour() != player_colour_type::black){
@@ -166,7 +187,7 @@ void game_state::setup_round(std::string &err) {
 }
 
 void game_state::wrap_up_round(std::string& err) {
-    if(_turn_number->get_value() != MAX_TURN_NUM){
+    if(!this->is_tied()){
         this->get_current_player()->increment_score(err);
     }
     this->switch_starting_player(err);
@@ -238,6 +259,7 @@ bool game_state::update_current_player(std::string& err) {
                             result = false;
                             break;
                     }
+                    break;
                 default:
                     // If swap has not been deferred
                     if (_swap_decision == do_swap || _swap_decision == do_not_swap) {
@@ -312,21 +334,20 @@ void game_state::iterate_turn() {
     this->_turn_number->set_value(this->get_turn_number()+1);
 }
 
-bool game_state::determine_swap_decision(std::string swap_decision, std::string &err) {
-    swap_decision_type swap_decision_enum = _string_to_swap_decision_type.at(swap_decision);
-    if (swap_decision_enum == do_swap || swap_decision_enum == do_not_swap || swap_decision_enum == defer_swap) {
+bool game_state::determine_swap_decision(swap_decision_type swap_decision, std::string &err) {
+    if (swap_decision == do_swap || swap_decision == do_not_swap || swap_decision == defer_swap) {
         // If swap has been deferred in a prior turn, set _swap_decision to the deferred enums after second swap
         if (_swap_decision == defer_swap) {
-            if (swap_decision_enum == do_swap) {
+            if (swap_decision == do_swap) {
                 _swap_decision = deferred_do_swap;
                 return true;
-            } else if (swap_decision_enum == do_not_swap) {
+            } else if (swap_decision == do_not_swap) {
                 _swap_decision = deferred_do_not_swap;
                 return true;
             }
         }
         // Otherwise, set _swap_decision directly as the enum parameter
-        _swap_decision = swap_decision_enum;
+        _swap_decision = swap_decision;
         return true;
     }
     err = "GameState: Unable to carry out swap decision";
@@ -470,6 +491,18 @@ unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int
     }
 }
 
+bool game_state::check_for_tie(){
+    int playing_board_size = playing_board::_playing_board_size;
+    for(int i = 0; i<playing_board_size; ++i){
+        for(int j = 0; j<playing_board_size; ++j){
+            if(this->get_playing_board().at(i).at(j) == field_type::empty){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 #endif
 
 
@@ -478,13 +511,17 @@ void game_state::write_into_json(rapidjson::Value &json,
                                  rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> &allocator) const {
     unique_serializable::write_into_json(json, allocator);
 
+    rapidjson::Value is_started_val(rapidjson::kObjectType);
+    _is_started->write_into_json(is_started_val, allocator);
+    json.AddMember("is_started", is_started_val, allocator);
+
     rapidjson::Value is_finished_val(rapidjson::kObjectType);
     _is_finished->write_into_json(is_finished_val, allocator);
     json.AddMember("is_finished", is_finished_val, allocator);
 
-    rapidjson::Value is_started_val(rapidjson::kObjectType);
-    _is_started->write_into_json(is_started_val, allocator);
-    json.AddMember("is_started", is_started_val, allocator);
+    rapidjson::Value is_tied_val(rapidjson::kObjectType);
+    _is_tied->write_into_json(is_tied_val, allocator);
+    json.AddMember("is_tied", is_tied_val, allocator);
 
     rapidjson::Value current_player_idx_val(rapidjson::kObjectType);
     _current_player_idx->write_into_json(current_player_idx_val, allocator);
@@ -520,11 +557,12 @@ void game_state::write_into_json(rapidjson::Value &json,
 
 game_state* game_state::from_json(const rapidjson::Value &json) {
     if (json.HasMember("id")
-        && json.HasMember("is_finished")
         && json.HasMember("is_started")
+        && json.HasMember("is_finished")
+        && json.HasMember("is_tied")
         && json.HasMember("current_player_idx")
-        && json.HasMember("turn_number")
         && json.HasMember("starting_player_idx")
+        && json.HasMember("turn_number")
         && json.HasMember("players")
         && json.HasMember("playing_board")
         && json.HasMember("opening_ruleset")
@@ -543,9 +581,10 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
                               deserialized_players,
                               serializable_value<bool>::from_json(json["is_started"].GetObject()),
                               serializable_value<bool>::from_json(json["is_finished"].GetObject()),
+                              serializable_value<bool>::from_json(json["is_tied"].GetObject()),
                               serializable_value<int>::from_json(json["current_player_idx"].GetObject()),
-                              serializable_value<int>::from_json(json["turn_number"].GetObject()),
                               serializable_value<int>::from_json(json["starting_player_idx"].GetObject()),
+                              serializable_value<int>::from_json(json["turn_number"].GetObject()),
                               serializable_value<bool>::from_json(json["swap_next_turn"].GetObject()),
                               swap_decision);
     } else {

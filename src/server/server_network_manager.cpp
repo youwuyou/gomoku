@@ -139,7 +139,7 @@ void server_network_manager::handle_incoming_message(const std::string& msg, con
             _rw_lock.unlock_shared();
         }
 #ifdef PRINT_NETWORK_MESSAGES
-        std::cout << "Received valid request : " << msg << std::endl;
+        std::cout << "\nReceived valid request : " << msg << std::endl;
 #endif
         // execute client request
         server_response* res = request_handler::handle_request(req);
@@ -153,7 +153,7 @@ void server_network_manager::handle_incoming_message(const std::string& msg, con
         std::string res_msg = json_utils::to_string(res_json);
 
 #ifdef PRINT_NETWORK_MESSAGES
-        std::cout << "Sending response : " << res_msg << std::endl;
+        std::cout << "\nSending response : " << res_msg << std::endl;
 #endif
 
         // send response back to client
@@ -188,7 +188,7 @@ void server_network_manager::broadcast_message(server_response &msg, const std::
     std::string msg_string = json_utils::to_string(msg_json);   // convert to string
 
 #ifdef PRINT_NETWORK_MESSAGES
-    std::cout << "Broadcasting message : " << msg_string << std::endl;
+    std::cout << "\nBroadcasting message : " << msg_string << std::endl;
 #endif
 
     _rw_lock.lock_shared();

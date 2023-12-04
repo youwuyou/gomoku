@@ -90,7 +90,7 @@ bool game_instance::try_add_player(player *new_player, std::string &err) {
 bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, field_type colour, std::string &err) {
     modification_lock.lock();
     if (_game_state->place_stone(x, y, colour, err)){
-        if (_game_state->check_win_condition(x, y, colour) || (_game_state->get_turn_number() == _game_state->MAX_TURN_NUM)) {
+        if (_game_state->check_win_condition(x, y, colour) || _game_state->check_for_tie()) {
             _game_state->wrap_up_round(err);
             full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
             server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
@@ -112,7 +112,7 @@ bool game_instance::place_stone(player *player, unsigned int x, unsigned int y, 
     return false;
 }
 
-bool game_instance::do_swap_decision(player *player, std::string swap_decision, std::string &err) {
+bool game_instance::do_swap_decision(player *player, swap_decision_type swap_decision, std::string &err) {
     // NOTE: This method expects swap_decision to be "do_swap", "do_not_swap", or "defer_swap".
     // Anything else will result in an error, or return false, to occur.
     modification_lock.lock();

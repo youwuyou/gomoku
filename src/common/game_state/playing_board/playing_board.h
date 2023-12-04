@@ -21,7 +21,6 @@ enum field_type {
 class playing_board : public unique_serializable {
 
 private:
-    static const int _playing_board_size = 15;
     std::vector<std::vector<field_type>> _playing_board;
 
     playing_board(std::string id);
@@ -31,6 +30,8 @@ private:
 public:
     playing_board();
     ~playing_board();
+
+    static const int _playing_board_size = 15;
 
     bool place_stone(unsigned int x, unsigned int y, field_type colour, std::string &err);
 

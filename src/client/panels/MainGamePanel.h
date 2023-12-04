@@ -14,10 +14,10 @@ public:
 
     std::vector<wxDialog*> _open_dialogs;
 
-private:
-
     static const std::unordered_map<std::string, std::string> _pretty_string_to_ruleset_string;
     static const std::unordered_map<std::string, std::string> _ruleset_string_to_pretty_string;
+
+private:
 
     void buildPlayingBoard(game_state* gameState, player* me);
     void buildTurnIndicator(game_state* gameState, player* me);
