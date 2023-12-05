@@ -4,7 +4,7 @@
 
 #include "player.h"
 
-#include "../../exceptions/GomokuException.h"
+#include "../../exceptions/gomoku_exception.h"
 
 player::player(std::string name, player_colour_type colour) : unique_serializable() {
     this->_player_name = new serializable_value<std::string>(name);
@@ -74,23 +74,6 @@ const std::unordered_map<player_colour_type, std::string> player::_player_colour
 };
 
 #ifdef GOMOKU_SERVER
-/* might be cut-able
-   void player::setup_round(std::string& err) {
-    _has_folded->set_value(false);
-    _hand->setup_round(err);
-}
-
-void player::wrap_up_round(std::string &err) {
-    int cards_value = _hand->get_score();
-    int new_score = _score->get_value();
-    if (cards_value > 0) {
-        new_score = _score->get_value() + cards_value;
-    } else {
-        // The player got rid of all cards. Deduct 10 points
-        new_score = std::max(0, _score->get_value() - 10);
-    }
-    _score->set_value(new_score);
-}*/
 
 void player::increment_score(std::string& err){
     int current_score = this->_score->get_value();
@@ -108,7 +91,7 @@ void player::change_colour(std::string& err) {
     } else if (this->_colour == player_colour_type::white) {
         this->_colour = player_colour_type::black;
     } else {
-        throw GomokuException("Failed to swap player colour. Unknown player colour was given.");
+        throw gomoku_exception("Failed to swap player colour. Unknown player colour was given.");
     }
 }
 
@@ -151,6 +134,6 @@ player *player::from_json(const rapidjson::Value &json) {
                 serializable_value<int>::from_json(json["score"].GetObject()),
                 colour);
     } else {
-        throw GomokuException("Failed to deserialize player from json. Required json entries were missing.");
+        throw gomoku_exception("Failed to deserialize player from json. Required json entries were missing.");
     }
 }

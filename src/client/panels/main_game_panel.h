@@ -6,12 +6,12 @@
 #include "../../common/game_state/game_state.h"
 
 
-class MainGamePanel : public wxPanel {
+class main_game_panel : public wxPanel {
 
 public:
-    MainGamePanel(wxWindow* parent);
+    main_game_panel(wxWindow* parent);
 
-    void buildGameState(game_state* gameState, player* me);
+    void build_game_state(game_state* game_state, player* me);
 
     std::vector<wxDialog*> _open_dialogs;
 
@@ -24,11 +24,11 @@ private:
     wxColor black = wxColor(0, 0, 0);
 
     wxMediaCtrl* backgroundMusicPlayer; // wxMediaCtrl for background music
-    void OnMusicStop(wxMediaEvent& WXUNUSED(event));
+    void on_music_stop(wxMediaEvent& WXUNUSED(event));
 
-    void buildPlayingBoard(game_state* gameState, player* me);
-    void buildTurnIndicator(game_state* gameState, player* me);
-    void buildThisPlayer(game_state* gameState, player* me);
+    void build_playing_board(game_state* game_state, player* me);
+    void build_turn_indicator(game_state* game_state, player* me);
+    void build_this_player(game_state* game_state, player* me);
 
     // todo: just one method for all three buttons!
     void build_about(game_state* gameState, player* me);
@@ -37,11 +37,11 @@ private:
 
     void close_all_dialogs();
 
-    void buildAboutText(wxCommandEvent& event);
-    wxStaticText* buildStaticText(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
+    void build_about_text(wxCommandEvent& event);
+    wxStaticText* build_static_text(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
 
     // define key constant layout values
-    wxSize const panelSize = wxSize(960, 680); // also set in the constructor implementation
+    wxSize const panel_size = wxSize(960, 680); // also set in the constructor implementation
     wxPoint const table_center = wxPoint(480, 325);
 
     int const scale_factor  = 1000/400;
@@ -51,8 +51,8 @@ private:
     wxSize const grid_corner_offset = wxSize(12/scale_factor,  12/scale_factor);
 
 
-    wxPoint const turnIndicatorOffset = wxPoint(1000/(scale_factor*2)-100, -30);
-    wxPoint const turnIndicatorStoneOffset = wxPoint(200, -5);
+    wxPoint const turn_indicator_offset = wxPoint(1000 / (scale_factor * 2) - 100, -30);
+    wxPoint const turn_indicator_stone_offset = wxPoint(200, -5);
 
 
 };

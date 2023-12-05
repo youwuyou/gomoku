@@ -9,7 +9,7 @@ bool Gomoku::OnInit()
     wxImage::AddHandler(new wxPNGHandler());
 
     // Open main game window
-    GameWindow* gameWindow = new GameWindow(
+    game* gameWindow = new game(
             "Gomoku", // title of window,
             wxDefaultPosition, // position of the window
             wxDefaultSize // size of the window
@@ -17,7 +17,7 @@ bool Gomoku::OnInit()
     gameWindow->Show(true);
 
     // Initialize game controller
-    GameController::init(gameWindow);
+    game_controller::init(gameWindow);
 
     return true;
 }

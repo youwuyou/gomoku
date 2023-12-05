@@ -68,7 +68,6 @@ public:
     bool is_started() const;
     bool is_finished() const;
     bool is_tied() const;
-    bool is_player_in_game(player* player) const;
     bool is_allowed_to_play_now(player* player) const;
     std::vector<player*>& get_players();
     int get_turn_number() const;

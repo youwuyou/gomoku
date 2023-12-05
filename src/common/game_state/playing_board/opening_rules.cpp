@@ -3,7 +3,7 @@
 //
 
 #include "opening_rules.h"
-#include "../../exceptions/GomokuException.h"
+#include "../../exceptions/gomoku_exception.h"
 
 // for deserialization
 const std::unordered_map<std::string, ruleset_type> opening_rules::_string_to_ruleset_type = {
@@ -47,7 +47,7 @@ std::string opening_rules::generate_description_from_ruleset(ruleset_type rulese
         case ruleset_type::uninitialized:
             return "uninitialized description placeholder";
         default:
-            throw GomokuException("Failed to instantiate opening_rules object. Invalid ruleset name.");
+            throw gomoku_exception("Failed to instantiate opening_rules object. Invalid ruleset name.");
     }
 }
 
@@ -83,7 +83,6 @@ std::string opening_rules::get_description() const noexcept {
     return this->_description->get_value();
 }
 
-// WIP HERE
 #ifdef GOMOKU_SERVER
 // state update functions
 void opening_rules::set_opening_rule(const std::string& ruleset_string) {
@@ -123,6 +122,6 @@ opening_rules *opening_rules::from_json(const rapidjson::Value &json) {
                 ruleset,
                 serializable_value<std::string>::from_json(json["description"].GetObject()));
     } else {
-        throw GomokuException("Failed to deserialize opening_rules from json. Required json entries were missing.");
+        throw gomoku_exception("Failed to deserialize opening_rules from json. Required json entries were missing.");
     }
 }

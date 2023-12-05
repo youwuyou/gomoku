@@ -6,7 +6,7 @@
 
 // Public constructor
 restart_game_request::restart_game_request(std::string player_id, std::string game_id, bool change_ruleset)
-        : client_request( client_request::create_base_class_properties(RequestType::restart_game, uuid_generator::generate_uuid_v4(), player_id, game_id) ),
+        : client_request( client_request::create_base_class_properties(request_type::restart_game, uuid_generator::generate_uuid_v4(), player_id, game_id) ),
         _change_ruleset(change_ruleset)
 { }
 

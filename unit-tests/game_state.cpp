@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "../src/common/game_state/game_state.h"
 #include "../src/common/serialization/json_utils.h"
-#include "../src/common/exceptions/GomokuException.h"
+#include "../src/common/exceptions/gomoku_exception.h"
 
 
 
@@ -104,9 +104,9 @@ TEST_F(game_state_test, serialization_equality) {
     EXPECT_EQ(test_game_state.get_turn_number(), game_state_recv->get_turn_number());
 }
 
-// Deserializing an invalid string must throw a GomokuException
+// Deserializing an invalid string must throw a gomoku_exception
 TEST_F(game_state_test, serialization_exception) {
     rapidjson::Document json = rapidjson::Document(rapidjson::kObjectType);
     json.Parse("not json");
-    EXPECT_THROW(playing_board::from_json(json), GomokuException);
+    EXPECT_THROW(playing_board::from_json(json), gomoku_exception);
 }
