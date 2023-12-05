@@ -49,9 +49,9 @@ void main_game_panel::build_game_state(game_state* game_state, player* me) {
     this->build_this_player(game_state, me);
 
     // build icon buttons for about, settings and help
-    this->build_icons(game_state, me, "assets/icons/info.png", wxPoint(30, 30));
-    this->build_icons(game_state, me, "assets/icons/cog.png", wxPoint(30, 100));
-    this->build_icons(game_state, me, "assets/icons/help.png", wxPoint(30, 170));
+    this->build_icons(game_state, me, IconType::About, "assets/icons/info.png", wxPoint(30, 30));
+    this->build_icons(game_state, me, IconType::Settings, "assets/icons/cog.png", wxPoint(30, 100));
+    this->build_icons(game_state, me, IconType::Help, "assets/icons/help.png", wxPoint(30, 170));
 
     // update layout
     this->Layout();
@@ -113,6 +113,7 @@ void main_game_panel::build_playing_board(game_state* game_state, player *me) {
                         image_panel *new_stone_button = new image_panel(this, transparent_stone_image, wxBITMAP_TYPE_ANY,
                                                                         current_stone_position,
                                                                         main_game_panel::stone_size);
+
                         new_stone_button->SetCursor(wxCursor(wxCURSOR_HAND));
                         std::string err;
 
@@ -351,21 +352,102 @@ void main_game_panel::build_this_player(game_state* game_state, player* me) {
 }
 
 // build icons for about, settings and help
-void main_game_panel::build_icons(game_state* gameState, player *me, std::string path, wxPoint position) {
-    wxBitmap about_button_bitmap(path, wxBITMAP_TYPE_PNG);
-    wxBitmapButton* about_button = new wxBitmapButton(this, wxID_ANY, about_button_bitmap, wxDefaultPosition, wxSize(70, 70), wxBORDER_NONE);
-    about_button->SetPosition(position); // Set position to top-left corner with margin
-    about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
-        this->build_about_text(event);
-    });
+// void main_game_panel::build_icons(game_state* gameState, player *me, std::string path, wxPoint position) {
+//     wxBitmap icon_button_bitmap(path, wxBITMAP_TYPE_PNG);
+//     wxBitmapButton* icon_button = new wxBitmapButton(this, wxID_ANY, icon_button_bitmap, wxDefaultPosition, wxSize(70, 70), wxBORDER_NONE);
+//     icon_button->SetPosition(position); // Set position to top-left corner with margin
+    
+//     // change this to be case switch based on a enum
+//     // enum of about, settings and help
+//     icon_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+//         wxSound button_click_sound("assets/music/click-button.wav");
+//         button_click_sound.Play(wxSOUND_ASYNC);
+//         this->build_about_text(event);
+//     });
+// }
+
+// build icons for about, settings and help
+void main_game_panel::build_icons(game_state* gameState, player *me, IconType iconType, std::string path, wxPoint position) {
+    wxBitmap icon_button_bitmap(path, wxBITMAP_TYPE_PNG);
+    wxBitmapButton* icon_button = new wxBitmapButton(this, wxID_ANY, icon_button_bitmap, wxDefaultPosition, wxSize(70, 70), wxBORDER_NONE);
+    icon_button->SetPosition(position); // Set position to top-left corner with margin
+
+    // switch cases based on the icon type to be displayed
+    switch (iconType) {
+        case IconType::About:
+            icon_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+                wxSound button_click_sound("assets/music/click-button.wav");
+                button_click_sound.Play(wxSOUND_ASYNC);
+                this->build_about_text(event);
+            });
+            break;
+
+        case IconType::Settings:
+            icon_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+                wxSound button_click_sound("assets/music/click-button.wav");
+                button_click_sound.Play(wxSOUND_ASYNC);
+                this->build_about_text(event);   // TODO: change this!
+            });
+            break;
+
+        case IconType::Help:
+            icon_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+                wxSound button_click_sound("assets/music/click-button.wav");
+                button_click_sound.Play(wxSOUND_ASYNC);
+                this->build_help_text(event);
+            });
+            break;
+    }
 }
 
 void main_game_panel::build_about_text(wxCommandEvent& event) {
     wxString about_info = wxT("Gomoku Game\n\nAuthors: Haoanqin Gao, Julius König, Stephen Lincon, \n                Nicolas Müller, Rana Singh, You Wu \nVersion: 1.0.0\n\n© 2023 Wizards of the C Inc.");
     wxMessageBox(about_info, wxT("About Gomoku"), wxOK | wxICON_INFORMATION, this);
 }
+
+void main_game_panel::build_help_text(wxCommandEvent& event) {
+    wxDialog ruleDialog(this, wxID_ANY, wxT("Game Rules"), wxDefaultPosition, wxDefaultSize);
+    wxNotebook* notebook = new wxNotebook(&ruleDialog, wxID_ANY);
+
+    // helper function to create a panel with text and image for the notebook
+    auto createRulePanel = [notebook](const wxString& text, const wxString& imagePath) -> wxPanel* {
+        wxPanel* panel = new wxPanel(notebook, wxID_ANY);
+        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+        wxStaticText* staticText = new wxStaticText(panel, wxID_ANY, text, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+        sizer->Add(staticText, 0, wxALL, 5);
+        wxBitmap bitmap(imagePath, wxBITMAP_TYPE_PNG);
+        wxStaticBitmap* image = new wxStaticBitmap(panel, wxID_ANY, bitmap);
+        sizer->Add(image, 0, wxALL | wxCENTER, 5);
+        panel->SetSizer(sizer);
+        return panel;
+    };
+
+    // create tabs for the notebook
+    // wxPanel* freestylePanel = createRulePanel(wxT("Freestyle rules..."), wxT("assets/rules_freestyle.png"));
+    // wxPanel* swapPanel = createRulePanel(wxT("Swap rules..."), wxT("assets/rules_swap1.png"));
+    // wxPanel* swap2Panel = createRulePanel(wxT("Swap2 rules..."), wxT("assets/rules_swap2.png"));
+    wxPanel* freestylePanel = createRulePanel(wxT(""), wxT("assets/rules_freestyle.png"));
+    wxPanel* swapPanel = createRulePanel(wxT(""), wxT("assets/rules_swap1.png"));
+    wxPanel* swap2Panel = createRulePanel(wxT(""), wxT("assets/rules_swap2.png"));
+
+    // panels as tabs to the notebook
+    notebook->AddPage(freestylePanel, wxT("Freestyle"), true); // true to make this the selected tab
+    notebook->AddPage(swapPanel, wxT("Swap"));
+    notebook->AddPage(swap2Panel, wxT("Swap2"));
+
+    // sizer for the dialog and add the notebook to it
+    wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+    vbox->Add(notebook, 1, wxEXPAND | wxALL, 5);
+
+    wxButton* continueButton = new wxButton(&ruleDialog, wxID_OK, wxT("Continue"));
+    vbox->Add(continueButton, 0, wxALIGN_CENTER | wxALL, 5);
+
+    // set the sizer for the rule dialog and fit the dialog to the contents of the sizer
+    ruleDialog.SetSizerAndFit(vbox);
+    ruleDialog.CentreOnParent();
+    ruleDialog.ShowModal();
+}
+
 
 wxStaticText* main_game_panel::build_static_text(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold) {
     wxStaticText* static_text = new wxStaticText(this, wxID_ANY, content, position, size, textAlignment);

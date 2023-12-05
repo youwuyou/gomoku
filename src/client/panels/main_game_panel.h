@@ -3,7 +3,15 @@
 
 #include <wx/wx.h>
 #include <wx/mediactrl.h> // background music
+#include <wx/notebook.h>
 #include "../../common/game_state/game_state.h"
+
+
+enum class IconType {
+    About,
+    Settings,
+    Help
+};
 
 
 class main_game_panel : public wxPanel {
@@ -29,10 +37,11 @@ private:
     void build_playing_board(game_state* game_state, player* me);
     void build_turn_indicator(game_state* game_state, player* me);
     void build_this_player(game_state* game_state, player* me);
-    void build_icons(game_state* gameState, player *me, std::string path, wxPoint position);
+    void build_icons(game_state* gameState, player *me, IconType iconType, std::string path, wxPoint position);
     void close_all_dialogs();
 
     void build_about_text(wxCommandEvent& event);
+    void build_help_text(wxCommandEvent& event);
     wxStaticText* build_static_text(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
 
     // define key constant layout values
