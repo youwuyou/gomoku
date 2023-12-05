@@ -2,8 +2,8 @@
 #define GOMOKUUI_GOMOKU_H
 
 #include <wx/wx.h>
-#include "../windows/GameWindow.h"
-#include "../GameController.h"
+#include "../windows/game_window.h"
+#include "../game_controller.h"
 
 
 // Main app class

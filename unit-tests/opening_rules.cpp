@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "../src/common/game_state/playing_board/opening_rules.h"
 #include "../src/common/serialization/json_utils.h"
-#include "../src/common/exceptions/GomokuException.h"
+#include "../src/common/exceptions/gomoku_exception.h"
 
 
 
@@ -53,9 +53,9 @@ TEST_F(opening_rules_test, serialization_equality) {
     EXPECT_EQ(ruleset_freestyle.get_description(), opening_rules_recv->get_description());
 }
 
-// Deserializing an invalid string must throw a GomokuException
+// Deserializing an invalid string must throw a gomoku_exception
 TEST_F(opening_rules_test, serialization_exception) {
     rapidjson::Document json = rapidjson::Document(rapidjson::kObjectType);
     json.Parse("not json");
-    EXPECT_THROW(opening_rules::from_json(json), GomokuException);
+    EXPECT_THROW(opening_rules::from_json(json), gomoku_exception);
 }

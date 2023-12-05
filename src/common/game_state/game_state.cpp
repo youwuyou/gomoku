@@ -4,7 +4,7 @@
 
 #include "game_state.h"
 
-#include "../exceptions/GomokuException.h"
+#include "../exceptions/gomoku_exception.h"
 #include "../serialization/vector_utils.h"
 #include "playing_board/playing_board.h"
 
@@ -155,10 +155,6 @@ int game_state::get_player_index(player *player) const {
     }
 }
 
-bool game_state::is_player_in_game(player *player) const {
-    return std::find(_players.begin(), _players.end(), player) < _players.end();
-}
-
 bool game_state::is_allowed_to_play_now(player *player) const {
     return player == get_current_player();
 }
@@ -302,7 +298,7 @@ bool game_state::update_current_player(std::string& err) {
             }
             break;
         default:
-            throw GomokuException("Failed to update current player. Invalid ruleset name.");
+            throw gomoku_exception("Failed to update current player. Invalid ruleset name.");
     }
     return result;
 }
@@ -480,7 +476,7 @@ unsigned int game_state::count_stones_one_direction(unsigned int x, unsigned int
         return 0;
     } else {
         int next_stone_colour = _playing_board->get_playing_board().at(y + direction_y).at(x + direction_x);
-        //return one if we have reached the end of the line
+        //return zero if we have reached the end of the line
         if (next_stone_colour != colour) {
             return 0;
         } else {
@@ -588,7 +584,7 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
                               serializable_value<bool>::from_json(json["swap_next_turn"].GetObject()),
                               swap_decision);
     } else {
-        throw GomokuException("Failed to deserialize game_state. Required entries were missing.");
+        throw gomoku_exception("Failed to deserialize game_state. Required entries were missing.");
     }
 }
 

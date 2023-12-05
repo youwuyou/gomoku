@@ -11,14 +11,14 @@
 #include <unordered_map>
 #include "../../../../rapidjson/include/rapidjson/document.h"
 #include "../../serialization/serializable.h"
-#include "../../exceptions/GomokuException.h"
+#include "../../exceptions/gomoku_exception.h"
 #include "../../serialization/uuid_generator.h"
 #include "../../serialization/json_utils.h"
 
 // Identifier for the different request types.
-// The RequestType is sent with every client_request to identify the type of client_request
+// The request_type is sent with every client_request to identify the type of client_request
 // during deserialization on the server side.
-enum RequestType {
+enum request_type {
     join_game,
     start_game,
     place_stone,
@@ -31,32 +31,32 @@ class client_request : public serializable {
 protected:
 
     struct base_class_properties {
-        RequestType _type;
+        request_type _type;
         std::string _req_id;
         std::string _player_id;
         std::string _game_id;
     };
 
-    RequestType _type;
+    request_type _type;
     std::string _req_id;
     std::string _player_id;
     std::string _game_id;
 
     explicit client_request(base_class_properties); // base constructor
-    static base_class_properties create_base_class_properties(RequestType type, std::string req_id, std::string& player_id, std::string& game_id);
+    static base_class_properties create_base_class_properties(request_type type, std::string req_id, std::string& player_id, std::string& game_id);
     static base_class_properties extract_base_class_properties(const rapidjson::Value& json);
 
 private:
 
     // for deserialization
-    static const std::unordered_map<std::string, RequestType> _string_to_request_type;
+    static const std::unordered_map<std::string, request_type> _string_to_request_type;
     // for serialization
-    static const std::unordered_map<RequestType, std::string> _request_type_to_string;
+    static const std::unordered_map<request_type, std::string> _request_type_to_string;
 
 public:
     virtual ~client_request() {}
 
-    [[nodiscard]] RequestType get_type() const { return this->_type; }
+    [[nodiscard]] request_type get_type() const { return this->_type; }
     [[nodiscard]] std::string get_req_id() const { return this->_req_id; }
     [[nodiscard]] std::string get_game_id() const { return this->_game_id; }
     [[nodiscard]] std::string get_player_id() const { return this->_player_id; }

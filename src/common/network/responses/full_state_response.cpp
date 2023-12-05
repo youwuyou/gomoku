@@ -4,11 +4,11 @@
 
 #include "full_state_response.h"
 
-#include "../../exceptions/GomokuException.h"
+#include "../../exceptions/gomoku_exception.h"
 #include "../../serialization/json_utils.h"
 
 #ifdef GOMOKU_CLIENT
-#include "../../../client/GameController.h"
+#include "../../../client/game_controller.h"
 #endif
 
 full_state_response::full_state_response(server_response::base_class_properties props, rapidjson::Value* state_json) :
@@ -34,7 +34,7 @@ full_state_response *full_state_response::from_json(const rapidjson::Value& json
         return new full_state_response(server_response::extract_base_class_properties(json),
                                        json_utils::clone_value(json["state_json"].GetObject()));
     } else {
-        throw GomokuException("Could not parse full_state_response from json. state is missing.");
+        throw gomoku_exception("Could not parse full_state_response from json. state is missing.");
     }
 }
 
@@ -54,7 +54,7 @@ rapidjson::Value* full_state_response::get_state_json() const {
 void full_state_response::Process() const {
     try {
         game_state* state = game_state::from_json(*_state_json);
-        GameController::updateGameState(state);
+        game_controller::update_game_state(state);
 
     } catch(std::exception& e) {
         std::cerr << "Failed to extract game_state from full_state_response" << std::endl

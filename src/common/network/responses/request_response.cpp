@@ -4,11 +4,11 @@
 
 #include "request_response.h"
 #include "../../serialization/json_utils.h"
-#include "../../exceptions/GomokuException.h"
+#include "../../exceptions/gomoku_exception.h"
 #include "../../game_state/game_state.h"
 
 #ifdef GOMOKU_CLIENT
-#include "../../../client/GameController.h"
+#include "../../../client/game_controller.h"
 #endif
 
 
@@ -69,7 +69,7 @@ request_response *request_response::from_json(const rapidjson::Value& json) {
                 state_json,
                 err);
     } else {
-        throw GomokuException("Could not parse request_response from json. err or success is missing.");
+        throw gomoku_exception("Could not parse request_response from json. err or success is missing.");
     }
 }
 
@@ -79,13 +79,14 @@ void request_response::Process() const {
     if (_success) {
         if (this->_state_json != nullptr) {
             game_state* state = game_state::from_json(*_state_json);
-            GameController::updateGameState(state);
+            game_controller::update_game_state(state);
 
         } else {
-            GameController::showError("Network error", "Expected a state as JSON inside the request_response. But there was none.");
+            game_controller::show_error("Network error",
+                                        "Expected a state as JSON inside the request_response. But there was none.");
         }
     } else {
-        GameController::showError("Warning!", _err);
+        game_controller::show_error("Warning!", _err);
     }
 
 }
