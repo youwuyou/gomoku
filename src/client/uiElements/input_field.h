@@ -4,10 +4,10 @@
 #include <wx/wx.h>
 
 
-class InputField : public wxPanel {
+class input_field : public wxPanel {
 
 public:
-    InputField(wxWindow* parent, const wxString& labelText, int labelWidth, const wxString& fieldValue, int fieldWidth);
+    input_field(wxWindow* parent, const wxString& label_text, int label_width, const wxString& field_value, int field_width);
     wxString getValue();
 
 private:

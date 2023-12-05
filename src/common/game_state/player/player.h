@@ -28,9 +28,7 @@ private:
     std::string _game_id;
 #endif
 
-    /*
-     * Deserialization constructor
-     */
+    //Deserialization constructor
     player(std::string id,
            serializable_value<std::string>* name,
            serializable_value<int>* score,

@@ -13,7 +13,7 @@
 
 #include "../common/network/requests/join_game_request.h"
 #include "../common/network/requests/place_stone_request.h"
-#include "../common/network/requests/swap_colour_request.h"
+#include "../common/network/requests/swap_decision_request.h"
 #include "../common/network/requests/select_game_mode_request.h"
 #include "../common/network/requests/restart_game_request.h"
 
@@ -26,7 +26,7 @@ request_response* request_handler::handle_request(const client_request* const re
     game_instance* game_instance_ptr = nullptr;
 
     // Get common properties of requests
-    RequestType type = req->get_type();
+    request_type type = req->get_type();
     std::string req_id = req->get_req_id();
     std::string game_id = req->get_game_id();
     std::string player_id = req->get_player_id();
@@ -36,7 +36,7 @@ request_response* request_handler::handle_request(const client_request* const re
     switch(type) {
 
         // ##################### JOIN GAME #####################  //
-        case RequestType::join_game: {
+        case request_type::join_game: {
             std::string player_name = ((join_game_request *) req)->get_player_name();
 
             // Create new player or get existing one with that name
@@ -74,7 +74,7 @@ request_response* request_handler::handle_request(const client_request* const re
 
 
         // ##################### START GAME ##################### //
-        case RequestType::start_game: {
+        case request_type::start_game: {
             if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
                 if (game_instance_ptr->start_game(player, err)) {
                     return new request_response(game_instance_ptr->get_id(), req_id, true,
@@ -85,7 +85,7 @@ request_response* request_handler::handle_request(const client_request* const re
         }
 
         // ##################### PLACE STONE ##################### //
-        case RequestType::place_stone: {
+        case request_type::place_stone: {
             if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
                 unsigned int x = (dynamic_cast<const place_stone_request *>(req))->get_stone_x();
                 unsigned int y = (dynamic_cast<const place_stone_request *>(req))->get_stone_y();
@@ -99,9 +99,9 @@ request_response* request_handler::handle_request(const client_request* const re
         }
 
         // ##################### SWAP COLOUR ##################### //
-        case RequestType::swap_colour: {
+        case request_type::swap_colour: {
             if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
-                const swap_decision_type swap_decision = (dynamic_cast<const swap_colour_request *>(req))->get_swap_decision();
+                const swap_decision_type swap_decision = (dynamic_cast<const swap_decision_request *>(req))->get_swap_decision();
                 if (game_instance_ptr->do_swap_decision(player, swap_decision, err)) {
                     return new request_response(game_instance_ptr->get_id(), req_id, true,
                                                 game_instance_ptr->get_game_state()->to_json(), err);
@@ -111,7 +111,7 @@ request_response* request_handler::handle_request(const client_request* const re
         }
 
         // ##################### SELECT GAME MODE ##################### //
-        case RequestType::select_game_mode: {
+        case request_type::select_game_mode: {
             if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
                 const std::string& ruleset_string = (dynamic_cast<const select_game_mode_request *>(req))->get_ruleset_string();
                 if (game_instance_ptr->set_game_mode(player, ruleset_string, err)) {
@@ -123,7 +123,7 @@ request_response* request_handler::handle_request(const client_request* const re
         }
 
         // ##################### RESTART GAME ##################### //
-        case RequestType::restart_game: {
+        case request_type::restart_game: {
             if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
                 bool change_ruleset = (dynamic_cast<const restart_game_request *>(req))->get_change_ruleset();
                 if (change_ruleset){
@@ -148,12 +148,8 @@ request_response* request_handler::handle_request(const client_request* const re
 
         // ##################### UNKNOWN REQUEST ##################### //
         default:
-            return new request_response("", req_id, false, nullptr, "Unknown RequestType " + type);
+            return new request_response("", req_id, false, nullptr, "Unknown request_type " + type);
     }
 }
-
-/*stone request_handler::get_stone(const place_stone_request * req) {
-    return stone(req->get_stone_x(), req->get_stone_y(), req->get_stone_colour());
-}*/
 
 #endif //GOMOKU_REQUEST_HANDLER_CPP

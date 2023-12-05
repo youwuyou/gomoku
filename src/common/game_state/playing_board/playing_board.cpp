@@ -4,7 +4,7 @@
 
 #include "playing_board.h"
 
-#include "../../exceptions/GomokuException.h"
+#include "../../exceptions/gomoku_exception.h"
 #include "../../serialization/vector_utils.h"
 
 playing_board::playing_board() : unique_serializable() {
@@ -88,7 +88,6 @@ void playing_board::setup_round(std::string& err) {
 
 #endif
 
-
 void playing_board::write_into_json(rapidjson::Value &json, rapidjson::Document::AllocatorType& allocator) const {
     unique_serializable::write_into_json(json, allocator);
     std::vector<serializable_value<std::string>> flattened_playing_board;
@@ -119,7 +118,7 @@ playing_board *playing_board::from_json(const rapidjson::Value &json) {
         }
         return new playing_board(json["id"].GetString(), deserialized_playing_board);
     } else {
-        throw GomokuException("Could not parse playing board from json. 'playing_board' was missing.");
+        throw gomoku_exception("Could not parse playing board from json. 'playing_board' was missing.");
     }
 }
 

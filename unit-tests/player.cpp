@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "../src/common/game_state/player/player.h"
 #include "../src/common/serialization/json_utils.h"
-#include "../src/common/exceptions/GomokuException.h"
+#include "../src/common/exceptions/gomoku_exception.h"
 
 
 
@@ -81,9 +81,9 @@ TEST_F(player_test, serialization_equality) {
     EXPECT_EQ(player_white.get_colour(), player_recv->get_colour());
 }
 
-// Deserializing an invalid string must throw a GomokuException
+// Deserializing an invalid string must throw a gomoku_exception
 TEST_F(player_test, serialization_exception) {
     rapidjson::Document json = rapidjson::Document(rapidjson::kObjectType);
     json.Parse("not json");
-    EXPECT_THROW(player::from_json(json), GomokuException);
+    EXPECT_THROW(player::from_json(json), gomoku_exception);
 }

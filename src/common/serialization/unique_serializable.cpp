@@ -6,7 +6,7 @@
 #include "unique_serializable.h"
 
 #include "uuid_generator.h"
-#include "../exceptions/GomokuException.h"
+#include "../exceptions/gomoku_exception.h"
 
 
 unique_serializable::unique_serializable()
