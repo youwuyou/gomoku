@@ -49,9 +49,13 @@ void main_game_panel::build_game_state(game_state* game_state, player* me) {
     this->build_this_player(game_state, me);
 
     // build About button
-    this->build_about(game_state, me);
-    this->build_settings(game_state, me);
-    this->build_help(game_state, me);
+    // this->build_about(game_state, me); 
+    // this->build_settings(game_state, me);
+    // this->build_help(game_state, me);
+
+    this->build_icons(game_state, me, "assets/icons/info.png", wxPoint(30, 30));
+    this->build_icons(game_state, me, "assets/icons/cog.png", wxPoint(30, 100));
+    this->build_icons(game_state, me, "assets/icons/help.png", wxPoint(30, 170));
 
     // update layout
     this->Layout();
@@ -350,58 +354,17 @@ void main_game_panel::build_this_player(game_state* game_state, player* me) {
     }
 }
 
-// void main_game_panel::build_about(game_state* gameState, player *me) {
-//     // create the About button with a default position
-//     wxButton* about_button = new wxButton(this, wxID_ANY, wxT("About"), wxDefaultPosition, wxSize(100, 30));
-
-//     // manually set the position of the About button to the upper left corner
-//     wxPoint button_position(20, 20); // setting the position to the top-left corner with margin
-//     about_button->SetPosition(button_position);
-
-//     // bind the event handler with sound
-//     about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-//         wxSound buttonClickSound("assets/music/info-click.wav");
-//         buttonClickSound.Play(wxSOUND_ASYNC);
-//         this->build_about_text(event); // call the original handler
-//     });
-// }
-
-// create the About button
-void main_game_panel::build_about(game_state* gameState, player *me) {
-    wxBitmap about_button_bitmap(wxT("assets/icons/info.png"), wxBITMAP_TYPE_PNG);
+// build icons for about, settings and help
+void main_game_panel::build_icons(game_state* gameState, player *me, std::string path, wxPoint position) {
+    wxBitmap about_button_bitmap(path, wxBITMAP_TYPE_PNG);
     wxBitmapButton* about_button = new wxBitmapButton(this, wxID_ANY, about_button_bitmap, wxDefaultPosition, wxSize(70, 70), wxBORDER_NONE);
-    about_button->SetPosition(wxPoint(30, 30)); // Set position to top-left corner with margin
+    about_button->SetPosition(position); // Set position to top-left corner with margin
     about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
         wxSound button_click_sound("assets/music/click-button.wav");
         button_click_sound.Play(wxSOUND_ASYNC);
         this->build_about_text(event);
     });
 }
-
-// create the setting button
-void main_game_panel::build_settings(game_state* gameState, player *me) {
-    wxBitmap about_button_bitmap(wxT("assets/icons/cog.png"), wxBITMAP_TYPE_PNG);
-    wxBitmapButton* about_button = new wxBitmapButton(this, wxID_ANY, about_button_bitmap, wxDefaultPosition, wxSize(70, 70), wxBORDER_NONE);
-    about_button->SetPosition(wxPoint(30, 100)); // Set position to top-left corner with margin
-    about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
-        this->build_about_text(event);
-    });
-}
-
-// create the help button
-void main_game_panel::build_help(game_state* gameState, player *me) {
-    wxBitmap about_button_bitmap(wxT("assets/icons/help.png"), wxBITMAP_TYPE_PNG);
-    wxBitmapButton* about_button = new wxBitmapButton(this, wxID_ANY, about_button_bitmap, wxDefaultPosition, wxSize(70,70), wxBORDER_NONE);
-    about_button->SetPosition(wxPoint(30, 170)); // Set position to top-left corner with margin
-    about_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
-        this->build_about_text(event);
-    });
-}
-
 
 void main_game_panel::build_about_text(wxCommandEvent& event) {
     wxString about_info = wxT("Gomoku Game\n\nAuthors: Haoanqin Gao, Julius König, Stephen Lincon, \n                Nicolas Müller, Rana Singh, You Wu \nVersion: 1.0.0\n\n© 2023 Wizards of the C Inc.");

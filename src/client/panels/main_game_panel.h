@@ -29,12 +29,7 @@ private:
     void build_playing_board(game_state* game_state, player* me);
     void build_turn_indicator(game_state* game_state, player* me);
     void build_this_player(game_state* game_state, player* me);
-
-    // todo: just one method for all three buttons!
-    void build_about(game_state* gameState, player* me);
-    void build_settings(game_state* gameState, player *me);
-    void build_help(game_state* gameState, player *me);
-
+    void build_icons(game_state* gameState, player *me, std::string path, wxPoint position);
     void close_all_dialogs();
 
     void build_about_text(wxCommandEvent& event);
