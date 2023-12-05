@@ -48,11 +48,7 @@ void main_game_panel::build_game_state(game_state* game_state, player* me) {
     // show our own player
     this->build_this_player(game_state, me);
 
-    // build About button
-    // this->build_about(game_state, me); 
-    // this->build_settings(game_state, me);
-    // this->build_help(game_state, me);
-
+    // build icon buttons for about, settings and help
     this->build_icons(game_state, me, "assets/icons/info.png", wxPoint(30, 30));
     this->build_icons(game_state, me, "assets/icons/cog.png", wxPoint(30, 100));
     this->build_icons(game_state, me, "assets/icons/help.png", wxPoint(30, 170));
@@ -201,7 +197,7 @@ void main_game_panel::build_this_player(game_state* game_state, player* me) {
         if (game_state->get_current_player() == me && game_state->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
 
             wxStaticText* game_rule_dropdown_text = build_static_text(
-                    "Please choose a game_window style:",
+                    "Please choose a game style:",
                     wxDefaultPosition,
                     wxSize(200, 18),
                     wxALIGN_CENTER,
@@ -271,7 +267,7 @@ void main_game_panel::build_this_player(game_state* game_state, player* me) {
     if (!game_state->is_started()) {
 
         wxStaticText* player_points = build_static_text(
-                "waiting for game_window to start...",
+                "waiting for game to start...",
                 wxDefaultPosition,
                 wxSize(200, 18),
                 wxALIGN_CENTER
