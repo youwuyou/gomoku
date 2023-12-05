@@ -206,22 +206,22 @@ void game_controller::show_game_over_message() {
     _main_game_panel->_open_dialogs.push_back(dialog_box);
 
     rematch_button->Bind(wxEVT_BUTTON, [dialog_box](wxCommandEvent& event) {
-        //wxSound button_click_sound("assets/music/info-click.wav");
-        //button_click_sound.Play(wxSOUND_ASYNC);
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
         restart_game_request request = restart_game_request(game_controller::_me->get_id(), game_controller::_current_game_state->get_id(), false);
         client_network_manager::send_request(request);
         dialog_box->EndModal(wxID_OK);
     });
     change_ruleset_button->Bind(wxEVT_BUTTON, [dialog_box](wxCommandEvent& event) {
-        //wxSound button_click_sound("assets/music/info-click.wav");
-        //button_click_sound.Play(wxSOUND_ASYNC);
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
         restart_game_request request = restart_game_request(game_controller::_me->get_id(), game_controller::_current_game_state->get_id(), true);
         client_network_manager::send_request(request);
         dialog_box->EndModal(wxID_OK);
     });
     close_button->Bind(wxEVT_BUTTON, [dialog_box](wxCommandEvent& event) {
-        //wxSound button_click_sound("assets/music/info-click.wav");
-        //button_click_sound.Play(wxSOUND_ASYNC);
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
         game_controller::_game_window->Close();
         dialog_box->EndModal(wxID_OK);
     });
@@ -235,34 +235,28 @@ void game_controller::show_game_over_message() {
 
 void game_controller::show_swap_message() {
     ruleset_type ruleset_name = game_controller::_current_game_state->get_opening_rules()->get_ruleset();
-    int turn_number = game_controller::_current_game_state->get_turn_number();
-
     std::string title = main_game_panel::_ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(ruleset_name));
-    std::string dialog_text = "How do you wish to proceed?";
 
-    wxSize dialog_box_size(300,200);
-    if(ruleset_name == swap2 && game_controller::_current_game_state->get_swap_decision() == no_decision_yet){
-        dialog_box_size = wxSize(300,260);
-    }
+    wxSize dialog_box_size = (ruleset_name == swap2 && game_controller::_current_game_state->get_swap_decision() == no_decision_yet) ? wxSize(300, 260) : wxSize(300, 200);
 
-    wxDialog* swap_dialog_box = new wxDialog(_game_window, wxID_ANY, wxString(title), wxPoint(500, 300), dialog_box_size);
+    // TODO: this did not work out
+    // long style = wxCAPTION | ~wxMINIMIZE_BOX;
+    long style = wxCAPTION;
+
+
+    wxDialog* swap_dialog_box = new wxDialog(nullptr, wxID_ANY, wxString(title), wxDefaultPosition, dialog_box_size, style);
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
 
     // Disable close button to force a choice
     swap_dialog_box->Bind(wxEVT_CLOSE_WINDOW, on_close);
 
-    std::string swap_button_text = "Swap to black";
-    std::string no_swap_button_text = "Continue as white";
-
-    if(game_controller::_current_game_state->get_swap_decision() == swap_decision_type::defer_swap){
-        swap_button_text = "Swap to white";
-        no_swap_button_text = "Continue as black";
-    }
+    std::string swap_button_text = (game_controller::_current_game_state->get_swap_decision() == swap_decision_type::defer_swap) ? "Swap to white" : "Swap to black";
+    std::string no_swap_button_text = (game_controller::_current_game_state->get_swap_decision() == swap_decision_type::defer_swap) ? "Continue as black" : "Continue as white";
 
     wxButton* swap_button = new wxButton(swap_dialog_box, wxID_ANY, swap_button_text);
     wxButton* no_swap_button = new wxButton(swap_dialog_box, wxID_ANY, no_swap_button_text);
 
-    wxStaticText* text_label = new wxStaticText(swap_dialog_box, wxID_ANY, wxString(dialog_text));
+    wxStaticText* text_label = new wxStaticText(swap_dialog_box, wxID_ANY, wxString("How do you wish to proceed?"));
     main_sizer->Add(text_label, 0, wxALIGN_CENTER | wxALL, 10);
 
     switch(ruleset_name){
@@ -270,15 +264,15 @@ void game_controller::show_swap_message() {
             main_sizer->Add(swap_button, 0, wxALIGN_CENTER | wxALL, 1);
             main_sizer->Add(no_swap_button, 0, wxALIGN_CENTER | wxALL, 1);
             swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
-                //wxSound button_click_sound("assets/music/info-click.wav");
-                //button_click_sound.Play(wxSOUND_ASYNC);
+                wxSound button_click_sound("assets/music/click-button.wav");
+                button_click_sound.Play(wxSOUND_ASYNC);
                 swap_decision_request request = swap_decision_request(game_controller::_me->get_id(), game_controller::_current_game_state->get_id(), swap_decision_type::do_swap);
                 client_network_manager::send_request(request);
                 swap_dialog_box->Show(false);
             });
             no_swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
-                //wxSound button_click_sound("assets/music/info-click.wav");
-                //button_click_sound.Play(wxSOUND_ASYNC);
+                wxSound button_click_sound("assets/music/click-button.wav");
+                button_click_sound.Play(wxSOUND_ASYNC);
                 swap_decision_request request = swap_decision_request(game_controller::_me->get_id(), game_controller::_current_game_state->get_id(), swap_decision_type::do_not_swap);
                 client_network_manager::send_request(request);
                 swap_dialog_box->Show(false);;
@@ -291,16 +285,16 @@ void game_controller::show_swap_message() {
             main_sizer->Add(no_swap_button, 0, wxALIGN_CENTER | wxALL, 1);
 
             swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
-                //wxSound button_click_sound("assets/music/info-click.wav");
-                //button_click_sound.Play(wxSOUND_ASYNC);
+                wxSound button_click_sound("assets/music/click-button.wav");
+                button_click_sound.Play(wxSOUND_ASYNC);
                 swap_decision_request request = swap_decision_request(game_controller::_me->get_id(),
                                                                       game_controller::_current_game_state->get_id(), swap_decision_type::do_swap);
                 client_network_manager::send_request(request);
                 swap_dialog_box->Show(false);
             });
             no_swap_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
-                //wxSound button_click_sound("assets/music/info-click.wav");
-                //button_click_sound.Play(wxSOUND_ASYNC);
+                wxSound button_click_sound("assets/music/click-button.wav");
+                button_click_sound.Play(wxSOUND_ASYNC);
                 swap_decision_request request = swap_decision_request(game_controller::_me->get_id(), game_controller::_current_game_state->get_id(), swap_decision_type::do_not_swap);
                 client_network_manager::send_request(request);
                 swap_dialog_box->Show(false);
@@ -311,8 +305,8 @@ void game_controller::show_swap_message() {
                 wxButton *defer_button = new wxButton(swap_dialog_box, wxID_ANY, "Defer choice");
                 main_sizer->Add(defer_button, 0, wxALIGN_CENTER | wxALL, 1);
                 defer_button->Bind(wxEVT_BUTTON, [swap_dialog_box](wxCommandEvent& event) {
-                    //wxSound button_click_sound("assets/music/info-click.wav");
-                    //button_click_sound.Play(wxSOUND_ASYNC);
+                    wxSound button_click_sound("assets/music/click-button.wav");
+                    button_click_sound.Play(wxSOUND_ASYNC);
                     swap_decision_request request = swap_decision_request(game_controller::_me->get_id(), game_controller::_current_game_state->get_id(), swap_decision_type::defer_swap);
                     client_network_manager::send_request(request);
                     swap_dialog_box->Show(false);
@@ -321,11 +315,8 @@ void game_controller::show_swap_message() {
 
             break;
     }
+    swap_dialog_box->SetSizerAndFit(main_sizer);
+    swap_dialog_box->CentreOnParent();
     swap_dialog_box->SetEscapeId(wxID_NONE);
-
-    main_sizer->Layout();
-    swap_dialog_box->SetSizer(main_sizer);
-    swap_dialog_box->CentreOnParent(wxVERTICAL);
-
-    swap_dialog_box->Show();
+    swap_dialog_box->ShowModal();
 }
