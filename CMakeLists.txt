@@ -14,7 +14,7 @@ set(CLIENT_SOURCE_FILES
         src/client/app/Gomoku.cpp src/client/app/Gomoku.h
         src/client/game_controller.cpp src/client/game_controller.h
         # UI
-        src/client/windows/game_window.cpp src/client/windows/game-window.h
+        src/client/windows/game_window.cpp src/client/windows/game_window.h
         src/client/uiElements/image_panel.cpp src/client/uiElements/image_panel.h
         src/client/panels/connection_panel.cpp src/client/panels/connection_panel.h
         src/client/panels/main_game_panel.cpp src/client/panels/main_game_panel.h

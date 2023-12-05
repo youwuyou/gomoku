@@ -4,10 +4,10 @@
 #include "../panels/connection_panel.h"
 
 
-class game : public wxFrame
+class game_window : public wxFrame
 {
 public:
-    game(const wxString& title, const wxPoint& pos, const wxSize& size);
+    game_window(const wxString& title, const wxPoint& pos, const wxSize& size);
 
     void show_panel(wxPanel* panel);
     void set_status(const std::string& message);

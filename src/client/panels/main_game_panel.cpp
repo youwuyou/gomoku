@@ -197,7 +197,7 @@ void main_game_panel::build_this_player(game_state* game_state, player* me) {
         if (game_state->get_current_player() == me && game_state->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
 
             wxStaticText* game_rule_dropdown_text = build_static_text(
-                    "Please choose a game style:",
+                    "Please choose a game_window style:",
                     wxDefaultPosition,
                     wxSize(200, 18),
                     wxALIGN_CENTER,
@@ -267,7 +267,7 @@ void main_game_panel::build_this_player(game_state* game_state, player* me) {
     if (!game_state->is_started()) {
 
         wxStaticText* player_points = build_static_text(
-                "waiting for game to start...",
+                "waiting for game_window to start...",
                 wxDefaultPosition,
                 wxSize(200, 18),
                 wxALIGN_CENTER

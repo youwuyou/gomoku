@@ -1,7 +1,7 @@
-#include "game-window.h"
+#include "game_window.h"
 
 
-game::game(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, title, pos, size)
+game_window::game_window(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, title, pos, size)
 {
     // Set up layout that will contain and center all content
 
@@ -24,7 +24,7 @@ game::game(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFr
 }
 
 
-void game::show_panel(wxPanel* panel) {
+void game_window::show_panel(wxPanel* panel) {
 
     // if we are already showing the panel, we don't need to do anything
     if (this->_current_panel == panel) {
@@ -51,7 +51,7 @@ void game::show_panel(wxPanel* panel) {
 }
 
 
-void game::set_status(const std::string& message) {
+void game_window::set_status(const std::string& message) {
     this->_status_bar->SetStatusText(message, 0);
 }
 

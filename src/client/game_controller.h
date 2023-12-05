@@ -2,7 +2,7 @@
 #define GOMOKUUI_GAMECONTROLLER_H
 
 #include <wx/sound.h>
-#include "windows/game-window.h"
+#include "windows/game_window.h"
 #include "panels/connection_panel.h"
 #include "panels/main_game_panel.h"
 #include "network/response_listener_thread.h"
@@ -12,7 +12,7 @@
 class game_controller {
 
 public:
-    static void init(game* game_window);
+    static void init(game_window* game_window);
 
     static void connect_to_server();
     static void update_game_state(game_state* new_game_state);
@@ -27,7 +27,7 @@ public:
     static void show_swap_message();
 
 private:
-    static game* _game_window;
+    static game_window* _game_window;
     static connection_panel* _connection_panel;
     static main_game_panel* _main_game_panel;
 

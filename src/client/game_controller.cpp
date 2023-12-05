@@ -9,13 +9,13 @@
 
 
 // initialize static members
-game* game_controller::_game_window = nullptr;
+game_window* game_controller::_game_window = nullptr;
 connection_panel* game_controller::_connection_panel = nullptr;
 main_game_panel* game_controller::_main_game_panel = nullptr;
 player* game_controller::_me = nullptr;
 game_state* game_controller::_current_game_state = nullptr;
 
-void game_controller::init(game* game_window) {
+void game_controller::init(game_window* game_window) {
 
     game_controller::_game_window = game_window;
 

@@ -9,7 +9,7 @@ bool Gomoku::OnInit()
     wxImage::AddHandler(new wxPNGHandler());
 
     // Open main game window
-    game* gameWindow = new game(
+    game_window* gameWindow = new game_window(
             "Gomoku", // title of window,
             wxDefaultPosition, // position of the window
             wxDefaultSize // size of the window

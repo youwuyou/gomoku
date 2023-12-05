@@ -2,7 +2,7 @@
 #define GOMOKUUI_GOMOKU_H
 
 #include <wx/wx.h>
-#include "../windows/game-window.h"
+#include "../windows/game_window.h"
 #include "../game_controller.h"
 
 
