@@ -69,6 +69,7 @@ public:
     bool is_finished() const;
     bool is_tied() const;
     bool is_allowed_to_play_now(player* player) const;
+    int get_starting_player_idx() const;
     std::vector<player*>& get_players();
     int get_turn_number() const;
     std::vector<std::vector<field_type>> get_playing_board() const;

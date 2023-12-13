@@ -130,6 +130,10 @@ int game_state::get_turn_number() const {
     return _turn_number->get_value();
 }
 
+int game_state::get_starting_player_idx() const {
+    return _starting_player_idx->get_value();
+}
+
 std::vector<std::vector<field_type>> game_state::get_playing_board() const{
     return _playing_board->get_playing_board();
 }
@@ -367,10 +371,10 @@ bool game_state::prepare_game(player* player, std::string &err) {
     if(_players.at(_starting_player_idx->get_value()) != player){
         this->switch_starting_player(err);
     }
-    if(_players.at(_current_player_idx->get_value())->get_colour() != player_colour_type::black){
-        this->_players.at(0)->change_colour(err);
-        this->_players.at(1)->change_colour(err);
-    }
+    //if(_players.at(_current_player_idx->get_value())->get_colour() != player_colour_type::black){
+    //    this->_players.at(0)->change_colour(err);
+    //    this->_players.at(1)->change_colour(err);
+    //}
     _is_finished->set_value(false);
     return true;
 }
@@ -496,6 +500,7 @@ bool game_state::check_for_tie(){
             }
         }
     }
+    this->_is_tied->set_value(true);
     return true;
 }
 
