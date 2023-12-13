@@ -6,10 +6,10 @@
 #include "../game_controller.h"
 
 
-connection_panel::connection_panel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
+connection_panel::connection_panel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition) {
 
     wxBoxSizer* vertical_layout = new wxBoxSizer(wxVERTICAL);
-    image_panel* logo = new image_panel(this, "assets/gomoku_logo.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, wxSize(400, 400));
+    image_panel* logo = new image_panel(this, "assets/gomoku_logo.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, wxSize(350, 350));
     vertical_layout->Add(logo, 0, wxALIGN_CENTER, 10);
 
     this->_server_address_field = new input_field(

@@ -9,6 +9,7 @@
 #include "join_game_request.h"
 #include "start_game_request.h"
 #include "restart_game_request.h"
+#include "forfeit_request.h"
 
 #include <iostream>
 
@@ -19,7 +20,8 @@ const std::unordered_map<std::string, request_type> client_request::_string_to_r
         {"place_stone",      request_type::place_stone},
         {"swap_colour",      request_type::swap_colour},
         {"select_game_mode", request_type::select_game_mode},
-        {"restart_game",     request_type::restart_game}
+        {"restart_game",     request_type::restart_game},
+        {"forfeit", request_type::forfeit}
 };
 // for serialization
 const std::unordered_map<request_type, std::string> client_request::_request_type_to_string = {
@@ -28,7 +30,8 @@ const std::unordered_map<request_type, std::string> client_request::_request_typ
         {request_type::place_stone,      "place_stone"},
         {request_type::swap_colour,      "swap_colour"},
         {request_type::select_game_mode, "select_game_mode"},
-        {request_type::restart_game,     "restart_game"}
+        {request_type::restart_game,     "restart_game"},
+        {request_type::forfeit, "forfeit"}
 };
 
 // protected constructor. only used by subclasses
@@ -112,6 +115,9 @@ client_request* client_request::from_json(const rapidjson::Value &json) {
         }
         else if (request_type == request_type::restart_game) {
             return restart_game_request::from_json(json);
+        }
+        else if (request_type == request_type::forfeit) {
+            return forfeit_request::from_json(json);
         }else {
             throw gomoku_exception("Encountered unknown ClientRequest type " + type);
         }

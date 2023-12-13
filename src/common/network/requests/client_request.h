@@ -25,6 +25,7 @@ enum request_type {
     swap_colour,
     select_game_mode,
     restart_game,
+    forfeit,
 };
 
 class client_request : public serializable {

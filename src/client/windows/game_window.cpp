@@ -4,7 +4,6 @@
 game_window::game_window(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, title, pos, size)
 {
     // Set up layout that will contain and center all content
-
     this->_main_layout = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* outer_layout = new wxBoxSizer(wxHORIZONTAL);
     outer_layout->Add(this->_main_layout, 1, wxCENTER);
@@ -19,7 +18,7 @@ game_window::game_window(const wxString& title, const wxPoint& pos, const wxSize
     this->SetBackgroundColour(light_grey);
 
     // Set the minimum size of the window. The user won't be able to resize the window to a size smaller than this
-    this->SetMinSize(wxSize(1000, 720));
+    this->SetMinSize(wxSize(960, 760));
 
 }
 
@@ -39,7 +38,7 @@ void game_window::show_panel(wxPanel* panel) {
     }
 
     // add new panel
-    this->_main_layout->Add(panel, 0, wxALIGN_CENTER | wxALL, 20); // 20 pixel spacing
+    this->_main_layout->Add(panel, 0, wxALIGN_CENTER | wxALL, 0); // 0 pixel spacing
     panel->Show(true);
     this->_current_panel = panel;
 
@@ -48,6 +47,7 @@ void game_window::show_panel(wxPanel* panel) {
 
     // update window size
     this->Fit();
+    this->Layout();
 }
 
 

@@ -18,12 +18,15 @@ const std::unordered_map<std::string, std::string> main_game_panel::_ruleset_str
 };
 
 
-main_game_panel::main_game_panel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 680)) {}
+main_game_panel::main_game_panel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 760)) {}
 
 void main_game_panel::build_game_state(game_state* game_state, player* me) {
 
     // remove any existing UI
     this->DestroyChildren();
+    // close all open dialogs
+    main_game_panel::close_all_dialogs();
+
     std::vector<player*> players = game_state->get_players();
 
     // find our own player object in the list of players
@@ -39,28 +42,171 @@ void main_game_panel::build_game_state(game_state* game_state, player* me) {
         return;
     }
 
-    // show the board at the center
-    this->build_playing_board(game_state, me);
+    // show game mode choice and start screen if the game is not yet started
+    if(!game_state->is_started() && !game_state->is_finished()){
+        this->build_before_start(game_state, me);
+    } else {
 
-    // show turn indicator below card piles
-    this->build_turn_indicator(game_state, me);
+        // show the board at the center
+        this->build_playing_board(game_state, me);
 
-    // show our own player
-    this->build_this_player(game_state, me);
+        // show the scoreboard
+        this->build_scoreboard(game_state, me);
+
+        if(!game_state->is_finished()){
+            build_forfeit_button(game_state, me);
+        }
+
+        // show swap field if applicable
+        if (game_state->get_swap_next_turn() && game_state->get_current_player() == me) {
+            this->build_swap_field(game_state, me);
+        }
+
+        // show the restart options if the game is finished
+        if (game_state->is_finished()) {
+            this->build_game_over_field(game_state, me);
+        }
+    }
 
     // build icon buttons for about, settings and help
-    this->build_icons(game_state, me, IconType::About, "assets/icons/info.png", wxPoint(30, 30));
-    this->build_icons(game_state, me, IconType::Settings, "assets/icons/cog.png", wxPoint(30, 100));
-    this->build_icons(game_state, me, IconType::Help, "assets/icons/help.png", wxPoint(30, 170));
+    this->build_icons(game_state, me, IconType::About, "assets/buttons/button_about.png", wxPoint(30, 30));
+    this->build_icons(game_state, me, IconType::Settings, "assets/buttons/button_settings.png", wxPoint(30, 100));
+    this->build_icons(game_state, me, IconType::Help, "assets/buttons/button_help.png", wxPoint(30, 170));
 
     // update layout
     this->Layout();
 }
 
-void main_game_panel::build_playing_board(game_state* game_state, player *me) {
+void main_game_panel::build_before_start(game_state* game_state, player* me){
 
-    // only show the board, stones and buttons if the game has started
-    if (game_state->is_started()) {
+    // Setup two nested box sizers, in order to align our UI to the bottom center
+    wxBoxSizer* outer_layout = new wxBoxSizer(wxHORIZONTAL);
+    this->SetSizer(outer_layout);
+
+    outer_layout->AddSpacer(220);
+
+    wxBoxSizer* inner_layout = new wxBoxSizer(wxVERTICAL);
+    outer_layout->Add(inner_layout, 1, wxALIGN_TOP);
+
+
+    // show background for game mode selection
+    std::string background_image = "assets/background_gameselection.jpg";
+    wxSize panel_size = this->GetSize();
+    image_panel *background_panel = new image_panel(this, background_image, wxBITMAP_TYPE_ANY, wxDefaultPosition, panel_size);
+    background_panel->Lower(); // background at bottom-most layer
+
+    // add a spacer for the gap at the top
+    inner_layout->AddSpacer(155);
+
+    // show dropdown for game mode choice to first player
+    if (game_state->get_current_player() == me && game_state->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
+
+        wxStaticText* game_rule_dropdown_text = build_static_text(
+                "Please choose a game style:",
+                wxDefaultPosition,
+                wxSize(200, 18),
+                wxALIGN_CENTER,
+                true
+        );
+        game_rule_dropdown_text->SetForegroundColour(dark_green);
+        inner_layout->Add(game_rule_dropdown_text, 0, wxALIGN_CENTER);
+
+        wxArrayString game_rule_choices;
+        game_rule_choices.Add("Freestyle");
+        game_rule_choices.Add("Swap after first move");
+        game_rule_choices.Add("Swap2");
+
+        wxComboBox* game_rule_dropdown = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, game_rule_choices, wxCB_DROPDOWN | wxCB_READONLY);
+        inner_layout->Add(game_rule_dropdown, 0, wxALIGN_CENTER, 10);
+        game_rule_dropdown->SetSelection(0);
+
+        // add a spacer for the gap
+        inner_layout->AddSpacer(10);
+
+        // add a button for confirming the ruleset choice
+        std::string err;
+        std::string start_game_button_string = "assets/buttons/button_confirm_choice.png";
+        image_panel* choose_rules_button = new image_panel(this, start_game_button_string, wxBITMAP_TYPE_ANY,
+                                                         wxDefaultPosition,
+                                                         main_game_panel::button_size);
+
+        choose_rules_button->SetCursor(wxCursor(wxCURSOR_HAND));
+        choose_rules_button->Bind(wxEVT_LEFT_UP, [game_rule_dropdown, &err](wxMouseEvent &event) {
+            wxSound button_click_sound("assets/music/click-button.wav");
+            button_click_sound.Play(wxSOUND_ASYNC);
+            game_controller::set_game_rules(_pretty_string_to_ruleset_string.at(std::string(game_rule_dropdown->GetValue())), err);
+        });
+        inner_layout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
+
+        // create a buffer before the start game button
+        inner_layout->AddSpacer(10);
+    }
+
+    // show chosen ruleset type if ruleset has been chosen
+    if (game_state->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
+        inner_layout->AddSpacer(40);
+        std::string chosen_game_mode_string = std::string("Chosen game style: ");
+        std::string ruleset_string = _ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(game_state->get_opening_rules()->get_ruleset()));
+        wxStaticText* game_rule_chosen_text = build_static_text(
+                chosen_game_mode_string,
+                wxDefaultPosition,
+                wxSize(400, 18),
+                wxALIGN_CENTER,
+                true
+        );
+        wxStaticText* game_rule_text = build_static_text(
+                ruleset_string,
+            wxDefaultPosition,
+            wxSize(400, 18),
+            wxALIGN_CENTER,
+            true
+        );
+        game_rule_chosen_text->SetForegroundColour(dark_green);
+        game_rule_text->SetForegroundColour(dark_green);
+        inner_layout->Add(game_rule_chosen_text, 0, wxALIGN_CENTER);
+        inner_layout->Add(game_rule_text, 0, wxALIGN_CENTER);
+        inner_layout->AddSpacer(35);
+    }
+
+    // Show the label with our player name
+    wxStaticText* player_name = build_static_text(
+            me->get_player_name(),
+            wxDefaultPosition,
+            wxSize(200, 18),
+            wxALIGN_CENTER,
+            true
+    );
+    player_name->SetForegroundColour(dark_green);
+    inner_layout->Add(player_name, 0, wxALIGN_CENTER);
+
+    // say that the game has not yet started
+    wxStaticText* waiting_text = build_static_text(
+            "waiting for game to start...",
+            wxDefaultPosition,
+            wxSize(200, 18),
+            wxALIGN_CENTER
+            );
+    waiting_text->SetForegroundColour(dark_green);
+    inner_layout->Add(waiting_text, 0, wxALIGN_CENTER, 8);
+    inner_layout->AddSpacer(10);
+
+    // show button that allows our player to start the game
+    std::string start_game_button_string = "assets/buttons/button_start_game.png";
+    image_panel* start_game_button = new image_panel(this, start_game_button_string, wxBITMAP_TYPE_ANY,
+                                                    wxDefaultPosition,
+                                                    main_game_panel::button_size);
+
+    start_game_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    start_game_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
+        game_controller::start_game();
+    });
+    inner_layout->Add(start_game_button, 0, wxALIGN_CENTER, 8);
+}
+
+
+void main_game_panel::build_playing_board(game_state* game_state, player *me) {
 
         // show background
         std::string background_image = "assets/background.jpg";
@@ -94,23 +240,28 @@ void main_game_panel::build_playing_board(game_state* game_state, player *me) {
                                                      i * wxPoint(0, grid_spacing / scale_factor) +
                                                      j * wxPoint(grid_spacing / scale_factor, 0) - stone_size / 2;
                     image_panel *current_stone_panel = new image_panel(this, current_stone_image, wxBITMAP_TYPE_ANY,
-                                                                       current_stone_position, main_game_panel::stone_size);
+                                                                       current_stone_position,
+                                                                       main_game_panel::stone_size);
 
                     // add drop shadow to stone
                     std::string stone_shadow_image = "assets/stone_shadow.png";
-                    wxPoint current_stone_shadow_position = current_stone_position + stone_size/17;
-                    image_panel *current_stone_shadow_panel = new image_panel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
-                                                                              current_stone_shadow_position, main_game_panel::stone_size);
+                    wxPoint current_stone_shadow_position = current_stone_position + stone_size / 17;
+                    image_panel *current_stone_shadow_panel = new image_panel(this, stone_shadow_image,
+                                                                              wxBITMAP_TYPE_ANY,
+                                                                              current_stone_shadow_position,
+                                                                              main_game_panel::stone_size);
 
                 } else {
                     // if no stone is present, show a transparent button on each spot, if it is currently our turn
-                    if (game_state->get_current_player() == me && !game_state->get_swap_next_turn()) {
+                    if (game_state->get_current_player() == me && !game_state->get_swap_next_turn() &&
+                        !game_state->is_finished()) {
                         player_colour_type current_player_colour = game_state->get_current_player()->get_colour();
                         std::string transparent_stone_image = "assets/stone_transparent.png";
                         wxPoint current_stone_position = table_center - board_size / 2 + grid_corner_offset +
                                                          i * wxPoint(0, grid_spacing / scale_factor) +
                                                          j * wxPoint(grid_spacing / scale_factor, 0) - stone_size / 2;
-                        image_panel *new_stone_button = new image_panel(this, transparent_stone_image, wxBITMAP_TYPE_ANY,
+                        image_panel *new_stone_button = new image_panel(this, transparent_stone_image,
+                                                                        wxBITMAP_TYPE_ANY,
                                                                         current_stone_position,
                                                                         main_game_panel::stone_size);
 
@@ -130,8 +281,8 @@ void main_game_panel::build_playing_board(game_state* game_state, player *me) {
                         unsigned int y = i;
 
                         new_stone_button->Bind(wxEVT_LEFT_UP, [x, y, new_stone_colour, &err](wxMouseEvent &event) {
-                        wxSound stone_place_sound("assets/music/place-stone-sound.wav");
-                        stone_place_sound.Play(wxSOUND_ASYNC);
+                            wxSound stone_place_sound("assets/music/place-stone-sound.wav");
+                            stone_place_sound.Play(wxSOUND_ASYNC);
 
                             game_controller::place_stone(x, y, new_stone_colour, err);
                         });
@@ -139,243 +290,223 @@ void main_game_panel::build_playing_board(game_state* game_state, player *me) {
                 }
             }
         }
-    }
-
 }
 
-void main_game_panel::build_turn_indicator(game_state *game_state, player *me) {
-    if (game_state->is_started() && game_state->get_current_player() != nullptr) {
+void main_game_panel::build_scoreboard(game_state *game_state, player *me) {
 
-        std::string turn_indicator_text_string = "It's " + game_state->get_current_player()->get_player_name() + "'s turn!";
-        if (game_state->get_current_player() == me) {
-            turn_indicator_text_string = "It's your turn!";
+    std::string scoreboard_image_string = "assets/button_frame_half.png";
+    image_panel* scoreboard_frame = new image_panel(this, scoreboard_image_string, wxBITMAP_TYPE_ANY,
+                                                     main_game_panel::scoreboard_position,
+                                                     main_game_panel::scoreboard_size);
+
+    for (int i = 0; i<game_state->get_players().size(); ++i){
+        player* player = game_state->get_players().at(i);
+        std::string player_name = player->get_player_name();
+        if (player == me){
+            player_name +=" (You)";
         }
+        std::string player_points = std::to_string(player->get_score());
+        player_points += " Points";
 
-        wxPoint turn_indicator_position = main_game_panel::table_center - main_game_panel::board_size / 2 + main_game_panel::turn_indicator_offset;
-
-        wxStaticText* turn_indicator_text = this->build_static_text(
-                turn_indicator_text_string,
-                turn_indicator_position,
-                wxSize(200, 18),
-                wxALIGN_CENTER,
+        wxStaticText* player_text = this->build_static_text(
+                player_name,
+                main_game_panel::scoreboard_position + wxPoint(53, 32 + i*30),
+                wxSize(100, 20),
+                wxALIGN_LEFT,
                 true
         );
-        turn_indicator_text->SetForegroundColour(black);
+        player_text->SetForegroundColour(black);
+        wxStaticText* player_points_text = this->build_static_text(
+                player_points,
+                main_game_panel::scoreboard_position + wxPoint(140, 32 + i*30),
+                wxSize(80, 20),
+                wxALIGN_LEFT,
+                true
+        );
+        player_points_text->SetForegroundColour(black);
 
-        std::string current_player_colour = player::_player_colour_type_to_string.at(game_state->get_current_player()->get_colour());
-        std::string current_player_stone_image = "assets/stone_" + current_player_colour + ".png";
-        wxPoint turn_indicator_stone_position = turn_indicator_position + main_game_panel::turn_indicator_stone_offset;
-        image_panel* turn_indicator_stone = new image_panel(this, current_player_stone_image, wxBITMAP_TYPE_ANY, turn_indicator_stone_position, main_game_panel::stone_size);
-        turn_indicator_stone->SetToolTip("Colour to play: " + current_player_colour);
+        if(game_state->get_current_player() == player){
+            std::string current_player_colour = player::_player_colour_type_to_string.at(game_state->get_current_player()->get_colour());
+            std::string current_player_stone_image = "assets/stone_" + current_player_colour + ".png";
+            wxPoint turn_indicator_stone_position = main_game_panel::scoreboard_position + wxPoint(23, 30 + i*30);
+            image_panel* turn_indicator_stone = new image_panel(this, current_player_stone_image, wxBITMAP_TYPE_ANY, turn_indicator_stone_position, main_game_panel::stone_size);
+            turn_indicator_stone->SetToolTip("Colour to play: " + current_player_colour);
 
-        // add drop shadow to stone
-        std::string stone_shadow_image = "assets/stone_shadow.png";
-        wxPoint turn_indicator_stone_shadow_position = turn_indicator_stone_position + stone_size / 17;
-        image_panel *turn_indicator_stone_shadow_panel = new image_panel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
-                                                                         turn_indicator_stone_shadow_position, main_game_panel::stone_size);
+            // add drop shadow to stone
+            std::string stone_shadow_image = "assets/stone_shadow.png";
+            wxPoint turn_indicator_stone_shadow_position = turn_indicator_stone_position + stone_size / 17;
+            image_panel *turn_indicator_stone_shadow_panel = new image_panel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
+                                                                             turn_indicator_stone_shadow_position, main_game_panel::stone_size);
+        }
     }
 }
 
+void main_game_panel::build_forfeit_button(game_state* game_state, player* me){
 
-void main_game_panel::build_this_player(game_state* game_state, player* me) {
-    // close all open dialogs
-    main_game_panel::close_all_dialogs();
+    std::string forfeit_button_string = "assets/buttons/button_forfeit.png";
+    wxPoint forfeit_position = wxPoint(scoreboard_position.x + 20, scoreboard_position.y + scoreboard_size.y + 20);
+    image_panel* forfeit_button = new image_panel(this, forfeit_button_string, wxBITMAP_TYPE_ANY,
+                                                  forfeit_position,
+                                                  main_game_panel::button_size);
+    forfeit_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    forfeit_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
+        game_controller::forfeit();
+    });
+}
 
-    // Setup two nested box sizers, in order to align our player's UI to the bottom center
-    wxBoxSizer* outer_layout = new wxBoxSizer(wxHORIZONTAL);
-    this->SetSizer(outer_layout);
-    wxBoxSizer* inner_layout = new wxBoxSizer(wxVERTICAL);
-    outer_layout->Add(inner_layout, 1, wxALIGN_BOTTOM);
+void main_game_panel::build_swap_field(game_state* game_state, player *me){
+    ruleset_type ruleset_name = game_state->get_opening_rules()->get_ruleset();
 
-    // show dropdown for game mode selection for first player if the game has not yet started and the opening ruleset is "uninitialized"
-    if(!game_state->is_started()){
-        // show background for game mode selection
-        std::string background_image = "assets/gameselec_background.png";
-        wxSize panel_size = this->GetSize();
-        image_panel *background_panel = new image_panel(this, background_image, wxBITMAP_TYPE_ANY, wxDefaultPosition, panel_size);
-        background_panel->Lower(); // background at bottom-most layer
-
-        if (game_state->get_current_player() == me && game_state->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
-
-            wxStaticText* game_rule_dropdown_text = build_static_text(
-                    "Please choose a game style:",
-                    wxDefaultPosition,
-                    wxSize(200, 18),
-                    wxALIGN_CENTER,
-                    true
-            );
-            game_rule_dropdown_text->SetForegroundColour(white);
-            inner_layout->Add(game_rule_dropdown_text, 0, wxALIGN_CENTER);
-
-            wxArrayString game_rule_choices;
-            game_rule_choices.Add("Freestyle");
-            game_rule_choices.Add("Swap after first move");
-            game_rule_choices.Add("Swap2");
-
-            wxComboBox* game_rule_dropdown = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, game_rule_choices, wxCB_DROPDOWN | wxCB_READONLY);
-            inner_layout->Add(game_rule_dropdown, 0, wxALIGN_CENTER, 10);
-            game_rule_dropdown->SetSelection(0);
-
-            // add a spacer for the gap
-            inner_layout->AddSpacer(10);
-
-            // add a button for confirming the ruleset choice
-            std::string err;
-            wxButton* choose_rules_button = new wxButton(this, wxID_ANY, "Confirm choice", wxDefaultPosition, wxSize(150, 40));
-            choose_rules_button->Bind(wxEVT_BUTTON, [game_rule_dropdown, &err](wxCommandEvent& event) {
-                wxSound button_click_sound("assets/music/click-button.wav");
-                button_click_sound.Play(wxSOUND_ASYNC);
-                game_controller::set_game_rules(_pretty_string_to_ruleset_string.at(std::string(game_rule_dropdown->GetValue())), err);
-            });
-            inner_layout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
-
-            // create a buffer before the start game button
-            inner_layout->AddSpacer(90);
-        }
-
+    wxSize current_swap_field_size = main_game_panel::swap_field_size;
+    if (ruleset_name == swap2 && game_state->get_swap_decision() == no_decision_yet){
+        current_swap_field_size = wxSize(main_game_panel::swap_field_size.x, main_game_panel::swap_field_size.y + 50);
     }
 
+    std::string swap_field_image_string = "assets/button_frame_full.png";
+    image_panel* scoreboard_frame = new image_panel(this, swap_field_image_string, wxBITMAP_TYPE_ANY,
+                                                    main_game_panel::swap_field_position,
+                                                    current_swap_field_size);
 
-    // show chosen ruleset type if game has not yet started but ruleset has been chosen
-    if (!game_state->is_started() && game_state->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
-        std::string chosen_game_mode_string = std::string("Chosen game style: ");
-        std::string ruleset_string = _ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(game_state->get_opening_rules()->get_ruleset()));
-        chosen_game_mode_string.append(ruleset_string);
-        wxStaticText* game_rule_chosen_text = build_static_text(
-                chosen_game_mode_string,
-                wxDefaultPosition,
-                wxSize(400, 18),
-                wxALIGN_CENTER,
-                true
-        );
-        game_rule_chosen_text->SetForegroundColour(white);
-        inner_layout->Add(game_rule_chosen_text, 0, wxALIGN_CENTER);
-        inner_layout->AddSpacer(170);
-    }
+    std::string title_string = main_game_panel::_ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(ruleset_name));
 
-    // Show the label with our player name
-    wxStaticText* player_name = build_static_text(
-            me->get_player_name(),
-            wxDefaultPosition,
-            wxSize(200, 18),
+    wxStaticText* title_text = this->build_static_text(
+            title_string,
+            main_game_panel::swap_field_position + wxPoint((swap_field_size.x/2) - 190/2, 30),
+            wxSize(190, 20),
             wxALIGN_CENTER,
             true
     );
-    player_name->SetForegroundColour(white);
-    inner_layout->Add(player_name, 0, wxALIGN_CENTER);
+    title_text->SetForegroundColour(black);
 
-    // if the game has not yet started we say so
-    if (!game_state->is_started()) {
+    std::string swap_button_string = "assets/buttons/button_swap_black.png";
+    std::string no_swap_button_string = "assets/buttons/button_continue_white.png";
+    if(game_state->get_swap_decision() == defer_swap){
+        swap_button_string = "assets/buttons/button_swap_white.png";
+        no_swap_button_string = "assets/buttons/button_continue_black.png";
+    }
 
-        wxStaticText* player_points = build_static_text(
-                "waiting for game to start...",
-                wxDefaultPosition,
-                wxSize(200, 18),
-                wxALIGN_CENTER
-        );
-        player_points->SetForegroundColour(white);
-        inner_layout->Add(player_points, 0, wxALIGN_CENTER, 8);
-        inner_layout->AddSpacer(10);
+    image_panel *swap_button = new image_panel(this, swap_button_string, wxBITMAP_TYPE_ANY,
+                                               main_game_panel::swap_field_position +
+                                               wxPoint((swap_field_size.x/2) - (button_size.x / 2), 50),
+                                               main_game_panel::button_size);
+    swap_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    swap_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
+        game_controller::send_swap_decision(swap_decision_type::do_swap);
+    });
 
-        // show button that allows our player to start the game
-        wxButton* start_game_button = new wxButton(this, wxID_ANY, "Start Game!", wxDefaultPosition, wxSize(160, 64));
-        start_game_button->Bind(wxEVT_BUTTON, [](wxCommandEvent& event) {
+    image_panel *no_swap_button = new image_panel(this, no_swap_button_string, wxBITMAP_TYPE_ANY,
+                                                  main_game_panel::swap_field_position +
+                                                  wxPoint((swap_field_size.x/2) - (button_size.x / 2), 100),
+                                                  main_game_panel::button_size);
+    no_swap_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    no_swap_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
+        game_controller::send_swap_decision(swap_decision_type::do_not_swap);
+        });
+
+    if(ruleset_name == swap2 && game_state->get_swap_decision() == no_decision_yet){
+        std::string defer_swap_button_string = "assets/buttons/button_defer_choice.png";
+        image_panel *defer_swap_button = new image_panel(this, defer_swap_button_string, wxBITMAP_TYPE_ANY,
+                                                      main_game_panel::swap_field_position +
+                                                      wxPoint((swap_field_size.x/2) - (button_size.x / 2), 150),
+                                                      main_game_panel::button_size);
+        defer_swap_button->SetCursor(wxCursor(wxCURSOR_HAND));
+        defer_swap_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
             wxSound button_click_sound("assets/music/click-button.wav");
             button_click_sound.Play(wxSOUND_ASYNC);
-            game_controller::start_game();
+            game_controller::send_swap_decision(swap_decision_type::defer_swap);
         });
-        inner_layout->Add(start_game_button, 0, wxALIGN_CENTER, 8);
-        inner_layout->AddSpacer(65);
-
-    } else {
-        // show our player's points
-        wxStaticText *player_points = build_static_text(
-                std::to_string(me->get_score()) + " points",
-                wxDefaultPosition,
-                wxSize(200, 18),
-                wxALIGN_CENTER
-        );
-        player_points->SetForegroundColour(white);
-        inner_layout->Add(player_points, 0, wxALIGN_CENTER, 8);
-
-        // show our player's colour next to their name and points
-        std::string my_stone_colour_image = "assets/stone_" + player::_player_colour_type_to_string.at(me->get_colour()) + ".png";
-        wxPoint my_colour_stone_position = wxDefaultPosition;
-        image_panel* my_colour_stone = new image_panel(this, my_stone_colour_image, wxBITMAP_TYPE_ANY, my_colour_stone_position, main_game_panel::stone_size);
-
-        inner_layout->Add(my_colour_stone, 0, wxALIGN_CENTER, 10);
-
-        // add drop shadow to stone
-        std::string stone_shadow_image = "assets/stone_shadow.png";
-        wxPoint player_stone_shadow_position = my_colour_stone_position + stone_size / 17;
-        image_panel *turn_indicator_stone_shadow_panel = new image_panel(this, stone_shadow_image, wxBITMAP_TYPE_ANY,
-                                                                         player_stone_shadow_position, main_game_panel::stone_size);
-
-        inner_layout->AddSpacer(5);
-
-        /* might be re-usable if we want to have a "give up" button
-         *
-        // if we haven't folded yet, and it's our turn, display Fold button
-        } else if (game_state->get_current_player() == me) {
-            wxButton *fold_button = new wxButton(this, wxID_ANY, "Fold", wxDefaultPosition, wxSize(80, 32));
-            fold_button->Bind(wxEVT_BUTTON, [](wxCommandEvent& event) {
-                game_controller::fold();
-            });
-            inner_layout->Add(foldButton, 0, wxALIGN_CENTER | wxBOTTOM, 8);
-        */
-
-        // if it's not our turn, display "waiting..."
-        if (game_state->get_current_player() != me) {
-            wxStaticText *player_status = build_static_text(
-                    "waiting...",
-                    wxDefaultPosition,
-                    wxSize(200, 32),
-                    wxALIGN_CENTER
-            );
-            player_status->SetForegroundColour(white);
-            inner_layout->Add(player_status, 0, wxALIGN_CENTER, 8);
-        }
-
-        else {
-            wxStaticText *player_status = build_static_text(
-                    "",
-                    wxDefaultPosition,
-                    wxSize(200, 32),
-                    wxALIGN_CENTER
-            );
-            player_status->SetForegroundColour(white);
-            inner_layout->Add(player_status, 0, wxALIGN_CENTER, 8);
-        }
-
 
     }
 }
 
-// build icons for about, settings and help
-// void main_game_panel::build_icons(game_state* gameState, player *me, std::string path, wxPoint position) {
-//     wxBitmap icon_button_bitmap(path, wxBITMAP_TYPE_PNG);
-//     wxBitmapButton* icon_button = new wxBitmapButton(this, wxID_ANY, icon_button_bitmap, wxDefaultPosition, wxSize(70, 70), wxBORDER_NONE);
-//     icon_button->SetPosition(position); // Set position to top-left corner with margin
-    
-//     // change this to be case switch based on a enum
-//     // enum of about, settings and help
-//     icon_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-//         wxSound button_click_sound("assets/music/click-button.wav");
-//         button_click_sound.Play(wxSOUND_ASYNC);
-//         this->build_about_text(event);
-//     });
-// }
+void main_game_panel::build_game_over_field(game_state* game_state, player* me){
+
+    std::string swap_field_image_string = "assets/button_frame_full.png";
+    image_panel* scoreboard_frame = new image_panel(this, swap_field_image_string, wxBITMAP_TYPE_ANY,
+                                                    main_game_panel::swap_field_position,
+                                                    wxSize(230, 260));
+
+    std::string title_string = "Game Over!";
+
+    std::string winner_string = game_state->get_current_player()->get_player_name();
+    winner_string += " won!";
+    if(game_state->is_tied()){
+        winner_string = "Tied!";
+    }
+
+    wxStaticText* title_text = this->build_static_text(
+            title_string,
+            main_game_panel::swap_field_position + wxPoint((swap_field_size.x/2) - 190/2, 33),
+            wxSize(190, 20),
+            wxALIGN_CENTER,
+            true
+    );
+    title_text->SetForegroundColour(black);
+    wxStaticText* winner_text = this->build_static_text(
+            winner_string,
+            main_game_panel::swap_field_position + wxPoint((swap_field_size.x/2) - 190/2, 53),
+            wxSize(190, 20),
+            wxALIGN_CENTER,
+            true
+    );
+    winner_text->SetForegroundColour(black);
+
+    std::string rematch_button_string = "assets/buttons/button_rematch.png";
+    std::string change_ruleset_button_string = "assets/buttons/button_change_game_mode.png";
+    std::string close_game_button_string = "assets/buttons/button_close_game.png";
+
+    image_panel *rematch_button = new image_panel(this, rematch_button_string, wxBITMAP_TYPE_ANY,
+                                               main_game_panel::swap_field_position +
+                                               wxPoint((swap_field_size.x/2) - (button_size.x / 2), 73),
+                                               main_game_panel::button_size);
+    rematch_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    rematch_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
+        game_controller::send_restart_decision(false);
+    });
+
+    image_panel *change_ruleset_button = new image_panel(this, change_ruleset_button_string, wxBITMAP_TYPE_ANY,
+                                                  main_game_panel::swap_field_position +
+                                                  wxPoint((swap_field_size.x/2) - (button_size.x / 2), 123),
+                                                  main_game_panel::button_size);
+    change_ruleset_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    change_ruleset_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
+        game_controller::send_restart_decision(true);
+    });
+
+    image_panel *close_game_button = new image_panel(this, close_game_button_string, wxBITMAP_TYPE_ANY,
+                                                         main_game_panel::swap_field_position +
+                                                         wxPoint((swap_field_size.x/2) - (button_size.x / 2), 173),
+                                                         main_game_panel::button_size);
+    close_game_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    close_game_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
+        wxSound button_click_sound("assets/music/click-button.wav");
+        button_click_sound.Play(wxSOUND_ASYNC);
+        game_controller::close_game();
+    });
+}
 
 // build icons for about, settings and help
 void main_game_panel::build_icons(game_state* gameState, player *me, IconType iconType, std::string path, wxPoint position) {
-    wxBitmap icon_button_bitmap(path, wxBITMAP_TYPE_PNG);
-    wxBitmapButton* icon_button = new wxBitmapButton(this, wxID_ANY, icon_button_bitmap, wxDefaultPosition, wxSize(70, 70), wxBORDER_NONE);
-    icon_button->SetPosition(position); // Set position to top-left corner with margin
+    image_panel* icon_button = new image_panel(this, path, wxBITMAP_TYPE_ANY,
+                                               position,
+                                               wxSize(70,70));
+    icon_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    //icon_button->SetPosition(position); // Set position to top-left corner with margin
 
     // switch cases based on the icon type to be displayed
     switch (iconType) {
         case IconType::About:
-            icon_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+            icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
                 wxSound button_click_sound("assets/music/click-button.wav");
                 button_click_sound.Play(wxSOUND_ASYNC);
                 this->build_about_text(event);
@@ -383,7 +514,7 @@ void main_game_panel::build_icons(game_state* gameState, player *me, IconType ic
             break;
 
         case IconType::Settings:
-            icon_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+            icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
                 wxSound button_click_sound("assets/music/click-button.wav");
                 button_click_sound.Play(wxSOUND_ASYNC);
                 this->build_about_text(event);   // TODO: change this!
@@ -391,7 +522,7 @@ void main_game_panel::build_icons(game_state* gameState, player *me, IconType ic
             break;
 
         case IconType::Help:
-            icon_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+            icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
                 wxSound button_click_sound("assets/music/click-button.wav");
                 button_click_sound.Play(wxSOUND_ASYNC);
                 this->build_help_text(event);
@@ -400,12 +531,12 @@ void main_game_panel::build_icons(game_state* gameState, player *me, IconType ic
     }
 }
 
-void main_game_panel::build_about_text(wxCommandEvent& event) {
+void main_game_panel::build_about_text(wxMouseEvent& event) {
     wxString about_info = wxT("Gomoku Game\n\nAuthors: Haoanqin Gao, Julius König, Stephen Lincon, \n                Nicolas Müller, Rana Singh, You Wu \nVersion: 1.0.0\n\n© 2023 Wizards of the C Inc.");
     wxMessageBox(about_info, wxT("About Gomoku"), wxOK | wxICON_INFORMATION, this);
 }
 
-void main_game_panel::build_help_text(wxCommandEvent& event) {
+void main_game_panel::build_help_text(wxMouseEvent& event) {
     wxDialog ruleDialog(this, wxID_ANY, wxT("Game Rules"), wxDefaultPosition, wxDefaultSize);
     wxNotebook* notebook = new wxNotebook(&ruleDialog, wxID_ANY);
 
@@ -447,7 +578,6 @@ void main_game_panel::build_help_text(wxCommandEvent& event) {
     ruleDialog.CentreOnParent();
     ruleDialog.ShowModal();
 }
-
 
 wxStaticText* main_game_panel::build_static_text(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold) {
     wxStaticText* static_text = new wxStaticText(this, wxID_ANY, content, position, size, textAlignment);

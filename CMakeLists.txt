@@ -38,6 +38,7 @@ set(CLIENT_SOURCE_FILES
         src/common/network/requests/start_game_request.cpp src/common/network/requests/start_game_request.h
         src/common/network/requests/swap_decision_request.cpp src/common/network/requests/swap_decision_request.h
         src/common/network/requests/restart_game_request.cpp src/common/network/requests/restart_game_request.h
+        src/common/network/requests/forfeit_request.cpp src/common/network/requests/forfeit_request.h
         # server responses
         src/common/network/responses/server_response.cpp src/common/network/responses/server_response.h
         src/common/network/responses/request_response.cpp src/common/network/responses/request_response.h
@@ -74,6 +75,7 @@ set(SERVER_SOURCE_FILES
         src/common/network/requests/start_game_request.cpp src/common/network/requests/start_game_request.h
         src/common/network/requests/swap_decision_request.cpp src/common/network/requests/swap_decision_request.h
         src/common/network/requests/restart_game_request.cpp src/common/network/requests/restart_game_request.h
+        src/common/network/requests/forfeit_request.cpp src/common/network/requests/forfeit_request.h
         # server responses
         src/common/network/responses/server_response.cpp src/common/network/responses/server_response.h
         src/common/network/responses/request_response.cpp src/common/network/responses/request_response.h

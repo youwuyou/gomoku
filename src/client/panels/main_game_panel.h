@@ -30,23 +30,34 @@ public:
 private:
     wxColor white = wxColor(255, 255, 255);
     wxColor black = wxColor(0, 0, 0);
+    wxColor dark_green = wxColor(54, 81, 39);
 
     wxMediaCtrl* backgroundMusicPlayer; // wxMediaCtrl for background music
     void on_music_stop(wxMediaEvent& WXUNUSED(event));
 
+    void build_before_start(game_state* game_state, player* me);
     void build_playing_board(game_state* game_state, player* me);
-    void build_turn_indicator(game_state* game_state, player* me);
-    void build_this_player(game_state* game_state, player* me);
+    void build_scoreboard(game_state* game_state, player* me);
+    void build_forfeit_button(game_state* game_state, player* me);
+    void build_swap_field(game_state* game_state, player* me);
+    void build_game_over_field(game_state* game_state, player* me);
     void build_icons(game_state* gameState, player *me, IconType iconType, std::string path, wxPoint position);
     void close_all_dialogs();
 
-    void build_about_text(wxCommandEvent& event);
-    void build_help_text(wxCommandEvent& event);
+    void build_about_text(wxMouseEvent& event);
+    void build_help_text(wxMouseEvent& event);
     wxStaticText* build_static_text(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
 
     // define key constant layout values
-    wxSize const panel_size = wxSize(960, 680); // also set in the constructor implementation
+    wxSize const panel_size = wxSize(960, 760); // also set in the constructor implementation
     wxPoint const table_center = wxPoint(480, 325);
+    wxSize const button_size = wxSize(130, 130/2.56);
+
+    wxPoint const scoreboard_position = wxPoint(730, 300);
+    wxSize const scoreboard_size = wxSize(230, 230/1.93);
+
+    wxPoint const swap_field_position = wxPoint(5, 350);
+    wxSize const swap_field_size = wxSize(230, 180);
 
     int const scale_factor  = 1000/400;
     wxSize const stone_size = wxSize(50/scale_factor, 50/scale_factor);

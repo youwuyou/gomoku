@@ -134,6 +134,21 @@ bool game_instance::do_swap_decision(player *player, swap_decision_type swap_dec
     return false;
 }
 
+bool game_instance::do_forfeit(player* player, std::string &err){
+    modification_lock.lock();
+    if(_game_state->alternate_current_player(err)){
+        _game_state->wrap_up_round(err);
+        full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);
+        server_network_manager::broadcast_message(state_update_msg, _game_state->get_players(), player);
+        modification_lock.unlock();
+        return true;
+    } else {
+        err = "game_instance: Unable to do forfeit.";
+    }
+    modification_lock.unlock();
+    return false;
+}
+
 bool game_instance::set_game_mode(player* player, const std::string& ruleset_string, std::string& err) {
     modification_lock.lock();
     if (_game_state->set_game_mode(ruleset_string, err)) {

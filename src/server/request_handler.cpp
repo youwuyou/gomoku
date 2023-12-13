@@ -16,6 +16,7 @@
 #include "../common/network/requests/swap_decision_request.h"
 #include "../common/network/requests/select_game_mode_request.h"
 #include "../common/network/requests/restart_game_request.h"
+#include "../common/network/requests/forfeit_request.h"
 
 
 request_response* request_handler::handle_request(const client_request* const req) {
@@ -144,6 +145,16 @@ request_response* request_handler::handle_request(const client_request* const re
                 }
             }
             return new request_response("", req_id, false, nullptr, err);
+        }
+
+        // ##################### FORFEIT ##################### //
+        case request_type::forfeit: {
+            if (game_instance_manager::try_get_player_and_game_instance(player_id, player, game_instance_ptr, err)) {
+                if (game_instance_ptr->do_forfeit(player, err)) {
+                    return new request_response(game_instance_ptr->get_id(), req_id, true,
+                                                game_instance_ptr->get_game_state()->to_json(), err);
+                }
+            }
         }
 
         // ##################### UNKNOWN REQUEST ##################### //
