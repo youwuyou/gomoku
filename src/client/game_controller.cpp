@@ -133,11 +133,6 @@ void game_controller::show_status(const std::string& message) {
     game_controller::_game_window->set_status(message);
 }
 
-// for disabling closing with cross on dialogues
-void on_close(wxCloseEvent& event){
-    event.Veto();
-}
-
 void game_controller::send_swap_decision(swap_decision_type decision){
     swap_decision_request request = swap_decision_request(game_controller::_me->get_id(), game_controller::_current_game_state->get_id(), decision);
     client_network_manager::send_request(request);
