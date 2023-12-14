@@ -651,6 +651,28 @@ TEST_F(game_state_test, setup_round) {
     EXPECT_EQ(test_game_state.get_current_player(), test_game_state.get_players().at(test_game_state.get_starting_player_idx()));
 }
 
+TEST_F(game_state_test, start_game){
+    test_game_state.add_player(player1, err);
+    EXPECT_FALSE(test_game_state.start_game(err));      // too few players
+    test_game_state.add_player(player2, err);
+    EXPECT_TRUE(test_game_state.start_game(err));       // valid
+    EXPECT_FALSE(test_game_state.start_game(err));      // already started
+}
+
+// players joining too late must get error messages
+TEST_F(game_state_test, join_too_late){
+    player* player3 = new player("player3", white);
+
+    test_game_state.add_player(player1, err);
+    EXPECT_FALSE(test_game_state.add_player(player1, err)); //player already in game
+    test_game_state.add_player(player2, err);
+    EXPECT_FALSE(test_game_state.add_player(player3, err)); //already full
+    test_game_state.start_game(err);
+    EXPECT_FALSE(test_game_state.add_player(player3, err)); //already started
+    test_game_state.wrap_up_round(err);
+    EXPECT_FALSE(test_game_state.add_player(player3, err)); //already finished
+}
+
 //// CHAPTER 5 - game end checking
 // test diagonal stone placement for win condition
 TEST_F(game_state_test, check_win_condition_diagonal){
@@ -706,6 +728,8 @@ TEST_F(game_state_test, check_tie){
 //// CHAPTER 6 - Serialisation
 // serialising and deserialising a game state must result in the initial game state
 TEST_F(game_state_test, serialization_equality) {
+    test_game_state.add_player(player1, err);
+    test_game_state.add_player(player2, err);
     EXPECT_TRUE(test_game_state.place_stone(0, 0, field_type::black_stone, err));
     EXPECT_TRUE(test_game_state.place_stone(5, 5, field_type::white_stone, err));
 
@@ -719,8 +743,11 @@ TEST_F(game_state_test, serialization_equality) {
 
     EXPECT_EQ(test_game_state.get_id(), game_state_recv->get_id());
     EXPECT_EQ(test_game_state.get_playing_board(), game_state_recv->get_playing_board());
-    EXPECT_EQ(test_game_state.get_players(), game_state_recv->get_players());
-    EXPECT_EQ(test_game_state.get_current_player(), game_state_recv->get_current_player());
+    EXPECT_EQ(test_game_state.get_players().at(0)->get_player_name(), game_state_recv->get_players().at(0)->get_player_name());
+    EXPECT_EQ(test_game_state.get_players().at(0)->get_colour(), game_state_recv->get_players().at(0)->get_colour());
+    EXPECT_EQ(test_game_state.get_players().at(1)->get_player_name(), game_state_recv->get_players().at(1)->get_player_name());
+    EXPECT_EQ(test_game_state.get_players().at(1)->get_colour(), game_state_recv->get_players().at(1)->get_colour());
+    EXPECT_EQ(test_game_state.get_current_player()->get_id(), game_state_recv->get_current_player()->get_id());
     EXPECT_EQ(test_game_state.get_turn_number(), game_state_recv->get_turn_number());
 }
 

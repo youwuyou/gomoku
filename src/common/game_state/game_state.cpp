@@ -381,7 +381,7 @@ bool game_state::prepare_game(player* player, std::string &err) {
 
 bool game_state::start_game(std::string &err) {
     if (_players.size() < 2) {
-        err = "You need at least " + std::to_string(2) + " players to start the game.";
+        err = "You need 2 players to start the game.";
         return false;
     }
 
