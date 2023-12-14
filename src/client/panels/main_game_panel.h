@@ -50,7 +50,7 @@ private:
 
     // define key constant layout values
     wxSize const panel_size = wxSize(960, 760); // also set in the constructor implementation
-    wxPoint const table_center = wxPoint(480, 325);
+    wxPoint const table_center = wxPoint(475, 400);
     wxSize const button_size = wxSize(130, 130/2.56);
 
     wxPoint const scoreboard_position = wxPoint(730, 300);
