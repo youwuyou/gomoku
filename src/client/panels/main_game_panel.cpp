@@ -86,7 +86,7 @@ void main_game_panel::build_game_state(game_state* game_state, player* me) {
 
     // build icon buttons for about, settings and help
     this->build_icons(icon_type::About, "assets/buttons/button_about.png", wxPoint(30, 30));
-    this->build_icons(icon_type::Settings, "assets/buttons/button_settings.png", wxPoint(30, 100));
+    this->build_icons(icon_type::Settings, "assets/icons/volume_on.png", wxPoint(30, 100));
     this->build_icons(icon_type::Help, "assets/buttons/button_help.png", wxPoint(30, 170));
 
     // update layout
@@ -513,16 +513,18 @@ void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_ty
         case icon_type::Settings:
             if(is_muted) {
                 icon_button->SetToolTip("Unmute sounds");
-                icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
+                icon_button->Bind(wxEVT_LEFT_UP, [this, icon_button](wxMouseEvent& event) {
                     is_muted = false;
                     this->play_sound(click_button_sound);
-                    this->build_icons(icon_type::Settings, "assets/buttons/button_settings.png", wxPoint(30, 100));
+                    delete icon_button;
+                    this->build_icons(icon_type::Settings, "assets/icons/volume_on.png", wxPoint(30, 100));
                 });
             } else if (!is_muted) {
                 icon_button->SetToolTip("Mute sounds");
-                icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
+                icon_button->Bind(wxEVT_LEFT_UP, [this, icon_button](wxMouseEvent& event) {
                     is_muted = true;
-                    this->build_icons(icon_type::Settings, "assets/buttons/button_settings.png", wxPoint(30, 100));
+                    delete icon_button;
+                    this->build_icons(icon_type::Settings, "assets/icons/volume_off.png", wxPoint(30, 100));
                 });
             }
             break;
