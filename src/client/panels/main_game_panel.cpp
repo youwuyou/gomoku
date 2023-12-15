@@ -90,9 +90,8 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
 
 
     // show background for game mode selection
-    std::string background_image = "assets/background_gameselection.jpg";
     wxSize panel_size = this->GetSize();
-    image_panel *background_panel = new image_panel(this, background_image, wxBITMAP_TYPE_ANY, wxDefaultPosition, panel_size);
+    image_panel *background_panel = new image_panel(this, "assets/background_gameselection.jpg", wxBITMAP_TYPE_ANY, wxDefaultPosition, panel_size);
     background_panel->Lower(); // background at bottom-most layer
 
     // add a spacer for the gap at the top
@@ -125,8 +124,7 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
 
         // add a button for confirming the ruleset choice
         std::string err;
-        std::string start_game_button_string = "assets/buttons/button_confirm_choice.png";
-        image_panel* choose_rules_button = new image_panel(this, start_game_button_string, wxBITMAP_TYPE_ANY,
+        image_panel* choose_rules_button = new image_panel(this, "assets/buttons/button_confirm_choice.png", wxBITMAP_TYPE_ANY,
                                                          wxDefaultPosition,
                                                          main_game_panel::button_size);
 
@@ -145,10 +143,9 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
     // show chosen ruleset type if ruleset has been chosen
     if (game_state->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
         inner_layout->AddSpacer(40);
-        std::string chosen_game_mode_string = std::string("Chosen game style: ");
         std::string ruleset_string = _ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(game_state->get_opening_rules()->get_ruleset()));
         wxStaticText* game_rule_chosen_text = build_static_text(
-                chosen_game_mode_string,
+                std::string("Chosen game style: "),
                 wxDefaultPosition,
                 wxSize(400, 18),
                 wxALIGN_CENTER,
@@ -191,8 +188,7 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
     inner_layout->AddSpacer(10);
 
     // show button that allows our player to start the game
-    std::string start_game_button_string = "assets/buttons/button_start_game.png";
-    image_panel* start_game_button = new image_panel(this, start_game_button_string, wxBITMAP_TYPE_ANY,
+    image_panel* start_game_button = new image_panel(this, "assets/buttons/button_start_game.png", wxBITMAP_TYPE_ANY,
                                                     wxDefaultPosition,
                                                     main_game_panel::button_size);
 
@@ -209,15 +205,13 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
 void main_game_panel::build_playing_board(game_state* game_state, player *me) {
 
         // show background
-        std::string background_image = "assets/background.jpg";
         wxSize panel_size = this->GetSize();
-        image_panel *background_panel = new image_panel(this, background_image, wxBITMAP_TYPE_ANY, wxDefaultPosition, panel_size);
+        image_panel *background_panel = new image_panel(this, "assets/background.jpg", wxBITMAP_TYPE_ANY, wxDefaultPosition, panel_size);
         background_panel->Lower(); // This ensures the background is behind all other elements
 
         // show board image
-        std::string board_image = "assets/playing_board.png";
         wxPoint playing_board_position = main_game_panel::table_center - main_game_panel::board_size / 2;
-        image_panel *playing_board_panel = new image_panel(this, board_image, wxBITMAP_TYPE_ANY, playing_board_position, main_game_panel::board_size);
+        image_panel *playing_board_panel = new image_panel(this, "assets/playing_board.png", wxBITMAP_TYPE_ANY, playing_board_position, main_game_panel::board_size);
 
         // show stones on the playing board
         std::vector<std::vector<field_type>> playing_board = game_state->get_playing_board();
