@@ -120,7 +120,7 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
         game_rule_dropdown->SetSelection(0);
 
         // add a spacer for the gap
-        inner_layout->AddSpacer(10);
+        inner_layout->AddSpacer(5);
 
         // add a button for confirming the ruleset choice
         std::string err;
@@ -135,9 +135,6 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
             game_controller::set_game_rules(_pretty_string_to_ruleset_string.at(std::string(game_rule_dropdown->GetValue())), err);
         });
         inner_layout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
-
-        // create a buffer before the start game button
-        inner_layout->AddSpacer(10);
     }
 
     // show chosen ruleset type if ruleset has been chosen
@@ -185,7 +182,7 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
             );
     waiting_text->SetForegroundColour(dark_green);
     inner_layout->Add(waiting_text, 0, wxALIGN_CENTER, 8);
-    inner_layout->AddSpacer(10);
+    inner_layout->AddSpacer(5);
 
     // show button that allows our player to start the game
     image_panel* start_game_button = new image_panel(this, "assets/buttons/button_start_game.png", wxBITMAP_TYPE_ANY,
@@ -344,7 +341,7 @@ void main_game_panel::build_forfeit_button(game_state* game_state, player* me){
                                                   main_game_panel::button_size);
     forfeit_button->SetCursor(wxCursor(wxCURSOR_HAND));
     forfeit_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
+        wxSound button_click_sound("assets/music/forfeit.wav");
         button_click_sound.Play(wxSOUND_ASYNC);
         game_controller::forfeit();
     });
@@ -461,7 +458,7 @@ void main_game_panel::build_game_over_field(game_state* game_state, player* me){
                                                main_game_panel::button_size);
     rematch_button->SetCursor(wxCursor(wxCURSOR_HAND));
     rematch_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
+        wxSound button_click_sound("assets/music/rematch.wav");
         button_click_sound.Play(wxSOUND_ASYNC);
         game_controller::send_restart_decision(false);
     });
@@ -472,7 +469,7 @@ void main_game_panel::build_game_over_field(game_state* game_state, player* me){
                                                   main_game_panel::button_size);
     change_ruleset_button->SetCursor(wxCursor(wxCURSOR_HAND));
     change_ruleset_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
+        wxSound button_click_sound("assets/music/rematch.wav");
         button_click_sound.Play(wxSOUND_ASYNC);
         game_controller::send_restart_decision(true);
     });
@@ -503,6 +500,7 @@ void main_game_panel::build_icons(game_state* gameState, player *me, IconType ic
             icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
                 wxSound button_click_sound("assets/music/click-button.wav");
                 button_click_sound.Play(wxSOUND_ASYNC);
+                // this->build_about_image(event);
                 this->build_about_text(event);
             });
             break;
@@ -525,8 +523,29 @@ void main_game_panel::build_icons(game_state* gameState, player *me, IconType ic
     }
 }
 
+void main_game_panel::build_about_image(wxMouseEvent& event) {
+
+    image_panel *about_image = new image_panel(this, 
+                                                "assets/about_gomoku.png", 
+                                                wxBITMAP_TYPE_ANY, 
+                                                wxPoint(300, 150), 
+                                                wxSize(400, 400));
+    // wxFrame *imageFrame = new wxFrame(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(450, 450), wxBORDER_NONE);
+    // wxImage aboutImage("assets/about_gomoku.png", wxBITMAP_TYPE_PNG);
+    // wxBitmap aboutBitmap(aboutImage);
+
+
+    // // Set the bitmap to display
+    // wxStaticBitmap *imageDisplay = new wxStaticBitmap(this, wxID_ANY, aboutImage);
+
+    // // Position and show the frame
+    // imageFrame->SetPosition(wxPoint(250, 250)); // Set this to your desired position
+    // imageFrame->Show(true);
+    // about_image->Show(true);
+}
+
 void main_game_panel::build_about_text(wxMouseEvent& event) {
-    wxString about_info = wxT("Gomoku Game\n\nAuthors: Haoanqin Gao, Julius König, Stephen Lincon, \n                Nicolas Müller, Rana Singh, You Wu \nVersion: 1.0.0\n\n© 2023 Wizards of the C Inc.");
+    wxString about_info = wxT("Authors: Haoanqin Gao, Julius König, Stephen Lincon, \n                Nicolas Müller, Rana Singh, You Wu \nVersion: 1.0.0\n\n© 2023 Wizards of the C Inc.");
     wxMessageBox(about_info, wxT("About Gomoku"), wxOK | wxICON_INFORMATION, this);
 }
 
@@ -535,14 +554,15 @@ void main_game_panel::build_help_text(wxMouseEvent& event) {
     wxNotebook* notebook = new wxNotebook(&ruleDialog, wxID_ANY);
 
     // helper function to create a panel with text and image for the notebook
-    auto createRulePanel = [notebook](const wxString& text, const wxString& imagePath) -> wxPanel* {
+    auto createRulePanel = [notebook](const wxString& text, const wxString& rule) -> wxPanel* {
         wxPanel* panel = new wxPanel(notebook, wxID_ANY);
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
         wxStaticText* staticText = new wxStaticText(panel, wxID_ANY, text, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
         sizer->Add(staticText, 0, wxALL, 5);
-        wxBitmap bitmap(imagePath, wxBITMAP_TYPE_PNG);
-        wxStaticBitmap* image = new wxStaticBitmap(panel, wxID_ANY, bitmap);
-        sizer->Add(image, 0, wxALL | wxCENTER, 5);
+
+        wxStaticText* ruleText = new wxStaticText(panel, wxID_ANY, rule, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+        sizer->Add(ruleText, 0, wxALL, 5);
+        
         panel->SetSizer(sizer);
         return panel;
     };
@@ -551,9 +571,9 @@ void main_game_panel::build_help_text(wxMouseEvent& event) {
     // wxPanel* freestylePanel = createRulePanel(wxT("Freestyle rules..."), wxT("assets/rules_freestyle.png"));
     // wxPanel* swapPanel = createRulePanel(wxT("Swap rules..."), wxT("assets/rules_swap1.png"));
     // wxPanel* swap2Panel = createRulePanel(wxT("Swap2 rules..."), wxT("assets/rules_swap2.png"));
-    wxPanel* freestylePanel = createRulePanel(wxT(""), wxT("assets/rules_freestyle.png"));
-    wxPanel* swapPanel = createRulePanel(wxT(""), wxT("assets/rules_swap1.png"));
-    wxPanel* swap2Panel = createRulePanel(wxT(""), wxT("assets/rules_swap2.png"));
+    wxPanel* freestylePanel = createRulePanel(wxT(""), wxT("Black starts, and both players play in an alternating \n fashion until one player has won or there is a tie."));
+    wxPanel* swapPanel = createRulePanel(wxT(""), wxT("After the first move, the second player has the option \n to switch to playing with black, or continuing as white. Free style rules from then on."));
+    wxPanel* swap2Panel = createRulePanel(wxT(""), wxT("The first player starts by placing two black \n and one white stones. The second player then has the \n option to switch to black, continue as white, or place one more stone of each colour \n and defer the swapping choice to the first player, \n who then gets to swap to white or continue as black. Free style rules from then on."));
 
     // panels as tabs to the notebook
     notebook->AddPage(freestylePanel, wxT("Freestyle"), true); // true to make this the selected tab

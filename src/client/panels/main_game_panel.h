@@ -48,6 +48,8 @@ private:
     void build_help_text(wxMouseEvent& event);
     wxStaticText* build_static_text(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
 
+    void build_about_image(wxMouseEvent& event);
+
     // define key constant layout values
     wxSize const panel_size = wxSize(960, 760); // also set in the constructor implementation
     wxPoint const table_center = wxPoint(475, 400);
@@ -68,8 +70,6 @@ private:
 
     wxPoint const turn_indicator_offset = wxPoint(1000 / (scale_factor * 2) - 100, -30);
     wxPoint const turn_indicator_stone_offset = wxPoint(200, -5);
-
-
 };
 
 
