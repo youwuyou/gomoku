@@ -17,8 +17,24 @@ const std::unordered_map<std::string, std::string> main_game_panel::_ruleset_str
         {"swap_after_first_move", "Swap after first move"},
 };
 
+// for sound playing
+const std::unordered_map<sound_type, std::string> main_game_panel::_sound_type_to_string = {
+        {click_button_sound, "assets/music/click-button.wav"},
+        {place_stone_sound, "assets/music/place-stone-sound.wav"},
+        {rematch_sound, "assets/music/rematch.wav"},
+        {forfeit_sound, "assets/music/forfeit.wav"},
+};
 
-main_game_panel::main_game_panel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 760)) {}
+main_game_panel::main_game_panel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 760)) {
+    // setup media control for background music
+    this->background_music_player = new wxMediaCtrl();
+    wxString filePath = "assets/music/chinese-journey.wav";
+    this->background_music_player->Create(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+                                    (long) wxMEDIABACKEND_WMP10);
+    this->background_music_player->Load(filePath);
+    this->background_music_player->Play();
+    this->background_music_player->SetVolume(1.0);
+}
 
 void main_game_panel::build_game_state(game_state* game_state, player* me) {
 
@@ -69,9 +85,9 @@ void main_game_panel::build_game_state(game_state* game_state, player* me) {
     }
 
     // build icon buttons for about, settings and help
-    this->build_icons(game_state, me, IconType::About, "assets/buttons/button_about.png", wxPoint(30, 30));
-    this->build_icons(game_state, me, IconType::Settings, "assets/buttons/button_settings.png", wxPoint(30, 100));
-    this->build_icons(game_state, me, IconType::Help, "assets/buttons/button_help.png", wxPoint(30, 170));
+    this->build_icons(icon_type::About, "assets/buttons/button_about.png", wxPoint(30, 30));
+    this->build_icons(icon_type::Settings, "assets/buttons/button_settings.png", wxPoint(30, 100));
+    this->build_icons(icon_type::Help, "assets/buttons/button_help.png", wxPoint(30, 170));
 
     // update layout
     this->Layout();
@@ -129,9 +145,8 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
                                                          main_game_panel::button_size);
 
         choose_rules_button->SetCursor(wxCursor(wxCURSOR_HAND));
-        choose_rules_button->Bind(wxEVT_LEFT_UP, [game_rule_dropdown, &err](wxMouseEvent &event) {
-            wxSound button_click_sound("assets/music/click-button.wav");
-            button_click_sound.Play(wxSOUND_ASYNC);
+        choose_rules_button->Bind(wxEVT_LEFT_UP, [game_rule_dropdown, this, &err](wxMouseEvent &event) {
+            this->play_sound(click_button_sound);
             game_controller::set_game_rules(_pretty_string_to_ruleset_string.at(std::string(game_rule_dropdown->GetValue())), err);
         });
         inner_layout->Add(choose_rules_button, 0, wxALIGN_CENTER, 10);
@@ -190,9 +205,8 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
                                                     main_game_panel::button_size);
 
     start_game_button->SetCursor(wxCursor(wxCURSOR_HAND));
-    start_game_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
+    start_game_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+        this->play_sound(click_button_sound);
         game_controller::start_game();
     });
     inner_layout->Add(start_game_button, 0, wxALIGN_CENTER, 8);
@@ -271,9 +285,8 @@ void main_game_panel::build_playing_board(game_state* game_state, player *me) {
                         unsigned int x = j;
                         unsigned int y = i;
 
-                        new_stone_button->Bind(wxEVT_LEFT_UP, [x, y, new_stone_colour, &err](wxMouseEvent &event) {
-                            wxSound stone_place_sound("assets/music/place-stone-sound.wav");
-                            stone_place_sound.Play(wxSOUND_ASYNC);
+                        new_stone_button->Bind(wxEVT_LEFT_UP, [x, y, new_stone_colour, this, &err](wxMouseEvent &event) {
+                            this->play_sound(place_stone_sound);
 
                             game_controller::place_stone(x, y, new_stone_colour, err);
                         });
@@ -340,9 +353,8 @@ void main_game_panel::build_forfeit_button(game_state* game_state, player* me){
                                                   forfeit_position,
                                                   main_game_panel::button_size);
     forfeit_button->SetCursor(wxCursor(wxCURSOR_HAND));
-    forfeit_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/forfeit.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
+    forfeit_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+        this->play_sound(forfeit_sound);
         game_controller::forfeit();
     });
 }
@@ -383,9 +395,8 @@ void main_game_panel::build_swap_field(game_state* game_state, player *me){
                                                wxPoint((swap_field_size.x/2) - (button_size.x / 2), 50),
                                                main_game_panel::button_size);
     swap_button->SetCursor(wxCursor(wxCURSOR_HAND));
-    swap_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
+    swap_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+        this->play_sound(click_button_sound);
         game_controller::send_swap_decision(swap_decision_type::do_swap);
     });
 
@@ -394,9 +405,8 @@ void main_game_panel::build_swap_field(game_state* game_state, player *me){
                                                   wxPoint((swap_field_size.x/2) - (button_size.x / 2), 100),
                                                   main_game_panel::button_size);
     no_swap_button->SetCursor(wxCursor(wxCURSOR_HAND));
-    no_swap_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
+    no_swap_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+        this->play_sound(click_button_sound);
         game_controller::send_swap_decision(swap_decision_type::do_not_swap);
         });
 
@@ -407,9 +417,8 @@ void main_game_panel::build_swap_field(game_state* game_state, player *me){
                                                       wxPoint((swap_field_size.x/2) - (button_size.x / 2), 150),
                                                       main_game_panel::button_size);
         defer_swap_button->SetCursor(wxCursor(wxCURSOR_HAND));
-        defer_swap_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-            wxSound button_click_sound("assets/music/click-button.wav");
-            button_click_sound.Play(wxSOUND_ASYNC);
+        defer_swap_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+            this->play_sound(click_button_sound);
             game_controller::send_swap_decision(swap_decision_type::defer_swap);
         });
 
@@ -457,9 +466,8 @@ void main_game_panel::build_game_over_field(game_state* game_state, player* me){
                                                wxPoint((swap_field_size.x/2) - (button_size.x / 2), 73),
                                                main_game_panel::button_size);
     rematch_button->SetCursor(wxCursor(wxCURSOR_HAND));
-    rematch_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/rematch.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
+    rematch_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+        this->play_sound(rematch_sound);
         game_controller::send_restart_decision(false);
     });
 
@@ -468,9 +476,8 @@ void main_game_panel::build_game_over_field(game_state* game_state, player* me){
                                                   wxPoint((swap_field_size.x/2) - (button_size.x / 2), 123),
                                                   main_game_panel::button_size);
     change_ruleset_button->SetCursor(wxCursor(wxCURSOR_HAND));
-    change_ruleset_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/rematch.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
+    change_ruleset_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+        this->play_sound(rematch_sound);
         game_controller::send_restart_decision(true);
     });
 
@@ -479,15 +486,14 @@ void main_game_panel::build_game_over_field(game_state* game_state, player* me){
                                                          wxPoint((swap_field_size.x/2) - (button_size.x / 2), 173),
                                                          main_game_panel::button_size);
     close_game_button->SetCursor(wxCursor(wxCURSOR_HAND));
-    close_game_button->Bind(wxEVT_LEFT_UP, [](wxMouseEvent &event) {
-        wxSound button_click_sound("assets/music/click-button.wav");
-        button_click_sound.Play(wxSOUND_ASYNC);
+    close_game_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+        this->play_sound(click_button_sound);
         game_controller::close_game();
     });
 }
 
 // build icons for about, settings and help
-void main_game_panel::build_icons(game_state* gameState, player *me, IconType iconType, std::string path, wxPoint position) {
+void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_type iconType, std::string path, wxPoint position) {
     image_panel* icon_button = new image_panel(this, path, wxBITMAP_TYPE_ANY,
                                                position,
                                                wxSize(70,70));
@@ -496,27 +502,34 @@ void main_game_panel::build_icons(game_state* gameState, player *me, IconType ic
 
     // switch cases based on the icon type to be displayed
     switch (iconType) {
-        case IconType::About:
+        case icon_type::About:
             icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
-                wxSound button_click_sound("assets/music/click-button.wav");
-                button_click_sound.Play(wxSOUND_ASYNC);
+                this->play_sound(click_button_sound);
                 // this->build_about_image(event);
                 this->build_about_text(event);
             });
             break;
 
-        case IconType::Settings:
-            icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
-                wxSound button_click_sound("assets/music/click-button.wav");
-                button_click_sound.Play(wxSOUND_ASYNC);
-                this->build_about_text(event);   // TODO: change this!
-            });
+        case icon_type::Settings:
+            if(is_muted) {
+                icon_button->SetToolTip("Unmute sounds");
+                icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
+                    is_muted = false;
+                    this->play_sound(click_button_sound);
+                    this->build_icons(icon_type::Settings, "assets/buttons/button_settings.png", wxPoint(30, 100));
+                });
+            } else if (!is_muted) {
+                icon_button->SetToolTip("Mute sounds");
+                icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
+                    is_muted = true;
+                    this->build_icons(icon_type::Settings, "assets/buttons/button_settings.png", wxPoint(30, 100));
+                });
+            }
             break;
 
-        case IconType::Help:
+        case icon_type::Help:
             icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
-                wxSound button_click_sound("assets/music/click-button.wav");
-                button_click_sound.Play(wxSOUND_ASYNC);
+                this->play_sound(click_button_sound);
                 this->build_help_text(event);
             });
             break;
@@ -608,5 +621,12 @@ void main_game_panel::close_all_dialogs(){
         if(dialog && dialog->IsModal()){
             dialog->EndModal(wxID_OK);
         }
+    }
+}
+
+void main_game_panel::play_sound(sound_type sound) {
+    if(!is_muted){
+        wxSound sound_to_play(_sound_type_to_string.at(sound));
+        sound_to_play.Play(wxSOUND_ASYNC);
     }
 }
