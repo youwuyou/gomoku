@@ -517,6 +517,7 @@ void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_ty
     // switch cases based on the icon type to be displayed
     switch (iconType) {
         case icon_type::About:
+                icon_button->SetToolTip("About");
                 icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
                     if(!this->about_already_built) {
                         this->play_sound(click_button_sound);
@@ -550,6 +551,7 @@ void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_ty
             break;
 
         case icon_type::Help:
+            icon_button->SetToolTip("Help");
             icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
                 this->play_sound(click_button_sound);
                 this->build_help_text(event);
