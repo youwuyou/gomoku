@@ -513,16 +513,16 @@ void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_ty
                                                position,
                                                wxSize(70,70));
     icon_button->SetCursor(wxCursor(wxCURSOR_HAND));
-    //icon_button->SetPosition(position); // Set position to top-left corner with margin
 
     // switch cases based on the icon type to be displayed
     switch (iconType) {
         case icon_type::About:
-            icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
-                this->play_sound(click_button_sound);
-                // this->build_about_image(event);
-                this->build_about_text(event);
-            });
+                icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
+                    if(!this->about_already_built) {
+                        this->play_sound(click_button_sound);
+                        this->build_about_image(event);
+                    }
+                });
             break;
 
         case icon_type::Settings:
@@ -559,29 +559,27 @@ void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_ty
 }
 
 void main_game_panel::build_about_image(wxMouseEvent& event) {
+    this->about_already_built = true;
 
-    image_panel *about_image = new image_panel(this, 
+    wxPoint about_image_pos(0, 400);
+    wxPoint close_button_offset(292, 53);
+    image_panel* about_image = new image_panel(this,
                                                 "assets/about_gomoku.png", 
                                                 wxBITMAP_TYPE_ANY, 
-                                                wxPoint(300, 150), 
+                                                about_image_pos,
                                                 wxSize(400, 400));
-    // wxFrame *imageFrame = new wxFrame(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(450, 450), wxBORDER_NONE);
-    // wxImage aboutImage("assets/about_gomoku.png", wxBITMAP_TYPE_PNG);
-    // wxBitmap aboutBitmap(aboutImage);
-
-
-    // // Set the bitmap to display
-    // wxStaticBitmap *imageDisplay = new wxStaticBitmap(this, wxID_ANY, aboutImage);
-
-    // // Position and show the frame
-    // imageFrame->SetPosition(wxPoint(250, 250)); // Set this to your desired position
-    // imageFrame->Show(true);
-    // about_image->Show(true);
-}
-
-void main_game_panel::build_about_text(wxMouseEvent& event) {
-    wxString about_info = wxT("Authors: Haoanqin Gao, Julius König, Stephen Lincon, \n                Nicolas Müller, Rana Singh, You Wu \nVersion: 1.0.0\n\n© 2023 Wizards of the C Inc.");
-    wxMessageBox(about_info, wxT("About Gomoku"), wxOK | wxICON_INFORMATION, this);
+    image_panel* close_button = new image_panel(this,
+                                                "assets/buttons/button_close.png",
+                                                wxBITMAP_TYPE_ANY,
+                                                about_image_pos + close_button_offset,
+                                                wxSize(40, 40));
+    close_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    close_button->Bind(wxEVT_LEFT_UP, [this, about_image, close_button](wxMouseEvent& event) {
+        this->play_sound(click_button_sound);
+        this->about_already_built = false;
+        delete about_image;
+        delete close_button;
+    });
 }
 
 void main_game_panel::build_help_text(wxMouseEvent& event) {

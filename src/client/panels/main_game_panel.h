@@ -53,13 +53,14 @@ private:
     void build_game_over_field(game_state* game_state, player* me);
     void build_icons(icon_type iconType, std::string path, wxPoint position);
 
+    bool about_already_built = false;
+
     // sound functions
     bool is_muted = false;
     void play_sound(sound_type sound);
     static const std::unordered_map<sound_type, std::string> _sound_type_to_string;
     wxFileOffset current_music_time;
 
-    void build_about_text(wxMouseEvent& event);
     void build_help_text(wxMouseEvent& event);
     wxStaticText* build_static_text(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold = false);
 
