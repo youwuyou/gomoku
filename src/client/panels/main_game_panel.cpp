@@ -17,8 +17,14 @@ const std::unordered_map<std::string, std::string> main_game_panel::_ruleset_str
         {"swap_after_first_move", "Swap after first move"},
 };
 
+const std::unordered_map<ruleset_type, std::string> main_game_panel::_ruleset_type_to_path = {
+        {freestyle, "assets/information/rules_freestyle.png"},
+        {swap_after_first_move, "assets/information/rules_swap_after_first_move.png"},
+        {swap2, "assets/information/rules_swap2.png"},
+};
+
 // for sound playing
-const std::unordered_map<sound_type, std::string> main_game_panel::_sound_type_to_string = {
+const std::unordered_map<sound_type, std::string> main_game_panel::_sound_type_to_path = {
         {click_button_sound, "assets/music/click-button.wav"},
         {place_stone_sound, "assets/music/place-stone-sound.wav"},
         {rematch_sound, "assets/music/rematch.wav"},
@@ -518,7 +524,7 @@ void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_ty
     switch (iconType) {
         case icon_type::About:
                 icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent &event) {
-                    if(!this->about_already_built) {
+                    if(!this->about_or_help_already_built) {
                         this->play_sound(click_button_sound);
                         this->build_about_image(event);
                     }
@@ -552,19 +558,19 @@ void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_ty
         case icon_type::Help:
             icon_button->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {
                 this->play_sound(click_button_sound);
-                this->build_help_text(event);
+                this->build_help_image(event, freestyle);
             });
             break;
     }
 }
 
 void main_game_panel::build_about_image(wxMouseEvent& event) {
-    this->about_already_built = true;
+    this->about_or_help_already_built = true;
 
     wxPoint about_image_pos(0, 400);
     wxPoint close_button_offset(292, 53);
     image_panel* about_image = new image_panel(this,
-                                                "assets/about_gomoku.png", 
+                                                "assets/information/about_gomoku.png",
                                                 wxBITMAP_TYPE_ANY, 
                                                 about_image_pos,
                                                 wxSize(400, 400));
@@ -576,54 +582,88 @@ void main_game_panel::build_about_image(wxMouseEvent& event) {
     close_button->SetCursor(wxCursor(wxCURSOR_HAND));
     close_button->Bind(wxEVT_LEFT_UP, [this, about_image, close_button](wxMouseEvent& event) {
         this->play_sound(click_button_sound);
-        this->about_already_built = false;
+        this->about_or_help_already_built = false;
         delete about_image;
         delete close_button;
     });
 }
 
-void main_game_panel::build_help_text(wxMouseEvent& event) {
-    wxDialog ruleDialog(this, wxID_ANY, wxT("Game Rules"), wxDefaultPosition, wxDefaultSize);
-    wxNotebook* notebook = new wxNotebook(&ruleDialog, wxID_ANY);
+void main_game_panel::build_help_image(wxMouseEvent& event, ruleset_type rule) {
+    this->about_or_help_already_built = true;
 
-    // helper function to create a panel with text and image for the notebook
-    auto createRulePanel = [notebook](const wxString& text, const wxString& rule) -> wxPanel* {
-        wxPanel* panel = new wxPanel(notebook, wxID_ANY);
-        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-        wxStaticText* staticText = new wxStaticText(panel, wxID_ANY, text, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
-        sizer->Add(staticText, 0, wxALL, 5);
+    wxPoint help_image_pos(0, 300);
+    wxPoint close_button_offset(303, 82);
+    wxPoint freestyle_button_offset(70, 380);
+    wxPoint swap_first_button_offset(160, 380);
+    wxPoint swap2_button_offset(250, 380);
+    image_panel* about_image = new image_panel(this,
+                                               main_game_panel::_ruleset_type_to_path.at(rule),
+                                               wxBITMAP_TYPE_ANY,
+                                               help_image_pos,
+                                               wxSize(400, 500));
+    image_panel* freestyle_button = new image_panel(this,
+                                                    "assets/buttons/button_rule_freestyle.png",
+                                                    wxBITMAP_TYPE_ANY,
+                                                    help_image_pos + freestyle_button_offset,
+                                                    wxSize(80, 40));
+    image_panel* swap_first_button = new image_panel(this,
+                                                    "assets/buttons/button_rule_swap_after_first_move.png",
+                                                    wxBITMAP_TYPE_ANY,
+                                                    help_image_pos + swap_first_button_offset,
+                                                    wxSize(80, 40));
+    image_panel* swap2_button = new image_panel(this,
+                                                    "assets/buttons/button_rule_swap2.png",
+                                                    wxBITMAP_TYPE_ANY,
+                                                    help_image_pos + swap2_button_offset,
+                                                    wxSize(80, 40));
 
-        wxStaticText* ruleText = new wxStaticText(panel, wxID_ANY, rule, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
-        sizer->Add(ruleText, 0, wxALL, 5);
-        
-        panel->SetSizer(sizer);
-        return panel;
-    };
+    image_panel* close_button = new image_panel(this,
+                                                "assets/buttons/button_close.png",
+                                                wxBITMAP_TYPE_ANY,
+                                                help_image_pos + close_button_offset,
+                                                wxSize(40, 40));
 
-    // create tabs for the notebook
-    // wxPanel* freestylePanel = createRulePanel(wxT("Freestyle rules..."), wxT("assets/rules_freestyle.png"));
-    // wxPanel* swapPanel = createRulePanel(wxT("Swap rules..."), wxT("assets/rules_swap1.png"));
-    // wxPanel* swap2Panel = createRulePanel(wxT("Swap2 rules..."), wxT("assets/rules_swap2.png"));
-    wxPanel* freestylePanel = createRulePanel(wxT(""), wxT("Black starts, and both players play in an alternating \n fashion until one player has won or there is a tie."));
-    wxPanel* swapPanel = createRulePanel(wxT(""), wxT("After the first move, the second player has the option \n to switch to playing with black, or continuing as white. Free style rules from then on."));
-    wxPanel* swap2Panel = createRulePanel(wxT(""), wxT("The first player starts by placing two black \n and one white stones. The second player then has the \n option to switch to black, continue as white, or place one more stone of each colour \n and defer the swapping choice to the first player, \n who then gets to swap to white or continue as black. Free style rules from then on."));
+    freestyle_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    freestyle_button->Bind(wxEVT_LEFT_UP, [this, about_image, close_button, freestyle_button, swap_first_button, swap2_button](wxMouseEvent& event) {
+        this->play_sound(click_button_sound);
+        main_game_panel::build_help_image(event, freestyle);
+        delete freestyle_button;
+        delete swap_first_button;
+        delete swap2_button;
+        delete about_image;
+        delete close_button;
+    });
+    swap_first_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    swap_first_button->Bind(wxEVT_LEFT_UP, [this, about_image, close_button, freestyle_button, swap_first_button, swap2_button](wxMouseEvent& event) {
+        this->play_sound(click_button_sound);
+        main_game_panel::build_help_image(event, swap_after_first_move);
+        delete freestyle_button;
+        delete swap_first_button;
+        delete swap2_button;
+        delete about_image;
+        delete close_button;
+    });
+    swap2_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    swap2_button->Bind(wxEVT_LEFT_UP, [this, about_image, close_button, freestyle_button, swap_first_button, swap2_button](wxMouseEvent& event) {
+        this->play_sound(click_button_sound);
+        main_game_panel::build_help_image(event, swap2);
+        delete freestyle_button;
+        delete swap_first_button;
+        delete swap2_button;
+        delete about_image;
+        delete close_button;
+    });
 
-    // panels as tabs to the notebook
-    notebook->AddPage(freestylePanel, wxT("Freestyle"), true); // true to make this the selected tab
-    notebook->AddPage(swapPanel, wxT("Swap"));
-    notebook->AddPage(swap2Panel, wxT("Swap2"));
-
-    // sizer for the dialog and add the notebook to it
-    wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-    vbox->Add(notebook, 1, wxEXPAND | wxALL, 5);
-
-    wxButton* continueButton = new wxButton(&ruleDialog, wxID_OK, wxT("Continue"));
-    vbox->Add(continueButton, 0, wxALIGN_CENTER | wxALL, 5);
-
-    // set the sizer for the rule dialog and fit the dialog to the contents of the sizer
-    ruleDialog.SetSizerAndFit(vbox);
-    ruleDialog.CentreOnParent();
-    ruleDialog.ShowModal();
+    close_button->SetCursor(wxCursor(wxCURSOR_HAND));
+    close_button->Bind(wxEVT_LEFT_UP, [this, about_image, close_button, freestyle_button, swap_first_button, swap2_button](wxMouseEvent& event) {
+        this->play_sound(click_button_sound);
+        this->about_or_help_already_built = false;
+        delete about_image;
+        delete freestyle_button;
+        delete swap_first_button;
+        delete swap2_button;
+        delete close_button;
+    });
 }
 
 wxStaticText* main_game_panel::build_static_text(std::string content, wxPoint position, wxSize size, long textAlignment, bool bold) {
@@ -638,7 +678,7 @@ wxStaticText* main_game_panel::build_static_text(std::string content, wxPoint po
 
 void main_game_panel::play_sound(sound_type sound) {
     if(!is_muted){
-        wxSound sound_to_play(_sound_type_to_string.at(sound));
+        wxSound sound_to_play(_sound_type_to_path.at(sound));
         sound_to_play.Play(wxSOUND_ASYNC);
     }
 }
