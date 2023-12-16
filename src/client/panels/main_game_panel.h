@@ -34,6 +34,9 @@ public:
     static const std::unordered_map<std::string, std::string> _pretty_string_to_ruleset_string;
     static const std::unordered_map<std::string, std::string> _ruleset_string_to_pretty_string;
 
+    void save_music_state();
+    bool music_is_started = false;
+
 private:
     wxColor white = wxColor(255, 255, 255);
     wxColor black = wxColor(0, 0, 0);
@@ -49,11 +52,12 @@ private:
     void build_swap_field(game_state* game_state, player* me);
     void build_game_over_field(game_state* game_state, player* me);
     void build_icons(icon_type iconType, std::string path, wxPoint position);
-    void close_all_dialogs();
 
+    // sound functions
     bool is_muted = false;
     void play_sound(sound_type sound);
     static const std::unordered_map<sound_type, std::string> _sound_type_to_string;
+    wxFileOffset current_music_time;
 
     void build_about_text(wxMouseEvent& event);
     void build_help_text(wxMouseEvent& event);

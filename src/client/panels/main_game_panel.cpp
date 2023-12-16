@@ -25,23 +25,12 @@ const std::unordered_map<sound_type, std::string> main_game_panel::_sound_type_t
         {forfeit_sound, "assets/music/forfeit.wav"},
 };
 
-main_game_panel::main_game_panel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 760)) {
-    // setup media control for background music
-    this->background_music_player = new wxMediaCtrl();
-    wxString filePath = "assets/music/chinese-journey.wav";
-    this->background_music_player->Create(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-                                    (long) wxMEDIABACKEND_WMP10);
-    this->background_music_player->Load(filePath);
-    this->background_music_player->Play();
-    this->background_music_player->SetVolume(1.0);
-}
+main_game_panel::main_game_panel(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(960, 760)) {}
 
 void main_game_panel::build_game_state(game_state* game_state, player* me) {
 
     // remove any existing UI
     this->DestroyChildren();
-    // close all open dialogs
-    main_game_panel::close_all_dialogs();
 
     std::vector<player*> players = game_state->get_players();
 
@@ -56,6 +45,27 @@ void main_game_panel::build_game_state(game_state* game_state, player* me) {
     } else {
         game_controller::show_error("Game state error", "Could not find this player among players of server game.");
         return;
+    }
+
+    // setup media control for background music
+    this->background_music_player = new wxMediaCtrl();
+    wxString filePath = "assets/music/chinese-journey.wav";
+    this->background_music_player->Create(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+                                          (long) wxMEDIABACKEND_WMP10);
+    this->background_music_player->Load(filePath);
+    this->background_music_player->SetVolume(1.0);
+    this->background_music_player->Connect(wxEVT_MEDIA_FINISHED,
+                       wxMediaEventHandler(main_game_panel::on_music_stop), NULL, this);
+    // start background music once
+    if(!this->music_is_started){
+        this->background_music_player->Play();
+        this->music_is_started = true;
+    } else {
+        // continue music from saved position
+        this->background_music_player->Seek(current_music_time);
+        if(!this->is_muted){
+            this->background_music_player->Play();
+        }
     }
 
     // show game mode choice and start screen if the game is not yet started
@@ -86,7 +96,12 @@ void main_game_panel::build_game_state(game_state* game_state, player* me) {
 
     // build icon buttons for about, settings and help
     this->build_icons(icon_type::About, "assets/buttons/button_about.png", wxPoint(30, 30));
-    this->build_icons(icon_type::Settings, "assets/buttons/button_volume_on.png", wxPoint(30, 100));
+    // volume button indicates the current state (off if muted, on if unmuted)
+    if(!this->is_muted){
+        this->build_icons(icon_type::Settings, "assets/buttons/button_volume_on.png", wxPoint(30, 100));
+    } else if(this->is_muted){
+        this->build_icons(icon_type::Settings, "assets/buttons/button_volume_off.png", wxPoint(30, 100));
+    }
     this->build_icons(icon_type::Help, "assets/buttons/button_help.png", wxPoint(30, 170));
 
     // update layout
@@ -511,20 +526,25 @@ void main_game_panel::build_icons(/*game_state* gameState, player *me, */icon_ty
             break;
 
         case icon_type::Settings:
+            // volume button indicates the current state (off if muted, on if unmuted)
             if(is_muted) {
-                icon_button->SetToolTip("Unmute sounds");
+                icon_button->SetToolTip("Sounds muted");
                 icon_button->Bind(wxEVT_LEFT_UP, [this, icon_button](wxMouseEvent& event) {
-                    is_muted = false;
+                    this->is_muted = false;
+                    this->background_music_player->Play();
                     this->play_sound(click_button_sound);
-                    delete icon_button;
+                    // set icon to opposite thing
                     this->build_icons(icon_type::Settings, "assets/buttons/button_volume_on.png", wxPoint(30, 100));
+                    delete icon_button;
                 });
             } else if (!is_muted) {
-                icon_button->SetToolTip("Mute sounds");
+                icon_button->SetToolTip("Sounds unmuted");
                 icon_button->Bind(wxEVT_LEFT_UP, [this, icon_button](wxMouseEvent& event) {
-                    is_muted = true;
-                    delete icon_button;
+                    this->is_muted = true;
+                    this->background_music_player->Pause();
+                    // set icon to opposite thing
                     this->build_icons(icon_type::Settings, "assets/buttons/button_volume_off.png", wxPoint(30, 100));
+                    delete icon_button;
                 });
             }
             break;
@@ -618,17 +638,18 @@ wxStaticText* main_game_panel::build_static_text(std::string content, wxPoint po
     return static_text;
 }
 
-void main_game_panel::close_all_dialogs(){
-    for (wxDialog* dialog : this->_open_dialogs){
-        if(dialog && dialog->IsModal()){
-            dialog->EndModal(wxID_OK);
-        }
-    }
-}
-
 void main_game_panel::play_sound(sound_type sound) {
     if(!is_muted){
         wxSound sound_to_play(_sound_type_to_string.at(sound));
         sound_to_play.Play(wxSOUND_ASYNC);
     }
+}
+
+void main_game_panel::save_music_state() {
+    this->current_music_time = this->background_music_player->Tell();
+    this->background_music_player->Pause();
+}
+
+void main_game_panel::on_music_stop(wxMediaEvent &) {
+    this->background_music_player->Play();
 }
