@@ -239,7 +239,7 @@ void main_game_panel::build_playing_board(game_state* game_state, player *me) {
 
         // show background
         wxSize panel_size = this->GetSize();
-        image_panel *background_panel = new image_panel(this, "assets/background.jpg", wxBITMAP_TYPE_ANY, wxDefaultPosition, panel_size);
+        image_panel *background_panel = new image_panel(this, "assets/background_game.png", wxBITMAP_TYPE_ANY, wxDefaultPosition, panel_size);
         background_panel->Lower(); // This ensures the background is behind all other elements
 
         // show board image

@@ -71,7 +71,7 @@ private:
     wxPoint const table_center = wxPoint(475, 400);
     wxSize const button_size = wxSize(130, 130/2.56);
 
-    wxPoint const scoreboard_position = wxPoint(730, 300);
+    wxPoint const scoreboard_position = wxPoint(727, 300);
     wxSize const scoreboard_size = wxSize(230, 230/1.93);
 
     wxPoint const swap_field_position = wxPoint(5, 350);
