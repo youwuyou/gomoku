@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(sockpp/include)
 
-find_package(wxWidgets COMPONENTS core base net adv REQUIRED)
+find_package(wxWidgets COMPONENTS core base net adv media REQUIRED)
 include(${wxWidgets_USE_FILE})
 
 # define a variable CLIENT_SOURCE_FILES that contains the paths to all source files required to compile the client executable

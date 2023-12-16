@@ -368,13 +368,9 @@ bool game_state::switch_starting_player(std::string& err) {
 }
 
 bool game_state::prepare_game(player* player, std::string &err) {
-    if(_players.at(_starting_player_idx->get_value()) != player){
+    if(_players.at(_starting_player_idx->get_value())->get_id() != player->get_id()){
         this->switch_starting_player(err);
     }
-    //if(_players.at(_current_player_idx->get_value())->get_colour() != player_colour_type::black){
-    //    this->_players.at(0)->change_colour(err);
-    //    this->_players.at(1)->change_colour(err);
-    //}
     _is_finished->set_value(false);
     return true;
 }

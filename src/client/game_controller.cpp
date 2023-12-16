@@ -93,6 +93,11 @@ void game_controller::update_game_state(game_state* new_game_state) {
     // make sure we are showing the main game panel in the window (if we are already showing it, nothing will happen)
     game_controller::_game_window->show_panel(game_controller::_main_game_panel);
 
+    // save current music state for continuation
+    if(game_controller::_main_game_panel->music_is_started) {
+        game_controller::_main_game_panel->save_music_state();
+    }
+
     // command the main game panel to rebuild itself, based on the new game state
     game_controller::_main_game_panel->build_game_state(game_controller::_current_game_state, game_controller::_me);
 
