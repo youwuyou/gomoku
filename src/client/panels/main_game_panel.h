@@ -39,10 +39,6 @@ public:
     bool music_is_started = false;
 
 private:
-    wxColor white = wxColor(255, 255, 255);
-    wxColor black = wxColor(0, 0, 0);
-    wxColor dark_green = wxColor(54, 81, 39);
-
     // UI build functions
     void build_before_start(game_state* game_state, player* me);
     void build_playing_board(game_state* game_state, player* me);
@@ -86,7 +82,9 @@ private:
     wxSize const board_size = wxSize(1000/scale_factor, 1000/scale_factor);
     const int grid_spacing = 70;
     wxSize const grid_corner_offset = wxSize(12/scale_factor,  12/scale_factor);
-};
 
+    // color
+    wxColor dark_green = wxColor(54, 81, 39);
+};
 
 #endif //GOMOKU_CLIENT_MAINGAMEPANEL_H

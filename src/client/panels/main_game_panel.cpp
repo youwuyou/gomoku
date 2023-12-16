@@ -341,7 +341,7 @@ void main_game_panel::build_scoreboard(game_state *game_state, player *me) {
                 wxALIGN_LEFT,
                 true
         );
-        player_text->SetForegroundColour(black);
+        player_text->SetForegroundColour(*wxBLACK);
         wxStaticText* player_points_text = this->build_static_text(
                 player_points,
                 main_game_panel::scoreboard_position + wxPoint(140, 32 + i*30),
@@ -349,7 +349,7 @@ void main_game_panel::build_scoreboard(game_state *game_state, player *me) {
                 wxALIGN_LEFT,
                 true
         );
-        player_points_text->SetForegroundColour(black);
+        player_points_text->SetForegroundColour(*wxBLACK);
 
         if(game_state->get_current_player() == player){
             std::string current_player_colour = player::_player_colour_type_to_string.at(game_state->get_current_player()->get_colour());
@@ -403,7 +403,7 @@ void main_game_panel::build_swap_field(game_state* game_state, player *me){
             wxALIGN_CENTER,
             true
     );
-    title_text->SetForegroundColour(black);
+    title_text->SetForegroundColour(*wxBLACK);
 
     std::string swap_button_string = "assets/buttons/button_swap_black.png";
     std::string no_swap_button_string = "assets/buttons/button_continue_white.png";
@@ -469,7 +469,7 @@ void main_game_panel::build_game_over_field(game_state* game_state, player* me){
             wxALIGN_CENTER,
             true
     );
-    title_text->SetForegroundColour(black);
+    title_text->SetForegroundColour(*wxBLACK);
     wxStaticText* winner_text = this->build_static_text(
             winner_string,
             main_game_panel::swap_field_position + wxPoint((swap_field_size.x/2) - 190/2, 53),
@@ -477,7 +477,7 @@ void main_game_panel::build_game_over_field(game_state* game_state, player* me){
             wxALIGN_CENTER,
             true
     );
-    winner_text->SetForegroundColour(black);
+    winner_text->SetForegroundColour(*wxBLACK);
 
     std::string rematch_button_string = "assets/buttons/button_rematch.png";
     std::string change_ruleset_button_string = "assets/buttons/button_change_game_mode.png";
