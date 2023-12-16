@@ -17,6 +17,7 @@ const std::unordered_map<std::string, std::string> main_game_panel::_ruleset_str
         {"swap_after_first_move", "Swap after first move"},
 };
 
+// for rule explanation rendering
 const std::unordered_map<ruleset_type, std::string> main_game_panel::_ruleset_type_to_path = {
         {freestyle, "assets/information/rules_freestyle.png"},
         {swap_after_first_move, "assets/information/rules_swap_after_first_move.png"},
