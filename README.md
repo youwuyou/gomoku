@@ -4,24 +4,24 @@
 This is a simple C++ implementation of a classical Japanese board game called "Gomoku". You can read the game's rules [here](https://www.wikiwand.com/en/Gomoku). The implementation features a client/server architecture for 2-player scenarios.
 
 ## 1. Compile instructions
-This project only works on UNIX systems (Linux / MacOS). We recommend using [Ubuntu](https://ubuntu.com/#download), as it offers the easiest way to setup wxWidgets. Therefore, we explain installation only for Ubuntu systems. The following was tested on a Ubuntu 20.4 system, but should also work for earlier versions of Ubuntu.
+This project only works on UNIX systems (Linux / MacOS). We recommend using [Ubuntu](https://ubuntu.com/#download), as it offers the easiest way to setup wxWidgets. Therefore, we explain installation only for Ubuntu systems. The following was tested on a Ubuntu 22.04 system, but should also work for earlier versions of Ubuntu.
 
 **Note:** If you create a virtual machine, we recommend to give the virtual machine **at least 12GB** of (dynamic) harddrive space (CLion and wxWidgets need quite a lot of space).
 
 ### 1.1 Prepare OS Environment
 
-#### Ubuntu 20.4
+#### Ubuntu 22.04
 The OS should already have git installed. If not, you can use: 
 `sudo apt-get install git`
 
-Then use  `git clone` to fetch this repository.
+Then use  `git clone https://gitlab.ethz.ch/youwuyou/gomoku` to fetch this repository.
 
-Execute the following commands in a console:
+Execute the following commands in a console to prepare the environment:
 1. `sudo apt-get update`
 2. `sudo apt-get install build-essential` followed by `sudo reboot`
 3. if on virtual machine : install guest-additions (https://askubuntu.com/questions/22743/how-do-i-install-guest-additions-in-a-virtualbox-vm) and then `sudo reboot`
 4. `sudo snap install clion --classic` this installs the latest stable CLion version
-5. `sudo apt-get install libwxgtk3.0-gtk3-dev libwxgtk-media3.0-gtk3-dev` this installs wxWidgets (GUI library used in this project)
+5. `sudo apt-get install libwxgtk3.0-gtk3-dev libwxgtk-media3.0-gtk3-dev` this installs wxWidgets (GUI and sound library used in this project)
 
 
 ### 1.2 Compile Code
@@ -42,11 +42,10 @@ We also provide build scripts that you can utilize for the build process, in cas
 1. Make sure you locate at the root, using `pwd` you should see `/path/to/gomoku`
 2. Choose to build with/without [Ninja](https://ninja-build.org/). Build directories named `cmake-build-debug` will appear under sockpp directory and then the root of the project 
     - either `./build-run.sh "Unix Makefiles"`
-    - or **way faster** with `./build-run.sh "Ninja"`, but requires the build tool Ninja to be installed
+    - or **way faster** with `./build-run.sh "Ninja"`, but requires the build tool Ninja to be installed (`apt-get install -y ninja-build`)
 3. Wait until the executables are compiled
 
 For your convinience, we also provide a script that allows us to remove the `cmake-build-debug` directories. Execute it using `./build-clean.sh`.
-
 
 ######  NOTE: Do not forget to grant permissions to the scripts using `chmod +x script_name.sh`
 
