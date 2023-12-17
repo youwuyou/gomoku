@@ -1,7 +1,3 @@
-//
-// Created by Julius on 13.12.2023.
-//
-
 #ifndef GOMOKU_FORFEIT_REQUEST_H
 #define GOMOKU_FORFEIT_REQUEST_H
 

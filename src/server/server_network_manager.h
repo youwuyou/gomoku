@@ -1,6 +1,3 @@
-//
-// Created by Manuel on 12.02.2021.
-//
 // The server_network_manager handles all incoming messages and offers functionality to broadcast messages
 // to all connected players of a game.
 

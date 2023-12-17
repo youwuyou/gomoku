@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 15.02.2021.
-//
-
 #ifndef GOMOKU_FULL_STATE_RESPONSE_H
 #define GOMOKU_FULL_STATE_RESPONSE_H
 

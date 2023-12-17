@@ -1,6 +1,3 @@
-//
-// Created by Manuel on 29.01.2021.
-//
 // The game_instance_manager only exists on the server side. It stores all currently active games and offers
 // functionality to retrieve game instances by id and adding players to games.
 // If a new player requests to join a game but no valid game_instance is available, then this class

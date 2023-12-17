@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 15.02.2021.
-//
-
 #ifndef GOMOKU_REQUEST_RESPONSE_H
 #define GOMOKU_REQUEST_RESPONSE_H
 

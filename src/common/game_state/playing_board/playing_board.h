@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 27.01.2021.
-//
-
 #ifndef GOMOKU_PLAYING_BOARD_H
 #define GOMOKU_PLAYING_BOARD_H
 

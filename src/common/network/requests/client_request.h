@@ -1,6 +1,3 @@
-//
-// Created by Manuel on 28.01.2021.
-//
 // client_request is the base-class for all requests that are being sent from the client to the server.
 // It offers a function to deserialize a client_request subclass from a valid json.
 

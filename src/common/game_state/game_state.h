@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 27.01.2021.
-//
-
 #ifndef GOMOKU_GAME_STATE_H
 #define GOMOKU_GAME_STATE_H
 

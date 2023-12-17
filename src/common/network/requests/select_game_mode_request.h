@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 29.01.2021.
-//
-
 #ifndef GOMOKU_SELECT_GAME_MODE_REQUEST_H
 #define GOMOKU_SELECT_GAME_MODE_REQUEST_H
 

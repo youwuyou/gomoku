@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 28.01.2021.
-//
-
 #ifndef GOMOKU_PLACE_STONE_REQUEST_H
 #define GOMOKU_PLACE_STONE_REQUEST_H
 

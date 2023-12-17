@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 09.03.2021.
-//
-
 #ifndef GOMOKU_GOMOKU_EXCEPTION_H
 #define GOMOKU_GOMOKU_EXCEPTION_H
 

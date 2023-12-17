@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 08.02.2022.
-//
-
 #ifndef GOMOKU_REQUEST_HANDLER_H
 #define GOMOKU_REQUEST_HANDLER_H
 

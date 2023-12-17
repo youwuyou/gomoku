@@ -1,6 +1,3 @@
-//
-// Created by Manuel on 15.02.2021.
-//
 // Base class for all messages sent from the server to the client.
 // It offers a function to deserialize a server_response subclass from a valid json.
 

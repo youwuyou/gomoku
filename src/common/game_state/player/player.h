@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 25.01.2021.
-//
-
 #ifndef GOMOKU_PLAYER_H
 #define GOMOKU_PLAYER_H
 

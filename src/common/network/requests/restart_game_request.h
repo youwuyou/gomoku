@@ -1,7 +1,3 @@
-//
-// Created by Julius on 28.11.2023.
-//
-
 #ifndef GOMOKU_RESTART_GAME_REQUEST_H
 #define GOMOKU_RESTART_GAME_REQUEST_H
 

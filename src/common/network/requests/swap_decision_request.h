@@ -1,7 +1,3 @@
-//
-// Created by Manuel on 29.01.2021.
-//
-
 #ifndef GOMOKU_SWAP_DECISION_REQUEST_H
 #define GOMOKU_SWAP_DECISION_REQUEST_H
 
