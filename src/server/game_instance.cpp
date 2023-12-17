@@ -42,7 +42,7 @@ bool game_instance::is_finished() {
 
 bool game_instance::start_game(player* player, std::string &err) {
     modification_lock.lock();
-    if (_game_state->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
+    if (_game_state->get_opening_rules() != ruleset_type::uninitialized) {
         if (_game_state->start_game(err)) {
             // send state update to all other players
             full_state_response state_update_msg = full_state_response(this->get_id(), *_game_state);

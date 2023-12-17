@@ -27,7 +27,6 @@ set(CLIENT_SOURCE_FILES
         src/common/game_state/game_state.cpp src/common/game_state/game_state.h
         src/common/game_state/player/player.cpp src/common/game_state/player/player.h
         src/common/game_state/playing_board/playing_board.cpp src/common/game_state/playing_board/playing_board.h
-        src/common/game_state/playing_board/opening_rules.cpp src/common/game_state/playing_board/opening_rules.h
         # client requests
         src/common/network/requests/client_request.cpp src/common/network/requests/client_request.h
         src/common/network/requests/select_game_mode_request.cpp src/common/network/requests/select_game_mode_request.h
@@ -66,7 +65,6 @@ set(SERVER_SOURCE_FILES
         src/common/game_state/game_state.cpp src/common/game_state/game_state.h
         src/common/game_state/player/player.cpp src/common/game_state/player/player.h
         src/common/game_state/playing_board/playing_board.cpp src/common/game_state/playing_board/playing_board.h
-        src/common/game_state/playing_board/opening_rules.cpp src/common/game_state/playing_board/opening_rules.h
         # client requests
         src/common/network/requests/client_request.cpp src/common/network/requests/client_request.h
         src/common/network/requests/join_game_request.cpp src/common/network/requests/join_game_request.h
