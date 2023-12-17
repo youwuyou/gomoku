@@ -55,6 +55,7 @@ For your convinience, we also provide a script that allows us to remove the `cma
 ## 2. Run the Game
 ### Using the script
 1. Open a console in the project folder, and execute `./run-game.sh` to automatically start a server and two clients using the script.
+######  NOTE: Do not forget to grant permissions to the script using `chmod +x run-game.sh`
 
 ### Manually
 1. Open a console in the project folder, navigate into "cmake-build-debug" `cd cmake-build-debug`
