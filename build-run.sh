@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 build_system=$1 # Get the build system from command line argument
 
