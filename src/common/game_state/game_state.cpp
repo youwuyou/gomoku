@@ -28,10 +28,26 @@ const std::unordered_map<swap_decision_type, std::string> game_state::_swap_deci
         { swap_decision_type::deferred_do_not_swap, "deferred_do_not_swap"},
 };
 
+// for deserialization
+const std::unordered_map<std::string, ruleset_type> game_state::_string_to_ruleset_type = {
+        {"freestyle", ruleset_type::freestyle },
+        {"swap2", ruleset_type::swap2 },
+        {"swap_after_first_move", ruleset_type::swap_after_first_move },
+        {"uninitialized", ruleset_type::uninitialized },
+};
+
+// for serialization
+const std::unordered_map<ruleset_type, std::string> game_state::_ruleset_type_to_string = {
+        { ruleset_type::freestyle, "freestyle" },
+        { ruleset_type::swap2, "swap2"},
+        { ruleset_type::swap_after_first_move, "swap_after_first_move"},
+        { ruleset_type::uninitialized, "uninitialized"},
+};
+
 game_state::game_state() : unique_serializable() {
     this->_players = std::vector<player*>();
     this->_playing_board = new playing_board();
-    this->_opening_ruleset = new opening_rules(ruleset_type::uninitialized);
+    this->_opening_ruleset = ruleset_type::uninitialized;
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
     this->_is_tied = new serializable_value<bool>(false);
@@ -40,11 +56,10 @@ game_state::game_state() : unique_serializable() {
     this->_turn_number = new serializable_value<int>(0);
     this->_swap_next_turn = new serializable_value<bool>(false);
     this->_swap_decision = swap_decision_type::no_decision_yet;
-
 }
 
 // deserialization constructor
-game_state::game_state (std::string id, playing_board* _playing_board, opening_rules* _opening_ruleset,
+game_state::game_state (std::string id, playing_board* _playing_board, ruleset_type _opening_ruleset,
                         std::vector<player *> &players, serializable_value<bool> *is_started,
                         serializable_value<bool> *is_finished, serializable_value<bool> *is_tied,
                         serializable_value<int> *current_player_idx, serializable_value<int> *starting_player_idx,
@@ -66,7 +81,7 @@ game_state::game_state (std::string id, playing_board* _playing_board, opening_r
 
 game_state::game_state(std::string id) : unique_serializable(id) {
     this->_playing_board = new playing_board();
-    this->_opening_ruleset = new opening_rules(ruleset_type::uninitialized);
+    this->_opening_ruleset = ruleset_type::uninitialized;
     this->_players = std::vector<player*>();
     this->_is_started = new serializable_value<bool>(false);
     this->_is_finished = new serializable_value<bool>(false);
@@ -84,7 +99,6 @@ game_state::~game_state() {
         delete _is_finished;
         delete _is_tied;
         delete _playing_board;
-        delete _opening_ruleset;
         delete _current_player_idx;
         delete _starting_player_idx;
         delete _turn_number;
@@ -94,7 +108,6 @@ game_state::~game_state() {
         _is_finished = nullptr;
         _is_tied = nullptr;
         _playing_board = nullptr;
-        _opening_ruleset = nullptr;
         _current_player_idx = nullptr;
         _starting_player_idx = nullptr;
         _turn_number = nullptr;
@@ -138,7 +151,7 @@ std::vector<std::vector<field_type>> game_state::get_playing_board() const{
     return _playing_board->get_playing_board();
 }
 
-opening_rules* game_state::get_opening_rules() const {
+ruleset_type game_state::get_opening_rules() const {
     return _opening_ruleset;
 }
 
@@ -199,7 +212,7 @@ bool game_state::update_current_player(std::string& err) {
     bool result;
     int current_turn_val = this->get_turn_number();
 
-    switch(_opening_ruleset->get_ruleset()) {
+    switch(_opening_ruleset) {
         case freestyle:
             result = alternate_current_player(err);
             break;
@@ -429,7 +442,7 @@ bool game_state::add_player(player* player_ptr, std::string& err) {
 }
 
 bool game_state::set_game_mode(const std::string& rule_name, std::string& err) {
-    this->_opening_ruleset->set_opening_rule(rule_name);
+    this->_opening_ruleset = _string_to_ruleset_type.at(rule_name);
     return true;
 }
 
@@ -536,8 +549,9 @@ void game_state::write_into_json(rapidjson::Value &json,
     _playing_board->write_into_json(playing_board_val, allocator);
     json.AddMember("playing_board", playing_board_val, allocator);
 
+    serializable_value<std::string> opening_ruleset_string = serializable_value<std::string>(_ruleset_type_to_string.at(_opening_ruleset));
     rapidjson::Value opening_ruleset_val(rapidjson::kObjectType);
-    _opening_ruleset->write_into_json(opening_ruleset_val, allocator);
+    opening_ruleset_string.write_into_json(opening_ruleset_val, allocator);
     json.AddMember("opening_ruleset", opening_ruleset_val, allocator);
 
     json.AddMember("players", vector_utils::serialize_vector(_players, allocator), allocator);
@@ -572,9 +586,10 @@ game_state* game_state::from_json(const rapidjson::Value &json) {
             deserialized_players.push_back(player::from_json(serialized_player.GetObject()));
         }
         swap_decision_type swap_decision = _string_to_swap_decision_type.at(serializable_value<std::string>::from_json(json["swap_decision"].GetObject())->get_value());
+        ruleset_type opening_ruleset = _string_to_ruleset_type.at(serializable_value<std::string>::from_json(json["opening_ruleset"].GetObject())->get_value());
         return new game_state(json["id"].GetString(),
                               playing_board::from_json(json["playing_board"].GetObject()),
-                              opening_rules::from_json(json["opening_ruleset"].GetObject()),
+                              opening_ruleset,
                               deserialized_players,
                               serializable_value<bool>::from_json(json["is_started"].GetObject()),
                               serializable_value<bool>::from_json(json["is_finished"].GetObject()),

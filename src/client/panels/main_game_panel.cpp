@@ -136,7 +136,7 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
     inner_layout->AddSpacer(155);
 
     // show dropdown for game mode choice to first player
-    if (game_state->get_current_player() == me && game_state->get_opening_rules()->get_ruleset() == ruleset_type::uninitialized) {
+    if (game_state->get_current_player() == me && game_state->get_opening_rules() == ruleset_type::uninitialized) {
 
         wxStaticText* game_rule_dropdown_text = build_static_text(
                 "Please choose a game style:",
@@ -175,9 +175,9 @@ void main_game_panel::build_before_start(game_state* game_state, player* me){
     }
 
     // show chosen ruleset type if ruleset has been chosen
-    if (game_state->get_opening_rules()->get_ruleset() != ruleset_type::uninitialized) {
+    if (game_state->get_opening_rules() != ruleset_type::uninitialized) {
         inner_layout->AddSpacer(40);
-        std::string ruleset_string = _ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(game_state->get_opening_rules()->get_ruleset()));
+        std::string ruleset_string = _ruleset_string_to_pretty_string.at(game_state::_ruleset_type_to_string.at(game_state->get_opening_rules()));
         wxStaticText* game_rule_chosen_text = build_static_text(
                 std::string("Chosen game style: "),
                 wxDefaultPosition,
@@ -382,7 +382,7 @@ void main_game_panel::build_forfeit_button(game_state* game_state, player* me){
 }
 
 void main_game_panel::build_swap_field(game_state* game_state, player *me){
-    ruleset_type ruleset_name = game_state->get_opening_rules()->get_ruleset();
+    ruleset_type ruleset_name = game_state->get_opening_rules();
 
     wxSize current_swap_field_size = main_game_panel::swap_field_size;
     if (ruleset_name == swap2 && game_state->get_swap_decision() == no_decision_yet){
@@ -394,7 +394,7 @@ void main_game_panel::build_swap_field(game_state* game_state, player *me){
                                                     main_game_panel::swap_field_position,
                                                     current_swap_field_size);
 
-    std::string title_string = main_game_panel::_ruleset_string_to_pretty_string.at(opening_rules::_ruleset_type_to_string.at(ruleset_name));
+    std::string title_string = main_game_panel::_ruleset_string_to_pretty_string.at(game_state::_ruleset_type_to_string.at(ruleset_name));
 
     wxStaticText* title_text = this->build_static_text(
             title_string,

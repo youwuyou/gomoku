@@ -140,13 +140,13 @@ TEST_F(game_state_test, is_full){
 }
 
 TEST_F(game_state_test, set_opening_rules){
-    EXPECT_EQ(test_game_state.get_opening_rules()->get_ruleset(), uninitialized);
+    EXPECT_EQ(test_game_state.get_opening_rules(), uninitialized);
     test_game_state.set_game_mode("freestyle", err);
-    EXPECT_EQ(test_game_state.get_opening_rules()->get_ruleset(), freestyle);
+    EXPECT_EQ(test_game_state.get_opening_rules(), freestyle);
     test_game_state.set_game_mode("swap_after_first_move", err);
-    EXPECT_EQ(test_game_state.get_opening_rules()->get_ruleset(), swap_after_first_move);
+    EXPECT_EQ(test_game_state.get_opening_rules(), swap_after_first_move);
     test_game_state.set_game_mode("swap2", err);
-    EXPECT_EQ(test_game_state.get_opening_rules()->get_ruleset(), swap2);
+    EXPECT_EQ(test_game_state.get_opening_rules(), swap2);
 }
 
 //// CHAPTER 3: swap decision functionality

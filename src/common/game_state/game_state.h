@@ -10,7 +10,6 @@
 #include "../../rapidjson/include/rapidjson/document.h"
 #include "player/player.h"
 #include "playing_board/playing_board.h"
-#include "playing_board/opening_rules.h"
 #include "../serialization/serializable.h"
 #include "../serialization/serializable_value.h"
 #include "../serialization/unique_serializable.h"
@@ -24,12 +23,19 @@ enum swap_decision_type {
     no_decision_yet,
 };
 
+enum ruleset_type {
+    freestyle,
+    swap2,
+    swap_after_first_move,
+    uninitialized
+};
+
 class game_state : public unique_serializable {
 private:
 
     std::vector<player*> _players;
     playing_board* _playing_board;
-    opening_rules* _opening_ruleset;
+    ruleset_type _opening_ruleset;
     serializable_value<bool>* _is_started;
     serializable_value<bool>* _is_finished;
     serializable_value<bool>* _is_tied;
@@ -46,7 +52,7 @@ private:
     game_state(
             std::string id,
             playing_board* _playing_board,
-            opening_rules* _opening_ruleset,
+            ruleset_type _opening_ruleset,
             std::vector<player*>& players,
             serializable_value<bool>* is_started,
             serializable_value<bool>* is_finished,
@@ -73,7 +79,7 @@ public:
     std::vector<player*>& get_players();
     int get_turn_number() const;
     std::vector<std::vector<field_type>> get_playing_board() const;
-    opening_rules* get_opening_rules() const;
+    ruleset_type get_opening_rules() const;
     bool get_swap_next_turn() const;
     swap_decision_type get_swap_decision() const;
 
@@ -83,6 +89,10 @@ public:
     static const std::unordered_map<std::string, swap_decision_type> _string_to_swap_decision_type;
     // for serialization of swap_decision
     static const std::unordered_map<swap_decision_type, std::string> _swap_decision_type_to_string;
+    // for deserialization of ruleset
+    static const std::unordered_map<std::string, ruleset_type> _string_to_ruleset_type;
+    // for serialization of ruleset
+    static const std::unordered_map<ruleset_type, std::string> _ruleset_type_to_string;
 
 #ifdef GOMOKU_SERVER
     // server-side state update functions

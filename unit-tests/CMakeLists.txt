@@ -2,7 +2,6 @@ project(Gomoku-unit-tests)
 
 set(TEST_SOURCE_FILES
         playing_board.cpp
-        opening_rules.cpp
         player.cpp
         game_state.cpp)
 
